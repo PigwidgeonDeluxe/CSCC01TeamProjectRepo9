@@ -8,7 +8,7 @@ the team must be visible in the picture and must be together.[do we need?]
 
 Used discord to communicate and share relevent files.
 Made decisions as a group. Passed around ideas and debated whether it was good or not.
-
+We allocated work depending on group members strengths. We prioritized which parts of the project to finish first.
 - How did you define priority and/or difficulty of user stories? (User stories not done yet[as of when this doc was edited])
 
 Meet in person and online.
