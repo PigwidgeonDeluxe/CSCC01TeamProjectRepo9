@@ -3,6 +3,7 @@
 There are two main branches `master` and `develop`
 
 `master`
+
 - Main branch of the project
 - Code base is result of `develop` being merged into `master`
     - Code is merged after pre-defined milestones (defined on JIRA)
@@ -11,6 +12,7 @@ There are two main branches `master` and `develop`
 - `master` code is guaranteed to be stable after peer-review
 
 `develop`
+
 - Develop branch of the project
 - All features and fixes are merged into `develop` upon completion
 - `develop` is merged into `master` after pre-defined milestones are met
@@ -39,6 +41,7 @@ Every new branch should be prefixed with one of the following prefixes:
 Ensure that your code is reviewed before merging into develop. NEVER merge a branch into `develop` yourself. Always submit a pull request to another team member to review code and let your reviewer merge into `develop`
 
 Merge steps:
+
 1. Submit a pull request to a team member to review your code
 2. Team member who you submitted pull request to should review code and check for errors or practices that go against coding principles
 3. Fix any issues with code if there are any and re-assign the pull request to the team member
