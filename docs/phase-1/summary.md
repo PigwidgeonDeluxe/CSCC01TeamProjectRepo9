@@ -8,18 +8,19 @@ Create a usable, well designed search engine for UTSC students to search, upload
 
 There will be three different user levels ranging:
 
-1. Instructors
+=======
+1. Registered Instructors
     * Represents instructors of UTSC
     * Persona -- Harold:
         * 60-year old professor at UTSC
         * Wants to upload and store notes for archiving and student access
-2. Students
+2. Registered Students
     * Represents students of UTSC
     * Persona -- Jimmy:
         * 20-year old student at UTSC
         * Wants to search for past exams to use for practice
         * Wants to keep up-to-date with his professors and some of his peers
-3. Non-registered users
+3. Non-registered users/guests
     * Represents any sort of person not in the above groups
     * Persona -- Chad:
         * 24-year old student from a different university

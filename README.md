@@ -46,3 +46,12 @@ Merge steps:
 2. Team member who you submitted pull request to should review code and check for errors or practices that go against coding principles
 3. Fix any issues with code if there are any and re-assign the pull request to the team member
 4. The team member who reviewed your code merges your code into `develop`
+
+## Folder Structure
+This section will keep track and explain the logic behind the folder structure.
+Folder structures will be subject to change as new folder structures will be created and modified.
+
+`docs`
+
+- `phase-1`
+    - contains the documentation created in phase-1 of the project: competition, process, summary, ui-ux, user_stories, personas

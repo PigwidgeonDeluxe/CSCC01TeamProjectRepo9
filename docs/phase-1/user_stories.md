@@ -10,7 +10,7 @@
 2. As a registered user, I would like to be able to follow the activity of other users
 3. As an instructor, I would like to be able to notify my followers of given messages
 4. As a user, I would like to be able to see the specific activity of the users I follow
-5. As a user, I would like to filter my searches to specific user types (instructor or student) or specific file types
+5. As a user, I would like to filter my searches via an advanced search for specific user types (instructor or student) or specific file types
 
 ---
 
