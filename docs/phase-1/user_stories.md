@@ -31,6 +31,7 @@ User stories are categorized on a high / med / low scale. User stories closer to
 ### Priority
 
 Priority is determined through two cases:
+
 1. The feature is a crucial feature:
     - The two crucial features are as follows:
         1. Users must be able to create an account
@@ -42,6 +43,7 @@ Priority is determined through two cases:
 ### High Difficulty User Stories
 
 High difficulty user stories are defined as stories with any of the following:
+
 - Requires use of difficult strategies or difficult to implement libraries:
     - Examples of difficult strategies:
         - Algorithms that are not straightforward to implement
@@ -56,6 +58,7 @@ High difficulty user stories are defined as stories with any of the following:
 ### Low Difficulty User Stories
 
 Low difficulty user stories are defined as stories with any of the following:
+
 - Does not rely on properties of other classes or components
 - Implementation is straightforward and/or does not require much planning
 - Is estimated to take a short amount of time to complete

@@ -1,17 +1,49 @@
-Process
+# PROCESS
 
-- Make sure to have a picture of your team together having lunch/dinner or coffee.  Each member in
-the team must be visible in the picture and must be together.[do we need?]
+<img src="team_photo.jpg" alt="placeholder image">
 
-- How did we work together?
-- Organization?
+## Overview
+We tried our best to optimize the communication between all of our team members. This was done through optimizing our use of git (through intelligent branching) and through weekly meetings. The group as a whole would meet together once or twice a week and also communicate intermittently through Discord to give each other updates
 
-Used discord to communicate and share relevent files.
-Made decisions as a group. Passed around ideas and debated whether it was good or not.
-We allocated work depending on group members strengths. We prioritized which parts of the project to finish first.
-- How did you define priority and/or difficulty of user stories? (User stories not done yet[as of when this doc was edited])
+---
 
-Meet in person and online.
-We meet weekly (once a week).
+## Organization
+Tasks were divided amongst members based on individual strength. During our weekly team meetings we would peer review each other's work, contribute ideas, and give suggestions for improvement
 
-- What lessons should you take forward to the next phase?
+During the week, we would update one another on the work we were doing over Discord. As well as that, we also used separate channels in Discord to break up discussion topics (such as organizing discussions for various questions, files, and outstandings tasks)
+
+### Tools Used
+
+- Discord
+- Git
+- Bitbucket
+
+---
+
+## Decision Making
+We started weekly meetings distributing tasks amongst the team members. During the week, each team member would work on their own tasks independently. At weekly meetings, each team member would showcase the work they had done so far and the rest of the team would provide input and suggestions if there were any
+
+---
+
+## Priority
+Priority is discussed heavily in the <a href="user_stories.md">user_stories.md</a> file. To reiterate:
+
+    Priority is determined through two cases:
+
+    1. The feature is a crucial feature:
+        - The two crucial features are as follows:
+            1. Users must be able to create an account
+            2. Users must be able to search the system regardless of whether they are registered or not
+    2. Another feature is dependent on the completion of the given feature
+
+Again, difficulty of user stories was discussed in the <a href="user_stories.md">user_stories.md</a> file
+
+---
+
+## Next Steps
+
+1. Continue to emphasize communication
+    - Give constructive feedback if necessary
+2. Adhere to the branaching structure
+    - Continue to use good practices and update the README file
+3. Improve task allocation
