@@ -7,6 +7,7 @@ Create a usable, well designed search engine for UTSC students to search, upload
 # KEY USERS
 
 There will be three different user levels ranging:
+
 1. Registered Instructors
     * Represents instructors of UTSC
     * Persona -- Harold:
@@ -29,12 +30,14 @@ There will be three different user levels ranging:
 # SCENARIOS
 
 Instructors might want to do the following:
+
 * Upload files pertinent to the courses they teach or their research
     * These can be of extension .txt, .html, or possible .pdf
 * Notify followers by email of any messages or updates they choose to make
 * Follow colleagues who are uploading research pertinent to their own research
 
 Students might want to do the following:
+
 * Upload past exams or class notes
     * These can be of .txt, .html, or .pdf extension
 * Follow students who are in the same course who are uploading their notes
@@ -42,6 +45,7 @@ Students might want to do the following:
 * Search for notes in prospective classes to get ahead
 
 Non-registered users might want to do the following:
+
 * Search for courses of a specific topic to find similar notes
 * Search for research papers to supplement their own research
 * Search up material for certain courses they are interested in
