@@ -2,6 +2,7 @@
 1. As a user, I would like to use some sort of structured query to specify my searches in the system
 2. As a user, I would like to have a clean and high-performing user interface to use to access the system
 3. As a registered user, I would like a page to see the details of my own account (account name, account settings, documents I've uploaded, etc)
+4. As a user, I would like to be able to perform an advanced search where I can specify which type of documents or some other specific attribute to search for
 
 ---
 
