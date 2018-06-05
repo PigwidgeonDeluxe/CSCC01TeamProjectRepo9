@@ -1,7 +1,62 @@
-Competition
+# Competition
 
-    There are two existing products that are similar to our product. Blackboard and Piazza. Blackboard lacks a search engine and only allows users from UTSC to have access to courses currently being taught or taken (depending on user). While piazza does have a search engine, it suffers from only being able to search for threads from the same class. Our product will allow all users to search for any kind of academic information from UTSC while being efficient and easy to use. This is better for all of its users.
-    Students will have the ability to explore courses of their interest or get ahead in their studies as they will have access to all academic information. This will also allow for students to review notes from taken courses. Searching through threads could give valuable foresight on how to solve questions. Professors will be able to easily align lectures with other professors teaching the same course. Professors would have the option of to reuse course information from previous years. Users outside of UTSC will be able to view academic posts.
-    Blackboard most likely didn't give public access to academic information to keep it private for the professors and students in a course. To implement the features our product is offering, Blackboard would need to allow access to all of its information and implement a search engine that would be able to efficiently bring up relevant data. It would also need to improve on its discussion board section.
-    Piazza offers a forum for current courses. This sort of information would only be helpful to students and professors in the course at that time. They would need to allow for public access to all their forums and design a search engine which would bring up relevant course forums.
+## Competing Technologies
+There are two existing products that are similar to our product: 
 
+- Blackboard
+    - Platform that allows teachers to create and manage course pages while also allowing students of these courses access to the course page
+    - Teachers can upload documents, assignments and supplmentary materials while students can access these materials as dictated by the teachers
+- Piazza
+    - Discussion board that allows teachers and students to communicate with each other and answer questions regarding the course and course material
+
+---
+
+## Our Selling Point
+
+- Things BlackBoard lacks:
+
+    - A search engine
+        - Only allows users from UTSC to have access to courses currently being taught or taken (depending on user)
+        - There is no easy way to query for specific information
+            - Our product will have a structured query format allowing for more specific searches
+        - Can't access previous course material
+            - Our product will be able to access all resources added to the system
+
+- Things Piazza lacks:
+
+    - Cannot search contents of other courses
+        - Limited to only the contents of the courses you're enrolled in
+            - Our product will allow all users to search for any kind of academic information from UTSC while being efficient and easy to use
+
+---
+
+## User Benefits
+
+- Students
+
+    - Ability to explore courses of their interest or get ahead in their studies as they will have access to all academic information
+        - Will also allow for students to review notes from taken courses
+        - Searching through threads could give valuable foresight on how to solve questions
+
+- Professors
+
+    - Able to easily align lectures with other professors teaching the same course
+        - Also have the ability to reuse course information from previous years without reuploading
+
+- Non-registered Users
+
+    - Will be able to view academic posts
+        - Will be able to find resources related to whatever work they're doing
+
+---
+
+## Why Competitors Don't Provide Our Benefits
+
+BlackBoard and Piazza both suffer from the same reasons for why they cannot easily provide the benefits of our platform
+
+- Difficulty of implementation
+    - It is not easy to implement a full search engine
+        - Requires indexer, user interface, query language
+- Cost
+    - Time required to implement
+    - Monetary cost of implementation
