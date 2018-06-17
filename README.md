@@ -1,57 +1,38 @@
 # PROJECT STRUCTURE
-## Branches
-There are two main branches `master` and `develop`
-
-`master`
-
-- Main branch of the project
-- Code base is result of `develop` being merged into `master`
-    - Code is merged after pre-defined milestones (defined on JIRA)
-    - DO NOT MERGE ANY BRANCH OTHER THAN `develop` INTO `master`
-        - With the exception of `hotfix/` branches
-- `master` code is guaranteed to be stable after peer-review
-
-`develop`
-
-- Develop branch of the project
-- All features and fixes are merged into `develop` upon completion
-- `develop` is merged into `master` after pre-defined milestones are met
-
----
-
-## Branching Prefixes
-Every new branch should be prefixed with one of the following prefixes:
-
-1. `feature/`
-    - New features; components that do not already exist in the project
-2. `fix/`
-    - Fixes to bugs identified in JIRA
-    - Fixes should be suffixed with the appropriate JIRA ticket number
-        - Example: `fix/pr-001`
-3. `hotfix/`
-    - Fixes to bugs identified in the `master` branch
-    - To fix:
-        1. Branch the `hotfix/` branch off of `master`
-        2. Fix the bug on the `hotfix/` branch
-        3. Merge the `hotfix/` into both `develop` and `master`
-
----
-
-## Merging
-Ensure that your code is reviewed before merging into develop. NEVER merge a branch into `develop` yourself. Always submit a pull request to another team member to review code and let your reviewer merge into `develop`
-
-Merge steps:
-
-1. Submit a pull request to a team member to review your code
-2. Team member who you submitted pull request to should review code and check for errors or practices that go against coding principles
-3. Fix any issues with code if there are any and re-assign the pull request to the team member
-4. The team member who reviewed your code merges your code into `develop`
 
 ## Folder Structure
 This section will keep track and explain the logic behind the folder structure.
-Folder structures will be subject to change as new folder structures will be created and modified.
+Folder structures will be subject to change as new folder structures will be created and modified
+
+---
+
+### Directories
 
 `docs`
+- contains the various documentation related to the project
+- each section of documentation is separated into the phase of which it was created in
+    - i.e. `phase-1`, `phase-2`, `phase-3`, etc...
 
-- `phase-1`
-    - contains the documentation created in phase-1 of the project: competition, process, summary, ui-ux, user_stories, personas
+`phase-1`
+
+- contains the documentation created in phase-1 of the project:
+    - <a href="docs/phase-1/competition.md">`competition.md`</a>
+        - describes competing products to our project and reasons why our product is better
+    - <a href="docs/phase-1/process.md">`process.md`</a>
+        - describes the process the team uses to work together and outlines various tools used to complete the project
+    - <a href="docs/phase-1/summary.md">`summary.md`</a>
+        - a summary of the high-level overview of the project
+    - <a href="docs/phase-1/UX-UI_websiteMockup.pdf">`UX-UI_websiteMockup.pdf`</a>
+        - a high-level mockup of the UI/UX components of the project
+    - <a href="docs/phase-1/user_stories.md">`user_stories.md`</a>
+        - a collection of the various user stories to be used in the project
+    - <a href="docs/phase-1/Personas.pdf">`Personas.pdf`</a>
+        - a collection of the personas to be used in the project
+    - <a href="docs/phase-1/team_photo.jpgs">`team_photo.jpg`</a>
+        - a photograph of the team
+
+`phase-2`
+
+- contains the CRC cards for the various classes created in phase-2 of the project
+    - <a href="docs/phase-2/CRC-cards.md">`CRC-cards.md`</a>
+        - the various CRC cards to be used for the classes in the project
