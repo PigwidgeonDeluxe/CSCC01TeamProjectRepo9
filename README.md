@@ -1,12 +1,10 @@
 # PROJECT STRUCTURE
 
-## Folder Structure
+## Directory Structure
 This section will keep track and explain the logic behind the folder structure.
 Folder structures will be subject to change as new folder structures will be created and modified
 
 ---
-
-### Directories
 
 `docs`
 - contains the various documentation related to the project
@@ -36,3 +34,15 @@ Folder structures will be subject to change as new folder structures will be cre
 - contains the CRC cards for the various classes created in phase-2 of the project
     - <a href="docs/phase-2/CRC-cards.md">`CRC-cards.md`</a>
         - the various CRC cards to be used for the classes in the project
+
+---
+
+## Special Files
+
+This section describes the files found at the root level and outlines their purpose
+
+<a href="BRANCHING_RULES.md">`BRANCHING_RULES.md`</a>
+
+- located at `docs/BRANCHING_RULES.md`
+- outlines the branching rules for pushing and merging branches to the origin repo
+    - documentation for internal use
