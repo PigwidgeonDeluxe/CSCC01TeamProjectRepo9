@@ -1,7 +1,5 @@
 # PROCESS
 
-<img src="team_photo.jpg" alt="placeholder image">
-
 ## Overview
 We tried our best to optimize the communication between all of our team members. This was done through optimizing our use of git (through intelligent branching) and through weekly meetings. The group as a whole would meet together once or twice a week and also communicate intermittently through Discord to give each other updates
 
@@ -26,7 +24,7 @@ We started weekly meetings distributing tasks amongst the team members. During t
 ---
 
 ## Priority
-Priority is discussed heavily in the <a href="user_stories.md">user_stories.md</a> file. To reiterate:
+Priority is discussed heavily in the `user_stories.md` file. To reiterate:
 
     Priority is determined through two cases:
 
@@ -36,7 +34,7 @@ Priority is discussed heavily in the <a href="user_stories.md">user_stories.md</
             2. Users must be able to search the system regardless of whether they are registered or not
     2. Another feature is dependent on the completion of the given feature
 
-Again, difficulty of user stories was discussed in the <a href="user_stories.md">user_stories.md</a> file
+Again, difficulty of user stories was discussed in the `user_stories.md` file
 
 ---
 
