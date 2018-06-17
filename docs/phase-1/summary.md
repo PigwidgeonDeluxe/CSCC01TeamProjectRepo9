@@ -8,7 +8,6 @@ Create a usable, well designed search engine for UTSC students to search, upload
 
 There will be three different user levels ranging:
 
-=======
 1. Registered Instructors
     * Represents instructors of UTSC
     * Persona -- Harold:

@@ -14,25 +14,25 @@ Folder structures will be subject to change as new folder structures will be cre
 `phase-1`
 
 - contains the documentation created in phase-1 of the project:
-    - <a href="docs/phase-1/competition.md">`competition.md`</a>
+    - `competition.md`
         - describes competing products to our project and reasons why our product is better
-    - <a href="docs/phase-1/process.md">`process.md`</a>
+    - `process.md`
         - describes the process the team uses to work together and outlines various tools used to complete the project
-    - <a href="docs/phase-1/summary.md">`summary.md`</a>
+    - `summary.md`
         - a summary of the high-level overview of the project
-    - <a href="docs/phase-1/UX-UI_websiteMockup.pdf">`UX-UI_websiteMockup.pdf`</a>
+    - `UX-UI_websiteMockup.pdf`
         - a high-level mockup of the UI/UX components of the project
-    - <a href="docs/phase-1/user_stories.md">`user_stories.md`</a>
+    - `user_stories.md`
         - a collection of the various user stories to be used in the project
-    - <a href="docs/phase-1/Personas.pdf">`Personas.pdf`</a>
+    - `Personas.pdf`
         - a collection of the personas to be used in the project
-    - <a href="docs/phase-1/team_photo.jpgs">`team_photo.jpg`</a>
+    - `team_photo.jpg`
         - a photograph of the team
 
 `phase-2`
 
 - contains the CRC cards for the various classes created in phase-2 of the project
-    - <a href="docs/phase-2/CRC-cards.md">`CRC-cards.md`</a>
+    - `CRC-cards.md`
         - the various CRC cards to be used for the classes in the project
 
 ---
@@ -41,7 +41,7 @@ Folder structures will be subject to change as new folder structures will be cre
 
 This section describes the files found at the root level and outlines their purpose
 
-<a href="BRANCHING_RULES.md">`BRANCHING_RULES.md`</a>
+`BRANCHING_RULES.md`
 
 - located at `docs/BRANCHING_RULES.md`
 - outlines the branching rules for pushing and merging branches to the origin repo

@@ -1,9 +1,7 @@
-## <a id="searchIndexedFiles">SearchIndexedFiles</a>
+## SearchIndexedFiles
 
 **Class Name**: SearchIndexedFiles
-<br>
 **Parent Class**: None
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -15,16 +13,14 @@
 
 **Collaborators**:
 
-- <a href="#fileIndexing">FileIndexing</a>
+- FileIndexing
 
 ---
 
-## <a id="userCreation">UserCreation</a>
+## UserCreation
 
 **Class Name**: UserCreation
-<br>
 **Parent Class**: None
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -34,17 +30,15 @@
 
 **Collaborators**:
 
-- <a href="#userDatabase">UserDatabase</a>
-- <a href="#userAuthentication">UserAuthentication</a>
+- UserDatabase
+- UserAuthentication
 
 ---
 
-## <a id="userDatabase">UserDatabase</a>
+## UserDatabase
 
 **Class Name**: UserDatabase
-<br>
 **Parent Class**: None
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -56,18 +50,16 @@
 
 **Collaborators**:
 
-- <a href="#userCreation">UserCreation</a>
-- <a href="#userAccount">UserAccount</a>
-- <a href="#userAuthentication">UserAuthentication</a>
+- UserCreation
+- UserAccount
+- UserAuthentication
 
 ---
 
-## <a id="userAccount">UserAccount</a>
+## UserAccount
 
 **Class Name**: UserAccount
-<br>
 **Parent Class**: None
-<br>
 **Subclasses**: StudentAccount, InstructorAccount
 
 **Responsibilities**:
@@ -77,16 +69,14 @@
 
 **Collaborators**:
 
-- <a href="#userDatabase">UserDatabase</a>
+- UserDatabase
 
 ---
 
-## <a id="studentAccount">StudentAccount</a>
+## StudentAccount
 
 **Class Name**: StudentAccount
-<br>
 **Parent Class**: UserAccount
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -96,16 +86,14 @@
 
 **Collaborators**:
 
-- <a href="#userDatabase">UserDatabase</a>
+- UserDatabase
 
 ---
 
-## <a id="instructorAccount">InstructorAccount</a>
+## InstructorAccount
 
 **Class Name**: InstructorAccount
-<br>
 **Parent Class**: UserAccount
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -115,16 +103,14 @@
 
 **Collaborators**:
 
-- <a href="#userDatabase">UserDatabase</a>
+- UserDatabase
 
 ---
 
-## <a id="fileStoring">FileStoring</a>
+## FileStoring
 
 **Class Name**: FileStoring
-<br>
 **Parent Class**: None
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -133,16 +119,14 @@
 
 **Collaborators**:
 
-- <a href="#userDatabase">UserDatabase</a>
+- UserDatabase
 
 ---
 
-## <a id="fileIndexing">FileIndexing</a>
+## FileIndexing
 
 **Class Name**: FileIndexing
-<br>
 **Parent Class**: None
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -151,17 +135,15 @@
 
 **Collaborators**:
 
-- <a href="#userDatabase">UserDatabase</a>
-- <a href="#userPasswordDatabase">UserPasswordDatabase</a>
+- UserDatabase
+- UserPasswordDatabase
 
 ---
 
-## <a id="userAuthentication">UserAuthentication</a>
+## UserAuthentication
 
 **Class Name**: UserAuthentication
-<br>
 **Parent Class**: None
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -170,16 +152,14 @@
 
 **Collaborators**:
 
-- <a href="#userPasswordDatabase">UserPasswordDatabase</a>
+- UserPasswordDatabase
 
 ---
 
-## <a id="userPasswordDatabase">UserPasswordDatabase</a>
+## UserPasswordDatabase
 
 **Class Name**: UserPasswordDatabase
-<br>
 **Parent Class**: None
-<br>
 **Subclasses**: None
 
 **Responsibilities**:
@@ -190,4 +170,4 @@
 
 **Collaborators**:
 
-- <a href="#userAuthentication">UserAuthentication</a>
+- UserAuthentication
