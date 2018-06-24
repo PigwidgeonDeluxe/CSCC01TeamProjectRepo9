@@ -34,10 +34,14 @@ public class Search extends HttpServlet {
     private static Directory index = null;
     private static final long serialVersionUID = 1L;
 
-    private static void addDoc(IndexWriter w, String title, String isbn) throws IOException {
+    private static void addDoc(IndexWriter w, String fileName, String fileType,
+                               String userType, String userName) throws IOException {
         Document doc = new Document();
-        doc.add(new TextField("title", title, Field.Store.YES));
-        doc.add(new StringField("isbn", isbn, Field.Store.YES));
+
+        doc.add(new TextField("fileName", fileName, Field.Store.YES));
+        doc.add(new TextField("fileType", fileType, Field.Store.YES));
+        doc.add(new TextField("userName", userName, Field.Store.YES));
+        doc.add(new StringField("userType", userType, Field.Store.YES));
         w.addDocument(doc);
     }
 
@@ -72,10 +76,9 @@ public class Search extends HttpServlet {
              * IndexWriter is used to write into the index.
              */
             IndexWriter w = new IndexWriter(index, config);
-            addDoc(w, "Lucene in Action", "193398817");
-            addDoc(w, "Lucene for Dummies", "55320055Z");
-            addDoc(w, "Managing Gigabytes", "55063554A");
-            addDoc(w, "The Art of Computer Science", "9900333X");
+            addDoc(w, "CSCC01 Midterm Solutions.pdf", "PDF","instructor", "abbas");
+            addDoc(w, "CSCC01 study notes.pdf", "PDF","student", "zhangke");
+            addDoc(w, "CSCC01 week 5 lecture notes.docx", "DOCX","student", "zhangke");
             w.close();
         } catch (IOException e) {
             System.err.println(e);
@@ -86,36 +89,57 @@ public class Search extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("text/plain");
-        String querystr = req.getParameter("query");
-        try {
-            /*
-             * 1. Query object, created that encapusulates the user query
-             *
-             * 2. IndexReader that allows you to read the index.
-             *
-             * 3. IndexSearcher that allows you to take the query and search the
-             *    index.
-             */
-            Query q = new QueryParser("title", analyzer).parse(querystr);
-            int hitsPerPage = 10;
-            IndexReader reader = DirectoryReader.open(index);
-            IndexSearcher searcher = new IndexSearcher(reader);
-            TopDocs docs = searcher.search(q, hitsPerPage);
-            ScoreDoc[] hits = docs.scoreDocs;
-            StringBuilder responseBackToUser = new StringBuilder();
-            responseBackToUser.append("Found " + hits.length + " hits.");
-            for (int i = 0; i < hits.length; ++i) {
-                int docId = hits[i].doc;
-                Document d = searcher.doc(docId);
-                responseBackToUser.append((i + 1) + ". " + d.get("isbn") + "\t" + d.get("title"));
-            }
-            resp.getWriter().write(responseBackToUser.toString());
 
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        String fileNameQuery = req.getParameter("fileName");
+        if (fileNameQuery != null) {
+            try {
+                /*
+                 * 1. Query object, created that encapusulates the user query
+                 *
+                 * 2. IndexReader that allows you to read the index.
+                 *
+                 * 3. IndexSearcher that allows you to take the query and search the
+                 *    index.
+                 */
+                Query q = new QueryParser("fileName", analyzer).parse(fileNameQuery);
+                int hitsPerPage = 10;
+                IndexReader reader = DirectoryReader.open(index);
+                IndexSearcher searcher = new IndexSearcher(reader);
+                TopDocs docs = searcher.search(q, hitsPerPage);
+                ScoreDoc[] hits = docs.scoreDocs;
+                StringBuilder responseBackToUser = new StringBuilder();
+                for (int i = 0; i < hits.length; ++i) {
+                    int docId = hits[i].doc;
+                    Document d = searcher.doc(docId);
+                    responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-" + d.get("userType") + "-" + d.get("userName") + "\n");
+                }
+                resp.setHeader("Access-Control-Allow-Origin", "*");
+                resp.getWriter().write(responseBackToUser.toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
-
+        String fileTypeQuery = req.getParameter("fileType");
+        if (fileTypeQuery != null) {
+            try {
+                Query q = new QueryParser("fileType", analyzer).parse(fileTypeQuery);
+                int hitsPerPage = 10;
+                IndexReader reader = DirectoryReader.open(index);
+                IndexSearcher searcher = new IndexSearcher(reader);
+                TopDocs docs = searcher.search(q, hitsPerPage);
+                ScoreDoc[] hits = docs.scoreDocs;
+                StringBuilder responseBackToUser = new StringBuilder();
+                for (int i = 0; i < hits.length; ++i) {
+                    int docId = hits[i].doc;
+                    Document d = searcher.doc(docId);
+                    responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-" + d.get("userType") + "-" + d.get("userName") + "\n");
+                }
+                resp.setHeader("Access-Control-Allow-Origin", "*");
+                resp.getWriter().write(responseBackToUser.toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
