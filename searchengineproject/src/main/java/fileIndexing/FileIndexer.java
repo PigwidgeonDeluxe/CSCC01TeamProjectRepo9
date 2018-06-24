@@ -72,7 +72,7 @@ public class FileIndexer {
   }
 
   /*
-   * Add given attributes to the index: title, path, lastmodified
+   * Add given attributes to the index: title, path, last modified
    */
   private static void addDoc(IndexWriter w, String title, Path file, FileTime lastModified)
       throws IOException {
