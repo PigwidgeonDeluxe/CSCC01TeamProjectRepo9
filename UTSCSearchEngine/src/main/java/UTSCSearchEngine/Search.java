@@ -28,7 +28,7 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.document.Field;
 
 @WebServlet("/search")
-public class CC01Query extends HttpServlet {
+public class Search extends HttpServlet {
 
 	   private static StandardAnalyzer analyzer=null;
 	   private static Directory index=null;
