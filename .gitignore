@@ -6,6 +6,9 @@ target/
 /.metadata/
 /RemoteSystemsTempFiles/
 
+src/main/resources/*
+!src/main/resources/.gitkeep
+
 *.class
 *.log
 *.iml
