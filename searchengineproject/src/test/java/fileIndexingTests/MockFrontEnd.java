@@ -3,7 +3,6 @@ package fileIndexingTests;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -21,10 +20,22 @@ public class MockFrontEnd {
 
   public List<String> titleList = new ArrayList<>();
   public List<String> pathList = new ArrayList<>();
-  public List<String> modifiedList = new ArrayList<>();
+  // public List<String> modifiedList = new ArrayList<>();
+  public static FileIndexer indexer = new FileIndexer();
+  public String path = null;
+  public String querystr = null;
 
   public MockFrontEnd(String path, String querystr) throws IOException, ParseException {
-    FileIndexer indexer = new FileIndexer();
+    this.path = path;
+    this.querystr = querystr;
+    reIndexing();
+  }
+  
+  public void reIndexing() throws IOException, ParseException{
+    titleList = new ArrayList<>();
+    pathList = new ArrayList<>();
+    // modifiedList = new ArrayList<>()
+        
     indexer.setDocsPath(path);
 
     indexer.doIndexing();
@@ -45,7 +56,7 @@ public class MockFrontEnd {
       Document d = searcher.doc(docId);
       titleList.add(d.get("title"));
       pathList.add(d.get("path"));
-      modifiedList.add(d.get("modified"));
+      // modifiedList.add(d.get("modified"));
     }
   }
 
@@ -57,7 +68,8 @@ public class MockFrontEnd {
     return pathList;
   }
 
+  /*
   public List<String> getModified() {
     return modifiedList;
-  }
+  }*/
 }
