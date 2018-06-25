@@ -20,7 +20,7 @@ public class FileIndexer {
 
     private static StandardAnalyzer analyzer = null;
     private static Directory index = null;
-    private static String docsPath = "./src/main/java/resources";
+    private static String docsPath = "src/main/java/resources";
     private static Path docDir = null;
 
     public void doIndexing() {

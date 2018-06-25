@@ -33,7 +33,7 @@ public class Search extends HttpServlet {
     private static StandardAnalyzer analyzer = null;
     private static Directory index = null;
     private static final long serialVersionUID = 1L;
-    private FileIndexer fileIndexer;
+    private FileIndexer fileIndexer = new FileIndexer();
 
     private static void addDoc(IndexWriter w, String fileName, String fileType,
                                String userType, String userName) throws IOException {
