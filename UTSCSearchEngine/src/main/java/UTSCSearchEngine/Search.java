@@ -155,5 +155,49 @@ public class Search extends HttpServlet {
                 e.printStackTrace();
             }
         }
+        
+        String userNameQuery = req.getParameter("userName");
+        if(userNameQuery != null){
+        	try{
+        		Query q = new QueryParser("userName", analyzer).parse(userNameQuery);
+                int hitsPerPage = 10;
+                IndexReader reader = DirectoryReader.open(index);
+                IndexSearcher searcher = new IndexSearcher(reader);
+                TopDocs docs = searcher.search(q, hitsPerPage);
+                ScoreDoc[] hits = docs.scoreDocs;
+                StringBuilder responseBackToUser = new StringBuilder();
+                for (int i = 0; i < hits.length; ++i) {
+                    int docId = hits[i].doc;
+                    Document d = searcher.doc(docId);
+                    responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-" + d.get("userType") + "-" + d.get("userName") + "\n");
+                }
+                resp.setHeader("Access-Control-Allow-Origin", "*");
+                resp.getWriter().write(responseBackToUser.toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        String userTypeQuery = req.getParameter("userType");
+        if(userTypeQuery != null){
+        	try{
+        		Query q = new QueryParser("userType", analyzer).parse(userTypeQuery);
+                int hitsPerPage = 10;
+                IndexReader reader = DirectoryReader.open(index);
+                IndexSearcher searcher = new IndexSearcher(reader);
+                TopDocs docs = searcher.search(q, hitsPerPage);
+                ScoreDoc[] hits = docs.scoreDocs;
+                StringBuilder responseBackToUser = new StringBuilder();
+                for (int i = 0; i < hits.length; ++i) {
+                    int docId = hits[i].doc;
+                    Document d = searcher.doc(docId);
+                    responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-" + d.get("userType") + "-" + d.get("userName") + "\n");
+                }
+                resp.setHeader("Access-Control-Allow-Origin", "*");
+                resp.getWriter().write(responseBackToUser.toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
