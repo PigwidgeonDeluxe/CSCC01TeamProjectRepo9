@@ -1,4 +1,4 @@
-package apacheLucene;
+package UTSCSearchEngine;
 
 import java.io.IOException;
 
@@ -33,6 +33,7 @@ public class Search extends HttpServlet {
     private static StandardAnalyzer analyzer = null;
     private static Directory index = null;
     private static final long serialVersionUID = 1L;
+    private FileIndexer fileIndexer;
 
     private static void addDoc(IndexWriter w, String fileName, String fileType,
                                String userType, String userName) throws IOException {
@@ -49,7 +50,7 @@ public class Search extends HttpServlet {
     public void init(ServletConfig config1) throws ServletException {
         super.init(config1);
         System.out.println("Started: init");
-        startIndexing();
+        fileIndexer.doIndexing();
         System.out.println("Finished: init");
     }
 
