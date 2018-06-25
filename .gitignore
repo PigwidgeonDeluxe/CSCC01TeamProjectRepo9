@@ -1,2 +1,15 @@
+.idea/
+.settings/
+target/
+.classpath
+.project
+*.class
+*.log
+*.iml
+*.jar
+*.war
+*.zip
+*.tar.gz
+*.rar
 /.metadata/
 /RemoteSystemsTempFiles/
