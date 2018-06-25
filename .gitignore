@@ -4,6 +4,9 @@ target/
 .classpath
 .project
 
+src/main/resources/*
+!src/main/resources/.gitkeep
+
 *.class
 *.log
 *.iml
