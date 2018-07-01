@@ -28,16 +28,16 @@ public class Search extends HttpServlet {
   private static Directory index = null;
   private static Indexing indexer = new Indexing();
 
-  /*public void init(ServletConfig config1) throws ServletException {
+  public void init(ServletConfig config1) throws ServletException {
     super.init(config1);
     System.out.println("Started: init");
     callIndexing();
     System.out.println("Finished: init");
-  }*/
+  }
 
   private static void callIndexing() {
     indexer.doIndexing();
-    analyzer = indexer.getAnlyzer();
+    analyzer = indexer.getAnalyzer();
     index = indexer.getIndex();
   }
 
@@ -49,7 +49,6 @@ public class Search extends HttpServlet {
     String fileNameQuery = req.getParameter("fileName");
     if (fileNameQuery != null) {
       try {
-        callIndexing();
         /*
          * 1. Query object, created that encapusulates the user query
          *
@@ -80,8 +79,6 @@ public class Search extends HttpServlet {
     String fileTypeQuery = req.getParameter("fileType");
     if (fileTypeQuery != null) {
       try {
-        callIndexing();
-
         Query q = new QueryParser("fileType", analyzer).parse(fileTypeQuery);
         int hitsPerPage = 10;
         IndexReader reader = DirectoryReader.open(index);
@@ -105,8 +102,6 @@ public class Search extends HttpServlet {
     String userNameQuery = req.getParameter("userName");
     if (userNameQuery != null) {
       try {
-        callIndexing();
-
         Query q = new QueryParser("userName", analyzer).parse(userNameQuery);
         int hitsPerPage = 10;
         IndexReader reader = DirectoryReader.open(index);
@@ -130,8 +125,6 @@ public class Search extends HttpServlet {
     String userTypeQuery = req.getParameter("userType");
     if (userTypeQuery != null) {
       try {
-        callIndexing();
-
         Query q = new QueryParser("userType", analyzer).parse(userTypeQuery);
         int hitsPerPage = 10;
         IndexReader reader = DirectoryReader.open(index);

@@ -97,7 +97,7 @@ public class Indexing {
     return this.index;
   }
   
-  public StandardAnalyzer getAnlyzer() {
+  public StandardAnalyzer getAnalyzer() {
     return this.analyzer;
   }
   
