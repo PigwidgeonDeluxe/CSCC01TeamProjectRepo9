@@ -104,9 +104,5 @@ public class Indexing {
   public Path getDocDir() {
     return this.docDir;
   }
-  
-  public void refreshIndex() {
-    
-  }
 
 }
