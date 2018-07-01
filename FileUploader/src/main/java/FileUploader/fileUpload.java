@@ -1,35 +1,37 @@
-package FileUploader
+package FileUploader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.httop.HttpServlet;
-import javax.servlet.httop.HttpServletRequest;
-import javax.servlet.httop.HttpServletResponse;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-
-@WebServlet (name = "fileUpload", urlPatterns ={"/upload"})
-@MultipartConfig
+@WebServlet ("/upload")
+// @MultipartConfig
 public class fileUpload extends HttpServlet {
+	/**
+	 * default serial ID
+	 */
+	private static final long serialVersionUID = 1L;
 	// class variable to hold canonical (standard) name of class
 	// for trouble shooting
 	private final static Logger LOGGER = Logger.getLogger(fileUpload.class.getCanonicalName());
 	
-	
-	protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 		 /* upload request to certain directory (on server or on instance of app)
-		 * recieves any kind of information and uploads to dir
+		 * Receives any kind of information and uploads to dir
 		 * 		- later should restrict to only docs or any user reqs
 		 * 
 		 * parameter info (brief summary from API)
@@ -43,7 +45,8 @@ public class fileUpload extends HttpServlet {
 		// response opject to client
 		response.setContentType("text/html;charset=UTF-8");
 		// Create path components to save file
-		final String path = "C:\#temp"
+		// need to make it so that it uploads to project file resource directory
+		final String path = "C:/#temp";
 		// request.getParameter("destination") // which directory file will be uploaded to
 		final Part filePart = request.getPart("file"); // 
 		final String fileName = getFileName(filePart);
@@ -51,7 +54,7 @@ public class fileUpload extends HttpServlet {
 		// Byte Streams calls
 		OutputStream out = null; // to write data to destination
 		InputStream filecontent = null; // to read data from source
-		final PrintWriter writer = response.getWriter(); // 
+		final PrintWriter writer = response.getWriter(); // write logs
 		
 		try {
 			// build path to where file will be uploaded to
@@ -68,7 +71,10 @@ public class fileUpload extends HttpServlet {
 			// extra print (print then terminates line)
 			writer.println("New file" + fileName +" created at " + path);
 			// for reporting errors
-			LOGGER.log(Level.INFO, "File{0}being uploaded to {1}", new Object[], {fileName, path});
+			LOGGER.log(Level.INFO, "File{0}being uploaded to {1}", new Object[] {fileName, path});
+			
+			// add indexer call
+			
 		// return error if file to non permissioned location
 		} catch (FileNotFoundException fne) {
 			writer.println("file not specified or are trying to upload file to protected or nonexistent location.");
@@ -84,20 +90,18 @@ public class fileUpload extends HttpServlet {
 			}
 			if (writer != null) {
 				writer.close();
-			}	
+			}
 		}
-		// first attempt code to be put in try
-		/*// request object has all data
-		ServletFileUpload sf = new ServletFileUpload(new DiskFileItemFactory());
-		// to send multiple files
-		List<FileItem> multifiles = sf.parseRequest(request);
-		
-		// writing to dir(database) which will store documents
-		for(FileItem item : multifiles) {
-			item.write(new File("C:\Users\edgar_000\Documents\CSCC01 files\eclipse-workspace\temp\" + item.getName()));
-		}
-		// will need to index every file with indexer
-		
-		System.out.println("file uploaded");*/
+	}
+	private String getFileName(final Part part) {
+	    final String partHeader = part.getHeader("file");
+	    LOGGER.log(Level.INFO, "Part Header = {0}", partHeader);
+	    for (String content : part.getHeader("file").split(";")) {
+	        if (content.trim().startsWith("filename")) {
+	            return content.substring(
+	                    content.indexOf('=') + 1).trim().replace("\"", "");
+	        }
+	    }
+	    return null;
 	}
 }
