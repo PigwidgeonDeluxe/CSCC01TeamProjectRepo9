@@ -24,7 +24,7 @@ public class User extends HttpServlet {
   private static String docsPath = "./src/main/resources/";
 
   @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+  public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
     String postBody = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
     JSONObject json = new JSONObject(postBody);
