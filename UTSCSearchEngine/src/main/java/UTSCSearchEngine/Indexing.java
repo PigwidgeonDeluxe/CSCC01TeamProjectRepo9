@@ -16,16 +16,16 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
 public class Indexing {
-
+  
   private String docsPath = "./src/main/resources/"; // default index directory
   private StandardAnalyzer analyzer = null;
   private Directory index = null;
   private Path docDir = null;
-
+  
   /**
    * Initialize and perform indexing with a given path, analyzer, to index (RAMDirectory)
    */
-  private void doIndexing() {
+  public void doIndexing() {
     this.docDir = Paths.get(docsPath);
     this.analyzer = new StandardAnalyzer();
     this.index = new RAMDirectory();
@@ -39,10 +39,9 @@ public class Indexing {
       System.err.println(e);
     }
   }
-
+  
   /**
    * Index all the documents for a given Path
-   * 
    * @param w
    * @param currentPath
    * @throws IOException
@@ -67,10 +66,9 @@ public class Indexing {
           .substring(currentPath.getFileName().toString().lastIndexOf('.') + 1), "user", "student");
     }
   }
-
+  
   /**
    * Add all the documents' attributes to the index
-   * 
    * @param w
    * @param fileName
    * @param fileType
@@ -94,31 +92,21 @@ public class Indexing {
   public void setDocsPath(String docsPath) {
     this.docsPath = docsPath;
   }
-
+  
   public Directory getIndex() {
     return this.index;
   }
-
+  
   public StandardAnalyzer getAnlyzer() {
     return this.analyzer;
   }
-
+  
   public Path getDocDir() {
     return this.docDir;
   }
-
-  /**
-   * Begins process of creating or refreshing the index with given parameters
-   * 
-   * @param analyzer
-   * @param index
-   * @param docsPath
-   */
-  public void populateIndex(StandardAnalyzer analyzer, Directory index, String docsPath) {
-    this.setDocsPath(docsPath);
-    this.doIndexing();
-    analyzer = this.getAnlyzer();
-    index = this.getIndex();
+  
+  public void refreshIndex() {
+    
   }
 
 }
