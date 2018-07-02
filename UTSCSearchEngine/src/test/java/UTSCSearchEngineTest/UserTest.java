@@ -19,7 +19,7 @@ import UTSCSearchEngine.User;
 
 public class UserTest extends Mockito {
 
-  private static String docsPath = "./src/main/resources/";
+  private static String docsPath = null;
 
   // create temporary folder for testing
   @Rule
@@ -28,6 +28,9 @@ public class UserTest extends Mockito {
   @Test
   public void testDoPostCreateUser() throws IOException {
 
+    File users = folder.newFile("users.csv");
+    docsPath = users.getParent().toString();
+    
     HttpServletRequest request = mock(HttpServletRequest.class, RETURNS_DEEP_STUBS);
     HttpServletResponse response = mock(HttpServletResponse.class);
     JSONObject json = mock(JSONObject.class);
@@ -48,7 +51,9 @@ public class UserTest extends Mockito {
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    new User().doPost(request, response);
+    User test =  new User();
+    test.setDocsPath(docsPath);
+    test.doPost(request, response);
 
     writer.flush();
     assertEquals("Make sure users.csv is empty, otherwise user creation failed",

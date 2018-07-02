@@ -23,6 +23,10 @@ public class User extends HttpServlet {
 
   private static String docsPath = "./src/main/resources/";
 
+  public void setDocsPath(String docsPath) {
+    this.docsPath = docsPath;
+  }
+
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
