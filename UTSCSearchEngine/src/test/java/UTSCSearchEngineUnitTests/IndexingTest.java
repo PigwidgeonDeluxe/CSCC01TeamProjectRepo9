@@ -72,11 +72,11 @@ public class IndexingTest {
   public void testSetDocsPath() throws NoSuchFieldException, SecurityException,
       IllegalArgumentException, IllegalAccessException {
     Indexing indexer = new Indexing();
-    indexer.setDocsPath("foo");
+    indexer.setDocsPath("examplepath");
 
     Field field = indexer.getClass().getDeclaredField("docsPath");
     field.setAccessible(true);
-    assertEquals("Docs path didn't match", field.get(indexer), "foo");
+    assertEquals("Docs path didn't match", field.get(indexer), "examplepath");
   }
 
   @Test

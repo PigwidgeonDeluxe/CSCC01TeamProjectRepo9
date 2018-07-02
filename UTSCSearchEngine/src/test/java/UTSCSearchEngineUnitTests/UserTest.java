@@ -1,4 +1,4 @@
-package UTSCSearchEngineTest;
+package UTSCSearchEngineUnitTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.util.Scanner;
 import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
@@ -21,12 +22,23 @@ public class UserTest extends Mockito {
 
   private static String docsPath = null;
 
+  @Test
+  public void testSetDocsPath() throws NoSuchFieldException, SecurityException,
+      IllegalArgumentException, IllegalAccessException {
+    User user = new User();
+    user.setDocsPath("examplepath");
+    
+    Field field = user.getClass().getDeclaredField("docsPath");
+    field.setAccessible(true);
+    assertEquals("Docs path didn't match", field.get(user), "examplepath");
+  } 
+  
   // create temporary folder for testing
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
   @Test
-  public void testDoPostCreateUser() throws IOException {
+  public void testDoPostCreateUserStudent() throws IOException {
 
     File users = folder.newFile("users.csv");
     docsPath = users.getParent().toString();
