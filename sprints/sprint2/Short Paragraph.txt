@@ -1,0 +1,4 @@
+Our team did not finished all of the tasks in the sprint.
+All functionality is completed, however most unit tests are not completed yet.
+This is because we prioritised working features above testing as they are necessary to complete the next set of user stories.
+Our team mainly had issues of availiability and free time to work on the project as this week and the last had multiple midterm exams and tests in other courses.
