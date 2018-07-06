@@ -87,4 +87,64 @@ public class SearchTest {
     Collections.sort(case3List);
     assertEquals("improperly matched files", case3, case3List);
   }
+
+  @Test
+  public void testSearchByFileType() throws NoSuchFieldException, IllegalAccessException,
+      ParseException, IOException {
+
+    File txtFile1 = folder.newFile("test file1.txt");
+    File txtFile2 = folder.newFile("test file2.txt");
+    File pdfFile = folder.newFile("sample file.pdf");
+    File docxFile = folder.newFile("word document.docx");
+    File testFolder = folder.newFolder();
+
+    List<String> case1 = Arrays.asList("txt", "txt");
+    List<String> case2 = Arrays.asList("pdf");
+    List<String> case3 = Arrays.asList("docx");
+
+    Indexing indexer = new Indexing();
+
+    Field field = indexer.getClass().getDeclaredField("docsPath");
+    field.setAccessible(true);
+    field.set(indexer, folder.getRoot().toString());
+    indexer.doIndexing();
+
+    Query q = new QueryParser("fileType", indexer.getAnalyzer()).parse("txt");
+    IndexReader reader = DirectoryReader.open(indexer.getIndex());
+    IndexSearcher searcher = new IndexSearcher(reader);
+    TopDocs docs = searcher.search(q, 10);
+    ScoreDoc[] hits = docs.scoreDocs;
+    List<String> case1List = new ArrayList<>();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      case1List.add(d.get("fileType"));
+    }
+    Collections.sort(case1List);
+    assertEquals("improperly matched files", case1, case1List);
+
+    q = new QueryParser("fileType", indexer.getAnalyzer()).parse("pdf");
+    docs = searcher.search(q, 10);
+    hits = docs.scoreDocs;
+    List<String> case2List = new ArrayList<>();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      case2List.add(d.get("fileType"));
+    }
+    Collections.sort(case2List);
+    assertEquals("improperly matched files", case2, case2List);
+
+    q = new QueryParser("fileType", indexer.getAnalyzer()).parse("docx");
+    docs = searcher.search(q, 10);
+    hits = docs.scoreDocs;
+    List<String> case3List = new ArrayList<>();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      case3List.add(d.get("fileType"));
+    }
+    Collections.sort(case3List);
+    assertEquals("improperly matched files", case3, case3List);
+  }
 }
