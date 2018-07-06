@@ -19,33 +19,24 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class SearchTest {
 
-  private TemporaryFolder folder;
-  private File txtFile1;
-  private File txtFile2;
-  private File pdfFile;
-  private File docxFile;
-  private File testFolder;
-
-  @BeforeClass
-  public void setup() throws IOException {
-    folder = new TemporaryFolder();
-    txtFile1 = folder.newFile("test file1.txt");
-    txtFile2 = folder.newFile("test file2.txt");
-    pdfFile = folder.newFile("sample file.pdf");
-    docxFile = folder.newFile("word document.docx");
-    testFolder = folder.newFolder();
-  }
-
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
 
   @Test
   public void testSearchByFilename() throws NoSuchFieldException, IllegalAccessException,
       ParseException, IOException {
+
+    File txtFile1 = folder.newFile("test file1.txt");
+    File txtFile2 = folder.newFile("test file2.txt");
+    File pdfFile = folder.newFile("sample file.pdf");
+    File docxFile = folder.newFile("word document.docx");
+    File testFolder = folder.newFolder();
 
     List<String> case1 = Arrays.asList("test file1.txt", "test file2.txt");
     List<String> case2 = Arrays.asList("sample file.pdf");
@@ -53,7 +44,7 @@ public class SearchTest {
 
     Indexing indexer = new Indexing();
 
-    Field field = indexer.getClass().getDeclaredField("docPath");
+    Field field = indexer.getClass().getDeclaredField("docsPath");
     field.setAccessible(true);
     field.set(indexer, folder.getRoot().toString());
     indexer.doIndexing();
@@ -63,35 +54,37 @@ public class SearchTest {
     IndexSearcher searcher = new IndexSearcher(reader);
     TopDocs docs = searcher.search(q, 10);
     ScoreDoc[] hits = docs.scoreDocs;
-    List<String> titleList = new ArrayList<>();
+    List<String> case1List = new ArrayList<>();
     for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
       Document d = searcher.doc(docId);
-      titleList.add(d.get("fileName"));
+      case1List.add(d.get("fileName"));
     }
-    Collections.sort(titleList);
-    assertEquals("improperly matched files", case1, titleList);
+    Collections.sort(case1List);
+    assertEquals("improperly matched files", case1, case1List);
 
     q = new QueryParser("fileName", indexer.getAnalyzer()).parse("sample");
     docs = searcher.search(q, 10);
     hits = docs.scoreDocs;
+    List<String> case2List = new ArrayList<>();
     for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
       Document d = searcher.doc(docId);
-      titleList.add(d.get("fileName"));
+      case2List.add(d.get("fileName"));
     }
-    Collections.sort(titleList);
-    assertEquals("improperly matched files", case2, titleList);
+    Collections.sort(case2List);
+    assertEquals("improperly matched files", case2, case2List);
 
     q = new QueryParser("fileName", indexer.getAnalyzer()).parse("word");
     docs = searcher.search(q, 10);
     hits = docs.scoreDocs;
+    List<String> case3List = new ArrayList<>();
     for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
       Document d = searcher.doc(docId);
-      titleList.add(d.get("fileName"));
+      case3List.add(d.get("fileName"));
     }
-    Collections.sort(titleList);
-    assertEquals("improperly matched files", case3, titleList);
+    Collections.sort(case3List);
+    assertEquals("improperly matched files", case3, case3List);
   }
 }
