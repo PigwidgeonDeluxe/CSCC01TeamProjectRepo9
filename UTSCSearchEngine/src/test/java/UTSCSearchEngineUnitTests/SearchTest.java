@@ -182,4 +182,39 @@ public class SearchTest {
     Collections.sort(case1List);
     assertEquals("improperly matched files", testCase, case1List);
   }
+
+  @Test
+  public void testSearchByUserName() throws NoSuchFieldException, IllegalAccessException,
+      ParseException, IOException {
+
+    File txtFile1 = folder.newFile("test file1.txt");
+    File txtFile2 = folder.newFile("test file2.txt");
+    File pdfFile = folder.newFile("sample file.pdf");
+    File docxFile = folder.newFile("word document.docx");
+    File testFolder = folder.newFolder();
+
+    List<String> testCase = Arrays.asList("sample file.pdf", "test file1.txt", "test file2.txt",
+        "word document.docx");
+
+    Indexing indexer = new Indexing();
+
+    Field field = indexer.getClass().getDeclaredField("docsPath");
+    field.setAccessible(true);
+    field.set(indexer, folder.getRoot().toString());
+    indexer.doIndexing();
+
+    Query q = new QueryParser("userName", indexer.getAnalyzer()).parse("user");
+    IndexReader reader = DirectoryReader.open(indexer.getIndex());
+    IndexSearcher searcher = new IndexSearcher(reader);
+    TopDocs docs = searcher.search(q, 10);
+    ScoreDoc[] hits = docs.scoreDocs;
+    List<String> case1List = new ArrayList<>();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      case1List.add(d.get("fileName"));
+    }
+    Collections.sort(case1List);
+    assertEquals("improperly matched files", testCase, case1List);
+  }
 }
