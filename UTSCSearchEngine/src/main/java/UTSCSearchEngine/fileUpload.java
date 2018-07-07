@@ -24,6 +24,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.store.Directory;
 
 @WebServlet ("/upload")
+// later implement uploading multiple files???
 // @MultipartConfig
 public class fileUpload extends HttpServlet {
 	/**
