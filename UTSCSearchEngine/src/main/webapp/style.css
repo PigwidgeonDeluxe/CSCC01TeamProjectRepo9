@@ -5,3 +5,7 @@ body {
 .heading {
 	font-weight: bold;
 }
+
+.input-group{
+	margin: 1%;
+}
