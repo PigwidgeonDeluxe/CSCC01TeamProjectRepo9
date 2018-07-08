@@ -71,7 +71,7 @@ public class User extends HttpServlet {
         Files.write(path, lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE,
             StandardOpenOption.APPEND);
         response.put("status", "SUCCESS");
-        response.put("message", "Successfully craeted new user");
+        response.put("message", "Successfully created new user");
         resp.getWriter().write(response.toString());
       }
 

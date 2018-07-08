@@ -37,7 +37,7 @@ public class UserTest extends Mockito {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
-  /*@Test
+  @Test
   public void testDoPostCreateUserStudent() throws IOException {
 
     File users = folder.newFile("users.csv");
@@ -69,7 +69,7 @@ public class UserTest extends Mockito {
 
     writer.flush();
     assertEquals("Make sure users.csv is empty, otherwise user creation failed",
-        "Successfully created new user", stringWriter.toString());
+        "{\"message\":\"Successfully created new user\",\"status\":\"SUCCESS\"}", stringWriter.toString());
 
     Boolean found = false;
     Scanner scanner = new Scanner(new File(docsPath + "users.csv"));
@@ -117,7 +117,7 @@ public class UserTest extends Mockito {
 
     writer.flush();
     assertEquals("Make sure users.csv is empty, otherwise user creation failed",
-        "Successfully created new user", stringWriter.toString());
+        "{\"message\":\"Successfully created new user\",\"status\":\"SUCCESS\"}", stringWriter.toString());
 
     Boolean found = false;
     Scanner scanner = new Scanner(new File(docsPath + "users.csv"));
@@ -131,7 +131,7 @@ public class UserTest extends Mockito {
         "Make sure users.csv exists in the right directory, otherwise user was not written successfully",
         found);
     scanner.close();
-  } */
+  } 
 
 
 }
