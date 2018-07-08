@@ -26,7 +26,7 @@ import org.apache.lucene.store.Directory;
 @WebServlet ("/upload")
 // later implement uploading multiple files???
 // @MultipartConfig
-public class fileUpload extends HttpServlet {
+public class FileUpload extends HttpServlet {
 	/**
 	 * 
 	 */
