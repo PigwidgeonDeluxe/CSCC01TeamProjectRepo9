@@ -1,6 +1,13 @@
 var TOMCAT_URL = "http://localhost:8080";
 var results = [];
 
+$(document).ready(function() {
+	// handle search button
+	$("#searchButton").click(function() {
+		alert('test');
+	});
+});
+
 // search functionality
 function search() {
 	var http = new XMLHttpRequest();
@@ -55,14 +62,30 @@ function clearContents() {
 	document.getElementById("resultsList").innerHTML = "No results";
 };
 
-$(document).ready(function() {
-	// change file type dropdown
-	$("#fileTypeMenu a").click(function() {
-		$("#selectedFileType").text($(this).text());
-	});
+// login request
+function loginUser() {
+	var http = new XMLHttpRequest();
+	var username = document.getElementById("loginUsername").value;
+	var password = document.getElementById("loginPassword").value;
+	var request = {
+		"userName": username,
+		"password": password
+	};
 
-	// change user type dropdown
-	$("#userTypeMenu a").click(function() {
-		$("#selectedUserType").text($(this).text());
-	});
-});
+	http.open("POST", TOMCAT_URL + "/login?=true", false);
+	http.setRequestHeader("Content-Type", "application/json");
+	http.send(JSON.stringify(request));
+	var resp = http.response;
+
+	if (resp.status == "SUCCESS") {
+		$("#loginModal").modal("hide");
+		$("#successModal").modal("show");
+		$("#successText").empty();
+		$("#successText").append(resp.message);
+	} else if (resp.status == "FAILURE") {
+		$("#loginModal").modal("hide");
+		$("#failureModal").modal("show");
+		$("#failureText").empty();
+		$("failureText").append(resp.message);
+	}
+};
