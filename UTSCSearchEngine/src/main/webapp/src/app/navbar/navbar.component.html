@@ -1,0 +1,77 @@
+<nav *ngIf="!userInfo">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="#" class="cursor" data-toggle="modal" (click)="openModal(loginModal)">Login</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a href="#" class="cursor" data-toggle="modal" (click)="openModal(registerModal)">Register</a>
+    </li>
+  </ol>
+</nav>
+<div *ngIf="userInfo" class="card mb-3">
+  <div class="card-body">
+    <div class="row">
+      <div class="col">
+        Welcome <span class="heading">{{ userInfo.userName }}</span>
+      </div>
+      <div class="col text-right">
+        <button (click)="logout()" type="button" class="btn btn-sm btn-primary">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #loginModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Login</h5>
+    <button type="button" class="close pull-right" (click)="modalRef.hide()">
+      <span>&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="registerUsername" class="heading col-form-label">Username</label>
+      <input [(ngModel)]="loginUsername" type="text" class="form-control form-control-sm" id="registerUsername">
+    </div>
+    <div class="form-group">
+      <label for="registerPassword" class="heading col-form-label">Password</label>
+      <input [(ngModel)]="loginPassword" type="password" class="form-control form-control-sm" id="registerPassword">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-danger" (click)="modalRef.hide()">Close</button>
+    <button type="success" class="btn btn-sm btn-success" (click)="loginUser()">Login</button>
+  </div>
+</ng-template>
+<ng-template #registerModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Register</h5>
+    <button type="button" class="close pull-right" (click)="modalRef.hide()">
+      <span>&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="registerUsername" class="heading col-form-label">Username</label>
+      <input [(ngModel)]="registerUsername" type="text" class="form-control form-control-sm" id="registerUsername">
+    </div>
+    <div class="form-group">
+      <label for="registerPassword" class="heading col-form-label">Password</label>
+      <input [(ngModel)]="registerPassword" type="password" class="form-control form-control-sm" id="registerPassword">
+    </div>
+    <label class="heading">User Type</label>
+    <div id="optionsList" class="form-group">
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" [value]="1" [(ngModel)]="registerUserType">
+        <label class="form-check-label">Student</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" [value]="2" [(ngModel)]="registerUserType">
+        <label class="form-check-label">Instructor</label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-danger" (click)="modalRef.hide()">Close</button>
+    <button type="success" class="btn btn-sm btn-success" (click)="registerUser()">Register</button>
+  </div>
+</ng-template>
