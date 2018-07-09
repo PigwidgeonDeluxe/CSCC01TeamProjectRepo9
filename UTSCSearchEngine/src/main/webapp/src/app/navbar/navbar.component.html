@@ -15,7 +15,10 @@
         Welcome <span class="heading">{{ userInfo.userName }}</span>
       </div>
       <div class="col text-right">
-        <button (click)="logout()" type="button" class="btn btn-sm btn-primary">Logout</button>
+        <label class="btn btn-sm btn-primary" style="margin: 0">
+          Upload <input (change)="upload($event.target.files)" type="file" style="display: none" multiple>
+        </label>
+        <button (click)="logout()" type="button" class="btn btn-sm btn-secondary">Logout</button>
       </div>
     </div>
   </div>
