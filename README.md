@@ -1,4 +1,26 @@
-# PROJECT STRUCTURE
+# UTSC Search Engine
+
+## Installation
+
+Prerequisites:
+
+  - NodeJS
+  - Angular CLI
+  - Maven
+  - Java
+
+Building:
+
+  - Frontend:
+    - `cd` to src/main/webapp/
+    - `npm install`
+    - Build with `ng serve -o`
+      - App opens on `http://localhost:8080`
+
+  - Backend:
+    - Build with `mvn clean install tomcat7:run`
+
+---
 
 ## Directory Structure
 This section will keep track and explain the logic behind the folder structure.
