@@ -1,0 +1,57 @@
+<div class="card">
+  <div class="card-body">
+    <div class="form-group">
+      <label class="heading">Search</label>
+      <div class="input-group">
+        <input [(ngModel)]="searchQuery" type="text" class="form-control form-control-sm" id="searchBox" placeholder="Enter search query">
+        <span class="input-group-btn">
+          <button (click)="search()" type="submit" class="btn btn-success btn-sm" id="searchButton">Search</button>
+        </span>
+      </div>
+      <br>
+      <label class="heading">Search By</label>
+      <div id="optionsList" class="form-group">
+        <div class="form-check form-check-inline">
+          <input type="radio" name="searchOptions" class="form-check-input" [value]="1" [(ngModel)]="selectedSearchOption">
+          <label class="form-check-label">File Name</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="searchOptions" class="form-check-input" [value]="2" [(ngModel)]="selectedSearchOption">
+          <label class="form-check-label">File Type</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="searchOptions" class="form-check-input" [value]="3" [(ngModel)]="selectedSearchOption">
+          <label class="form-check-label">User Name</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="searchOptions" class="form-check-input" [value]="4" [(ngModel)]="selectedSearchOption">
+          <label class="form-check-label">User Type</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card mt-3">
+    <div class="card-body">
+      <label class="heading">Results</label>
+      <table id="resultsTable" class="table table-sm table-bordered table-hover">
+        <caption id="resultsList">{{ results.length > 0 ? results.length + ' results' : 'No results' }}</caption>
+        <thead class="thead-light">
+          <tr>
+            <th>File Name</th>
+            <th>File Type</th>
+            <th>User Name</th>
+            <th>User Type</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody">
+          <tr *ngFor="let result of results">
+            <td>{{ result.fileName }}</td>
+            <td>{{ result.fileType }}</td>
+            <td>{{ result.userName }}</td>
+            <td>{{ result.userType }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>

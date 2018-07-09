@@ -79,6 +79,16 @@
 
 			<!-- Embedded Apache Tomcat required for testing war -->
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <warSourceExcludes>
+            node_modules/**
+          </warSourceExcludes>
+        </configuration>
+      </plugin>
+
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
@@ -89,5 +99,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

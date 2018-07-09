@@ -1,22 +1,4 @@
-.idea/
-.settings/
-target/
-.classpath
-.project
-/.metadata/
-/RemoteSystemsTempFiles/
-
-UTSCSearchEngine/src/main/resources/*
-!UTSCSearchEngine/src/main/resources/.gitkeep
-
-*.class
-*.log
-*.iml
-*.jar
-*.war
-*.zip
-*.tar.gz
-*.rar
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
 /dist
