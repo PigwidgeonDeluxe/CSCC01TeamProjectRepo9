@@ -6,8 +6,8 @@ target/
 /.metadata/
 /RemoteSystemsTempFiles/
 
-UTSCSearchEngine/src/main/resources/*
-!UTSCSearchEngine/src/main/resources/.gitkeep
+src/main/resources/*
+!src/main/resources/.gitkeep
 
 *.class
 *.log
