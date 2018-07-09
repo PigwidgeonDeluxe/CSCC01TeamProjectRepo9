@@ -110,7 +110,33 @@ export class NavbarComponent implements OnInit {
     }).then(() => {
       location.reload();
     });
+  }
 
+  upload(files: FileList) {
+    this.http.open('POST', this.TOMCAT_URL + '/upload', false);
+
+    const request = new FormData();
+    Array.from(files).forEach(file => {
+      request.append(file.name, file);
+    });
+    this.http.send(request);
+    const resp = JSON.parse(this.http.response);
+
+    if (resp.status === 'SUCCESS') {
+      swal({
+        title: 'Success',
+        type: 'success',
+        text: resp.message
+      }).then(() => {
+        location.reload();
+      });
+    } else {
+      swal({
+        title: 'Failure',
+        type: 'error',
+        text: resp.message
+      });
+    }
   }
 
 }
