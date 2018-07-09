@@ -1,0 +1,5 @@
+Our team did not finish all of the tasks in the sprint.
+All functionality is completed, a few select unit tests are not done yet.
+This is because we priorities working features above testing.
+Again, our team mainly had issues of availiability and free time to work on the project as this week and the last had multiple midterm exams, test, and assignments in other courses.
+    
