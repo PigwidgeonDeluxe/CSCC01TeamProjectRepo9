@@ -1,4 +1,4 @@
-package FileUploader;
+package UTSCSearchEngine;
 
 import java.util.List;
 import java.io.File;
@@ -16,24 +16,39 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.store.Directory;
 
 @WebServlet ("/upload")
+// later implement uploading multiple files???
 // @MultipartConfig
-public class fileUpload extends HttpServlet {
-	private final static Logger LOGGER = Logger.getLogger(fileUpload.class.getCanonicalName());
+public class FileUpload extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
+	// implement into database at later point
+	private static String docsPath = "./src/main/resources/"; // default path
+	// to call indexer
+	private static Indexing indexer = new Indexing();	
+	  
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
+		/**
+		 * upload files to database/file
+		 */
 		try {
 			ServletFileUpload sf = new ServletFileUpload(new DiskFileItemFactory());
 			List<FileItem> multifiles = sf.parseRequest(request);
 			for (FileItem item : multifiles) {
-				item.write(new File ("./src/main/resources/" + item.getName()));
+				item.write(new File (docsPath + item.getName()));
+				// call indexer for every uploaded file
+				indexer.doIndexing();
 			}
 		} catch (Exception e){
 			System.out.println(e);
