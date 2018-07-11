@@ -19,7 +19,7 @@ public class FileUpload extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	// implement into database at later point
-	private static String docsPath = "./src/main/resources/"; // default path
+	private String docsPath = "./src/main/resources/"; // default path
 	// to call indexer
 	private static Indexing indexer = new Indexing();	
 
@@ -42,5 +42,9 @@ public class FileUpload extends HttpServlet {
 		} catch (Exception e){
 			System.out.println(e);
 		}
+	}
+	
+	public void setDocsPath(String new_path) {
+		this.docsPath = new_path;
 	}
 }
