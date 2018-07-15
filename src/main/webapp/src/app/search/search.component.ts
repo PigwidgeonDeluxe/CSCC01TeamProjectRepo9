@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import * as FileSaver from 'file-saver';
+import { toBase64String } from '../../../node_modules/@angular/compiler/src/output/source_map';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -50,6 +53,30 @@ export class SearchComponent implements OnInit {
         });
       }
     });
+  }
+
+  downloadFile(fileName: string) {
+    this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + fileName, true);
+    this.http.responseType = 'arraybuffer';
+    this.http.send(null);
+
+    this.http.onload = () => {
+      const data = this.http.response;
+      const extension = fileName.split('.').pop();
+      let contentType;
+      if (extension === 'pdf') {
+        contentType = {type: 'application/pdf'};
+      } else if (extension === 'doc' || extension === 'docx') {
+        contentType = {type: 'application/msword'};
+      } else if (extension === 'html') {
+        contentType = {type: 'text/html'};
+      } else {
+        contentType = {type: 'text/plain'};
+      }
+      const blob = new Blob([data], contentType);
+      FileSaver.saveAs(blob, fileName);
+
+    };
   }
 
 }
