@@ -1,10 +1,13 @@
 package UTSCSearchEngine;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -16,12 +19,12 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
 public class Indexing {
-  
+
   private String docsPath = "./src/main/resources/"; // default index directory
   private StandardAnalyzer analyzer = null;
   private Directory index = null;
   private Path docDir = null;
-  
+
   /**
    * Initialize and perform indexing with a given path, analyzer, to index (RAMDirectory)
    */
@@ -39,9 +42,10 @@ public class Indexing {
       System.err.println(e);
     }
   }
-  
+
   /**
    * Index all the documents for a given Path
+   * 
    * @param w
    * @param currentPath
    * @throws IOException
@@ -54,21 +58,27 @@ public class Indexing {
         if (fileEntry.isDirectory()) {
           indexDocuments(w, fileEntry.toPath());
         } else {
+          FileReader fr = new FileReader(fileEntry);
           // Index this file
           addDoc(w, fileEntry.getName(),
               fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1), "user",
-              "student");
+              "student", fr);
+          fr.close();
         }
       }
     } else {
+      FileReader fr = new FileReader(currentPath.toFile());
       // Index this file
       addDoc(w, currentPath.getFileName().toString(), currentPath.getFileName().toString()
-          .substring(currentPath.getFileName().toString().lastIndexOf('.') + 1), "user", "student");
+          .substring(currentPath.getFileName().toString().lastIndexOf('.') + 1), "user", "student",
+          fr);
+      fr.close();
     }
   }
-  
+
   /**
    * Add all the documents' attributes to the index
+   * 
    * @param w
    * @param fileName
    * @param fileType
@@ -77,13 +87,20 @@ public class Indexing {
    * @throws IOException
    */
   private static void addDoc(IndexWriter w, String fileName, String fileType, String userName,
-      String userType) throws IOException {
+      String userType, FileReader contents) throws IOException {
     Document doc = new Document();
 
     doc.add(new TextField("fileName", fileName, Field.Store.YES));
     doc.add(new TextField("fileType", fileType, Field.Store.YES));
     doc.add(new TextField("userName", userName, Field.Store.YES));
     doc.add(new StringField("userType", userType, Field.Store.YES));
+    Scanner contentsScanner = new Scanner(contents);
+    String contentsString = "";
+    if (contentsScanner.hasNextLine()) {
+      contentsString = contentsScanner.useDelimiter("\\A").next();
+    }
+    doc.add(new TextField("contents", contentsString, Field.Store.YES));
+    contentsScanner.close();
 
     w.addDocument(doc);
     w.commit();
@@ -92,15 +109,15 @@ public class Indexing {
   public void setDocsPath(String docsPath) {
     this.docsPath = docsPath;
   }
-  
+
   public Directory getIndex() {
     return this.index;
   }
-  
+
   public StandardAnalyzer getAnalyzer() {
     return this.analyzer;
   }
-  
+
   public Path getDocDir() {
     return this.docDir;
   }
