@@ -12,13 +12,14 @@ Prerequisites:
 Building:
 
   - Frontend:
-    - `cd` to src/main/webapp/
+    - `cd` to `src/main/webapp/`
     - `npm install`
     - Build with `ng serve -o`
-      - App opens on `http://localhost:8080`
+      - App opens on `http://localhost:4200`
 
   - Backend:
     - Build with `mvn clean install tomcat7:run`
+    - Backend runs on `http://localhost:8080`
 
 ---
 
