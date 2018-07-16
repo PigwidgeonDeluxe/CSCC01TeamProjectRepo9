@@ -29,8 +29,8 @@ public class SearchTest {
   public TemporaryFolder folder = new TemporaryFolder();
 
   @Test
-  public void testSearchByFilename() throws NoSuchFieldException, IllegalAccessException,
-      ParseException, IOException {
+  public void testSearchByFilename()
+      throws NoSuchFieldException, IllegalAccessException, ParseException, IOException {
 
     File txtFile1 = folder.newFile("test file1.txt");
     File txtFile2 = folder.newFile("test file2.txt");
@@ -89,8 +89,8 @@ public class SearchTest {
   }
 
   @Test
-  public void testSearchByFileType() throws NoSuchFieldException, IllegalAccessException,
-      ParseException, IOException {
+  public void testSearchByFileType()
+      throws NoSuchFieldException, IllegalAccessException, ParseException, IOException {
 
     File txtFile1 = folder.newFile("test file1.txt");
     File txtFile2 = folder.newFile("test file2.txt");
@@ -149,8 +149,8 @@ public class SearchTest {
   }
 
   @Test
-  public void testSearchByUserType() throws NoSuchFieldException, IllegalAccessException,
-      ParseException, IOException {
+  public void testSearchByUserType()
+      throws NoSuchFieldException, IllegalAccessException, ParseException, IOException {
 
     File txtFile1 = folder.newFile("test file1.txt");
     File txtFile2 = folder.newFile("test file2.txt");
@@ -158,8 +158,8 @@ public class SearchTest {
     File docxFile = folder.newFile("word document.docx");
     File testFolder = folder.newFolder();
 
-    List<String> testCase = Arrays.asList("sample file.pdf", "test file1.txt", "test file2.txt",
-        "word document.docx");
+    List<String> testCase =
+        Arrays.asList("sample file.pdf", "test file1.txt", "test file2.txt", "word document.docx");
 
     Indexing indexer = new Indexing();
 
@@ -184,8 +184,8 @@ public class SearchTest {
   }
 
   @Test
-  public void testSearchByUserName() throws NoSuchFieldException, IllegalAccessException,
-      ParseException, IOException {
+  public void testSearchByUserName()
+      throws NoSuchFieldException, IllegalAccessException, ParseException, IOException {
 
     File txtFile1 = folder.newFile("test file1.txt");
     File txtFile2 = folder.newFile("test file2.txt");
@@ -193,8 +193,8 @@ public class SearchTest {
     File docxFile = folder.newFile("word document.docx");
     File testFolder = folder.newFolder();
 
-    List<String> testCase = Arrays.asList("sample file.pdf", "test file1.txt", "test file2.txt",
-        "word document.docx");
+    List<String> testCase =
+        Arrays.asList("sample file.pdf", "test file1.txt", "test file2.txt", "word document.docx");
 
     Indexing indexer = new Indexing();
 
@@ -217,9 +217,9 @@ public class SearchTest {
     Collections.sort(case1List);
     assertEquals("improperly matched files", testCase, case1List);
   }
-  
+
   @Test
   public void testSearchByContents() {
-    
+    // To-DO
   }
 }

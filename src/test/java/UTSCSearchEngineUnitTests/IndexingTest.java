@@ -41,7 +41,7 @@ public class IndexingTest {
     // this folder gets cleaned up automatically by JUnit
     File file1 = folder.newFile("test file 1.txt");
     File file2 = folder.newFile("test file 2.txt");
-    File file3 = folder.newFile("test file 3.doc");
+    File file3 = folder.newFile("test file 3.txt");
 
     // set up expected lines
     String file1Line1 = "Line 1 foo";
@@ -69,7 +69,7 @@ public class IndexingTest {
     writeToFile(file3, file1Contents);
 
     List<String> expectedFileNames =
-        Arrays.asList("test file 1.txt", "test file 2.txt", "test file 3.doc");
+        Arrays.asList("test file 1.txt", "test file 2.txt", "test file 3.txt");
 
     Indexing indexer = new Indexing();
 
@@ -176,27 +176,6 @@ public class IndexingTest {
       out.println(line);
     }
     out.close();
-  }
-
-  /**
-   * Method that reads from doc files
-   * 
-   * @param file
-   * @return
-   */
-  private String[] parseDocContents(File file) {
-    WordExtractor extractor = null;
-    String[] fileData = null;
-    try {
-      FileInputStream fis = new FileInputStream(file.getAbsolutePath());
-      HWPFDocument document = new HWPFDocument(fis);
-      extractor = new WordExtractor(document);
-      fileData = extractor.getParagraphText();
-    } catch (Exception exep) {
-      exep.printStackTrace();
-    }
-
-    return fileData;
   }
 
 }

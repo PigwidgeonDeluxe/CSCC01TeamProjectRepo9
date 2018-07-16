@@ -92,8 +92,8 @@ public class Search extends HttpServlet {
         e.printStackTrace();
       }
     }
-    
-    // if the user wants to search by contents     
+
+    // if the user wants to search by contents
     String userContentQuery = req.getParameter("contents");
     if (userContentQuery != null) {
       try {
@@ -104,7 +104,14 @@ public class Search extends HttpServlet {
       }
     }
   }
-  
+
+  /**
+   * Search for Query q and return a response to the user containing the requested information
+   * 
+   * @param q
+   * @param resp
+   * @throws IOException
+   */
   private static void search(Query q, HttpServletResponse resp) throws IOException {
     int hitsPerPage = 10;
     IndexReader reader = DirectoryReader.open(index);

@@ -1,6 +1,7 @@
 package UTSCSearchEngine;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -17,6 +19,9 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.poi.EmptyFileException;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.extractor.WordExtractor;
 
 public class Indexing {
 
@@ -58,21 +63,14 @@ public class Indexing {
         if (fileEntry.isDirectory()) {
           indexDocuments(w, fileEntry.toPath());
         } else {
-          FileReader fr = new FileReader(fileEntry);
+
           // Index this file
-          addDoc(w, fileEntry.getName(),
-              fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1), "user",
-              "student", fr);
-          fr.close();
+          addDoc(w, fileEntry);
         }
       }
     } else {
-      FileReader fr = new FileReader(currentPath.toFile());
       // Index this file
-      addDoc(w, currentPath.getFileName().toString(), currentPath.getFileName().toString()
-          .substring(currentPath.getFileName().toString().lastIndexOf('.') + 1), "user", "student",
-          fr);
-      fr.close();
+      addDoc(w, currentPath.toFile());
     }
   }
 
@@ -86,21 +84,43 @@ public class Indexing {
    * @param userType
    * @throws IOException
    */
-  private static void addDoc(IndexWriter w, String fileName, String fileType, String userName,
-      String userType, FileReader contents) throws IOException {
+  private static void addDoc(IndexWriter w, File file) throws IOException {
     Document doc = new Document();
+    FileReader fr = new FileReader(file);
+    // get required values from the file
+    String fileName = file.getName();
+    String fileType = file.getName().substring(file.getName().lastIndexOf('.') + 1);
+    String userName = "user";
+    String userType = "student";
 
+    // add the values to the index
     doc.add(new TextField("fileName", fileName, Field.Store.YES));
     doc.add(new TextField("fileType", fileType, Field.Store.YES));
     doc.add(new TextField("userName", userName, Field.Store.YES));
     doc.add(new StringField("userType", userType, Field.Store.YES));
-    Scanner contentsScanner = new Scanner(contents);
-    String contentsString = "";
-    if (contentsScanner.hasNextLine()) {
-      contentsString = contentsScanner.useDelimiter("\\A").next();
+    Scanner contentsScanner = new Scanner(fr);
+    if (fileType.contains("doc")) {
+      String[] docContents = parseDocContents(file);
+      String contentString = "";
+      // add all contents to a single string, ensure the contents of the file is not empty
+      if (docContents != null) {
+        for (Integer i = 0; i < docContents.length; i++) {
+          if (docContents[i] != null) {
+            contentString.concat(docContents[i]);
+          }
+        }
+      }
+      // add the doc contents
+      doc.add(new TextField("contents", contentString, Field.Store.YES));
+    } else {
+      String contentsString = "";
+      if (contentsScanner.hasNextLine()) {
+        contentsString = contentsScanner.useDelimiter("\\A").next();
+      }
+      // add the txt contents
+      doc.add(new TextField("contents", contentsString, Field.Store.YES));
+      contentsScanner.close();
     }
-    doc.add(new TextField("contents", contentsString, Field.Store.YES));
-    contentsScanner.close();
 
     w.addDocument(doc);
     w.commit();
@@ -120,6 +140,29 @@ public class Indexing {
 
   public Path getDocDir() {
     return this.docDir;
+  }
+
+  /**
+   * Method that reads from doc files
+   * 
+   * @param file
+   * @return
+   */
+  private static String[] parseDocContents(File file) {
+    WordExtractor extractor = null;
+    String[] fileData = null;
+    try {
+      FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+      HWPFDocument document = new HWPFDocument(fis);
+      extractor = new WordExtractor(document);
+      fileData = extractor.getParagraphText();
+    } catch (EmptyFileException e) {
+      // if the file is empty, who cares
+    } catch (Exception exep) {
+      exep.printStackTrace();
+    }
+
+    return fileData;
   }
 
 }
