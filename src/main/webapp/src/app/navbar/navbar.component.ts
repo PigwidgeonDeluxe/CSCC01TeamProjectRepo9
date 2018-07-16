@@ -2,7 +2,9 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
+declare var gapi: any;
 import swal from 'sweetalert2';
+import $ from 'jquery';
 
 @Component({
   selector: 'app-navbar',
@@ -23,30 +25,45 @@ export class NavbarComponent implements OnInit {
 
   modalRef: BsModalRef;
   userInfo: object;
+  registerUser: boolean;
 
-  constructor(private modalService: BsModalService) { }
+  constructor(private modalService: BsModalService) {
+    window['onSignIn'] = ((user) => {
+      this.onSignIn(user);
+    });
+
+    window['onRegister'] = ((user) => {
+      this.onRegister(user);
+    });
+  }
 
   ngOnInit() {
     this.http = new XMLHttpRequest;
     this.TOMCAT_URL = 'http://localhost:8080';
     this.userInfo = JSON.parse(localStorage.getItem('user'));
+    this.registerUser = true;
   }
 
   openModal(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template);
   }
 
-  loginUser() {
+  toggleRegister() {
+    this.registerUser = !this.registerUser;
+  }
+
+  onSignIn(googleUser) {
+    const profile = googleUser.getBasicProfile();
+    const idToken = googleUser.getAuthResponse().id_token;
+
     this.http.open('POST', this.TOMCAT_URL + '/user?login=true', false);
     this.http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-    const request = {
-      'userName': this.loginUsername,
-      'password': this.loginPassword
-    };
+    // package request
+    const request = {'token': idToken};
     this.http.send(JSON.stringify(request));
-    const resp = JSON.parse(this.http.response);
 
+    const resp = JSON.parse(this.http.response);
     if (resp.status === 'SUCCESS') {
       swal({
         title: 'Success',
@@ -54,7 +71,7 @@ export class NavbarComponent implements OnInit {
         text: resp.message
       }).then(() => {
         localStorage.setItem('user', JSON.stringify({
-          'userName': this.loginUsername,
+          'userName': profile.getName(),
           'userType': resp.userType
         }));
         location.reload();
@@ -64,22 +81,27 @@ export class NavbarComponent implements OnInit {
         title: 'Failure',
         type: 'error',
         text: resp.message
+      }).then(() => {
+        this.signOut(false);
       });
     }
   }
 
-  registerUser() {
+  onRegister(googleUser) {
+    const profile = googleUser.getBasicProfile();
+    const idToken = googleUser.getAuthResponse().id_token;
+
     this.http.open('POST', this.TOMCAT_URL + '/user?create=true', false);
     this.http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
+    // package request
     const request = {
-      'userName': this.registerUsername,
-      'password': this.registerPassword,
+      'token': idToken,
       'userType': this.registerUserType === '1' ? 'student' : 'instructor'
     };
     this.http.send(JSON.stringify(request));
-    const resp = JSON.parse(this.http.response);
 
+    const resp = JSON.parse(this.http.response);
     if (resp.status === 'SUCCESS') {
       swal({
         title: 'Success',
@@ -87,7 +109,7 @@ export class NavbarComponent implements OnInit {
         text: resp.message
       }).then(() => {
         localStorage.setItem('user', JSON.stringify({
-          'userName': this.registerUsername,
+          'userName': profile.getName(),
           'userType': this.registerUserType === '1' ? 'student' : 'instructor'
         }));
         location.reload();
@@ -97,20 +119,109 @@ export class NavbarComponent implements OnInit {
         title: 'Failure',
         type: 'error',
         text: resp.message
+      }).then(() => {
+        this.signOut(false);
       });
     }
   }
 
-  logout() {
-    localStorage.removeItem('user');
-    swal({
-      title: 'Logged Out',
-      type: 'success',
-      text: 'Successfully logged out!'
-    }).then(() => {
-      location.reload();
-    });
+  signOut(userInitiated) {
+    if (userInitiated) {
+      gapi.load('auth2', () => {
+        gapi.auth2.init();
+      });
+      swal({
+        title: 'Success',
+        type: 'success',
+        text: 'Successfully logged out'
+      }).then(() => {
+        const auth2 = gapi.auth2.getAuthInstance();
+        localStorage.clear();
+        auth2.signOut();
+        location.reload();
+      });
+    } else {
+      const auth2 = gapi.auth2.getAuthInstance();
+      localStorage.clear();
+      auth2.signOut();
+    }
   }
+
+  // loginUser() {
+  //   this.http.open('POST', this.TOMCAT_URL + '/user?login=true', false);
+  //   this.http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+  //   const request = {
+  //     'userName': this.loginUsername,
+  //     'password': this.loginPassword
+  //   };
+  //   this.http.send(JSON.stringify(request));
+  //   const resp = JSON.parse(this.http.response);
+
+  //   if (resp.status === 'SUCCESS') {
+  //     swal({
+  //       title: 'Success',
+  //       type: 'success',
+  //       text: resp.message
+  //     }).then(() => {
+  //       localStorage.setItem('user', JSON.stringify({
+  //         'userName': this.loginUsername,
+  //         'userType': resp.userType
+  //       }));
+  //       location.reload();
+  //     });
+  //   } else {
+  //     swal({
+  //       title: 'Failure',
+  //       type: 'error',
+  //       text: resp.message
+  //     });
+  //   }
+  // }
+
+  // registerUser() {
+  //   this.http.open('POST', this.TOMCAT_URL + '/user?create=true', false);
+  //   this.http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+  //   const request = {
+  //     'userName': this.registerUsername,
+  //     'password': this.registerPassword,
+  //     'userType': this.registerUserType === '1' ? 'student' : 'instructor'
+  //   };
+  //   this.http.send(JSON.stringify(request));
+  //   const resp = JSON.parse(this.http.response);
+
+  //   if (resp.status === 'SUCCESS') {
+  //     swal({
+  //       title: 'Success',
+  //       type: 'success',
+  //       text: resp.message
+  //     }).then(() => {
+  //       localStorage.setItem('user', JSON.stringify({
+  //         'userName': this.registerUsername,
+  //         'userType': this.registerUserType === '1' ? 'student' : 'instructor'
+  //       }));
+  //       location.reload();
+  //     });
+  //   } else {
+  //     swal({
+  //       title: 'Failure',
+  //       type: 'error',
+  //       text: resp.message
+  //     });
+  //   }
+  // }
+
+  // logout() {
+  //   localStorage.removeItem('user');
+  //   swal({
+  //     title: 'Logged Out',
+  //     type: 'success',
+  //     text: 'Successfully logged out!'
+  //   }).then(() => {
+  //     location.reload();
+  //   });
+  // }
 
   upload(files: FileList) {
     this.http.open('POST', this.TOMCAT_URL + '/upload', false);

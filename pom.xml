@@ -63,7 +63,14 @@
 			<version>20180130</version>
 		</dependency>
 
-	</dependencies>
+    <!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
+    <dependency>
+      <groupId>com.google.api-client</groupId>
+      <artifactId>google-api-client</artifactId>
+      <version>1.23.0</version>
+    </dependency>
+
+  </dependencies>
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
