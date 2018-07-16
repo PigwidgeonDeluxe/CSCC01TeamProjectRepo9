@@ -217,4 +217,9 @@ public class SearchTest {
     Collections.sort(case1List);
     assertEquals("improperly matched files", testCase, case1List);
   }
+  
+  @Test
+  public void testSearchByContents() {
+    
+  }
 }
