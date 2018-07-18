@@ -31,18 +31,10 @@ public class Indexing {
   public void doIndexing() {
     this.docDir = Paths.get(docsPath);
     this.analyzer = new StandardAnalyzer();
-    FSDirectory indexFile;
-    try {
-      FileUtils.cleanDirectory(Paths.get("./src/main/resources/index.lucene").toFile());
-      indexFile = FSDirectory.open(Paths.get("./src/main/resources/index.lucene"));
-      this.index = indexFile;
-    } catch (IOException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    }
+    this.index = new RAMDirectory();
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
     try {
-      // config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+      config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
       IndexWriter w = new IndexWriter(index, config);
       indexDocuments(w, docDir);
       w.close();

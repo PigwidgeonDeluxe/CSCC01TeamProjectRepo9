@@ -40,5 +40,6 @@ public class FileUpload extends HttpServlet {
     }
     // call indexer for every uploaded file
     indexer.doIndexing();
+    Search.refreshIndexer();
   }
 }
