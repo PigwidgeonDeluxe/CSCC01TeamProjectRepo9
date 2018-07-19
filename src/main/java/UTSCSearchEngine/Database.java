@@ -34,21 +34,14 @@ public class Database {
     }
   }
 
-  public void getUserById(String userId) {
+  public ResultSet getUserById(String userId) throws SQLException {
 
     String sql = "SELECT * FROM user WHERE user_id = ?";
 
-    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
-      pstmt.setString(1, userId);
-      ResultSet rs = pstmt.executeQuery();
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
 
-      while (rs.next()) {
-        System.out.println(rs.getInt("id"));
-        System.out.println(rs.getString("user_id"));
-        System.out.println(rs.getString("user_type"));
-      }
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
+    pstmt.setString(1, userId);
+    return pstmt.executeQuery();
   }
 }
