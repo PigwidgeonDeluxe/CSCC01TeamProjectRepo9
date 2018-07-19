@@ -148,12 +148,14 @@ export class NavbarComponent implements OnInit {
   }
 
   upload(files: FileList) {
-    this.http.open('POST', this.TOMCAT_URL + '/upload', false);
+    const user = JSON.parse(localStorage.getItem('user'));
+    this.http.open('POST', this.TOMCAT_URL + '/upload?userName=' + user.userName + '&userType=' + user.userType, false);
 
     const request = new FormData();
     Array.from(files).forEach(file => {
       request.append(file.name, file);
     });
+
     this.http.send(request);
     const resp = JSON.parse(this.http.response);
 

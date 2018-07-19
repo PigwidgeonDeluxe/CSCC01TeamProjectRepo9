@@ -1,7 +1,7 @@
 package UTSCSearchEngine;
 
+import java.io.IOException;
 import java.util.List;
-import java.io.File;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,30 +15,42 @@ import org.json.JSONObject;
 public class FileUpload extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
-
-  // implement into database at later point
-  private static String docsPath = "./src/main/resources/"; // default path
-  // to call indexer
   private static Indexing indexer = new Indexing();
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) {
-    response.setContentType("multipart/form-data");
-    response.setHeader("Access-Control-Allow-Origin", "*");
+  public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    JSONObject response = new JSONObject();
+    Database db = new Database();
+    resp.setContentType("multipart/form-data");
+    resp.setHeader("Access-Control-Allow-Origin", "*");
+    String uploaderName = req.getParameter("userName");
+    String uploaderType = req.getParameter("userType");
+
     try {
+      // parse files
       ServletFileUpload sf = new ServletFileUpload(new DiskFileItemFactory());
-      List<FileItem> multifiles = sf.parseRequest(request);
-      JSONObject resp = new JSONObject();
-      resp.put("status", "SUCCESS");
-      resp.put("message", "Successfully uploaded files");
-      response.getWriter().write(resp.toString());
-      for (FileItem item : multifiles) {
-        item.write(new File(docsPath + item.getName()));
+      List<FileItem> multiFiles = sf.parseRequest(req);
+
+      // save file data
+      for (FileItem item : multiFiles) {
+        if (!item.isFormField()) {
+          db.insertFileData(item.get(),
+              item.getName(),
+              item.getName().substring(item.getName().lastIndexOf('.') + 1),
+              uploaderName,
+              uploaderType);
+        }
       }
-    } catch (Exception e) {
-      System.out.println(e);
+
+      // package client response
+      response.put("status", "SUCCESS");
+      response.put("message", "Successfully uploaded file(s)");
+      resp.getWriter().write(response.toString());
+    } catch (Exception ex) {
+      ex.printStackTrace();
     }
-    // call indexer for every uploaded file
+
+    // reindex
     indexer.doIndexing();
     Search.refreshIndexer();
   }

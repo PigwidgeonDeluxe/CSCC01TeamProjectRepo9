@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -20,7 +22,6 @@ import org.apache.lucene.store.RAMDirectory;
 
 public class Indexing {
 
-  private String docsPath = "./src/main/resources/"; // default index directory
   private StandardAnalyzer analyzer = null;
   private Directory index = null;
   private Path docDir = null;
@@ -29,14 +30,13 @@ public class Indexing {
    * Initialize and perform indexing with a given path, analyzer, to index (RAMDirectory)
    */
   public void doIndexing() {
-    this.docDir = Paths.get(docsPath);
     this.analyzer = new StandardAnalyzer();
     this.index = new RAMDirectory();
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
     try {
       config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
       IndexWriter w = new IndexWriter(index, config);
-      indexDocuments(w, docDir);
+      indexDocuments(w);
       w.close();
     } catch (IOException e) {
       System.err.println(e);
@@ -47,27 +47,22 @@ public class Indexing {
    * Index all the documents for a given Path
    * 
    * @param w
-   * @param currentPath
    * @throws IOException
    */
-  private static void indexDocuments(final IndexWriter w, Path currentPath) throws IOException {
-    // Directory?
-    if (Files.isDirectory(currentPath)) {
-      // Iterate directory
-      for (final File fileEntry : currentPath.toFile().listFiles()) {
-        if (fileEntry.isDirectory()) {
-          indexDocuments(w, fileEntry.toPath());
-        } else {
-          // Index this file
-          addDoc(w, fileEntry.getName(),
-              fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1), "user",
-              "student");
-        }
+  private static void indexDocuments(final IndexWriter w) throws IOException {
+    Database db = new Database();
+
+    try {
+      ResultSet rs = db.getAllFiles();
+      while (rs.next()) {
+        addDoc(w,
+            rs.getString("file_name"),
+            rs.getString("file_type"),
+            rs.getString("uploader_name"),
+            rs.getString("uploader_type"));
       }
-    } else {
-      // Index this file
-      addDoc(w, currentPath.getFileName().toString(), currentPath.getFileName().toString()
-          .substring(currentPath.getFileName().toString().lastIndexOf('.') + 1), "user", "student");
+    } catch (SQLException ex) {
+      ex.printStackTrace();
     }
   }
 
@@ -92,10 +87,6 @@ public class Indexing {
 
     w.addDocument(doc);
     w.commit();
-  }
-
-  public void setDocsPath(String docsPath) {
-    this.docsPath = docsPath;
   }
 
   public Directory getIndex() {
