@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class SearchTest {
-
+/**
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
@@ -222,4 +222,5 @@ public class SearchTest {
   public void testSearchByContents() {
     // To-DO
   }
+  */
 }

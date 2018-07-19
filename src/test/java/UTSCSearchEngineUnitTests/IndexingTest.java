@@ -1,15 +1,12 @@
 package UTSCSearchEngineUnitTests;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,8 +18,6 @@ import org.apache.lucene.queryparser.classic.*;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -36,7 +31,7 @@ public class IndexingTest {
   public TemporaryFolder folder = new TemporaryFolder();
 
   @Test
-  public void testDoIndexing() throws ParseException, NoSuchFieldException, SecurityException,
+  public void testDoIndexingTXT() throws ParseException, NoSuchFieldException, SecurityException,
       IllegalArgumentException, IllegalAccessException, IOException {
     // this folder gets cleaned up automatically by JUnit
     File file1 = folder.newFile("test file 1.txt");
@@ -100,6 +95,69 @@ public class IndexingTest {
     Collections.sort(titleList);
     assertEquals("all files must be accounted for and correct", expectedFileNames, titleList);
     assertEquals("all contents must be accounted for and correct", expectedContents, contentsList);
+
+  }
+
+  @Test
+  public void testDoIndexingDoc() throws ParseException, NoSuchFieldException, SecurityException,
+      IllegalArgumentException, IllegalAccessException, IOException {
+    // create word docs for testing
+
+    // set up paragraphs
+    String content1 = "The quick brown fox jumped over the lazy dog.";
+    String content2 =
+        "This section gives instructions on how to format and generate a Microsoft Word file.";
+    String content3 =
+        "Notice that we hard-code the contents of both the title and subtitle as these statements are too short to justify the use of a helper method.";
+
+    // create the docx files
+    CreateDOCX.create(folder.getRoot().toString(), "test file 1.docx", content1);
+    CreateDOCX.create(folder.getRoot().toString(), "test file 2.docx", content2);
+    CreateDOCX.create(folder.getRoot().toString(), "test file 3.docx", content3);
+    
+    List<String> expectedFileNames =
+        Arrays.asList("test file 1.docx", "test file 2.docx", "test file 3.docx");
+
+    Indexing indexer = new Indexing();
+
+    // indexer.setDocsPath(folder.getRoot().toString());
+    Field field = indexer.getClass().getDeclaredField("docsPath");
+    field.setAccessible(true);
+    field.set(indexer, folder.getRoot().toString());
+    indexer.doIndexing();
+
+    // search for all test files
+    Query q = new QueryParser("fileName", indexer.getAnalyzer()).parse("test");
+    IndexReader reader = DirectoryReader.open(indexer.getIndex());
+    IndexSearcher searcher = new IndexSearcher(reader);
+    TopDocs docs = searcher.search(q, 10);
+    ScoreDoc[] hits = docs.scoreDocs;
+    // System.out.println(reader.toString());
+
+    // get all the file names and contents
+    List<String> titleList = new ArrayList<String>();
+    List<String> contentsList = new ArrayList<String>();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      titleList.add(d.get("fileName"));
+      contentsList.add(d.get("contents"));
+    }
+
+    Collections.sort(titleList);
+    assertEquals("all files must be accounted for and correct", expectedFileNames, titleList);
+    
+    Boolean containsContent1 = false;
+    Boolean containsContent2 = false;
+    Boolean containsContent3 = false;
+    for (String content : contentsList) {
+      containsContent1 = containsContent1 || content.contains(content1);
+      containsContent2 = containsContent2 || content.contains(content2);
+      containsContent3 = containsContent3|| content.contains(content3);
+    }
+    assertTrue("Content 1 must be accounted for and correct", containsContent1);
+    assertTrue("Content 2 must be accounted for and correct", containsContent2);
+    assertTrue("Content 3 must be accounted for and correct", containsContent3);
 
   }
 

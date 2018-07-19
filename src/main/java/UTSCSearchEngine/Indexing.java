@@ -7,9 +7,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -20,8 +21,8 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.poi.EmptyFileException;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
 public class Indexing {
 
@@ -99,20 +100,22 @@ public class Indexing {
     doc.add(new TextField("userName", userName, Field.Store.YES));
     doc.add(new StringField("userType", userType, Field.Store.YES));
     Scanner contentsScanner = new Scanner(fr);
-    if (fileType.contains("doc")) {
-      String[] docContents = parseDocContents(file);
+    // if the file is a docx
+    if (fileType.contains("docx")) {
+      List<String> docContents = parseDocContents(file);
       String contentString = "";
       // add all contents to a single string, ensure the contents of the file is not empty
       if (docContents != null) {
-        for (Integer i = 0; i < docContents.length; i++) {
-          if (docContents[i] != null) {
-            contentString.concat(docContents[i]);
+        for (String content : docContents) {
+          if (content != null) {
+            // store all content to a single string
+            contentString = contentString.concat(content + " ");
           }
         }
       }
       // add the doc contents
       doc.add(new TextField("contents", contentString, Field.Store.YES));
-    } else {
+    } else { // otherwise if its a generic text file
       String contentsString = "";
       if (contentsScanner.hasNextLine()) {
         contentsString = contentsScanner.useDelimiter("\\A").next();
@@ -148,14 +151,19 @@ public class Indexing {
    * @param file
    * @return
    */
-  private static String[] parseDocContents(File file) {
-    WordExtractor extractor = null;
-    String[] fileData = null;
+  private static List<String> parseDocContents(File file) {
+    List<XWPFParagraph> paragraphs = null;
+    List<String> fileData = new ArrayList<String>();
     try {
+      // get all paragraphs of the documents
       FileInputStream fis = new FileInputStream(file.getAbsolutePath());
-      HWPFDocument document = new HWPFDocument(fis);
-      extractor = new WordExtractor(document);
-      fileData = extractor.getParagraphText();
+      XWPFDocument document = new XWPFDocument(fis);
+      paragraphs = document.getParagraphs();
+      document.close();
+      // add all the text of the document to the List of strings
+      for (XWPFParagraph paragraph : paragraphs) {
+        fileData.add(paragraph.getText());
+      }
     } catch (EmptyFileException e) {
       // if the file is empty, who cares
     } catch (Exception exep) {
