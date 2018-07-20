@@ -32,12 +32,6 @@ import java.util.stream.Collectors;
 @WebServlet("/user")
 public class User extends HttpServlet {
 
-  private static String docsPath = "./src/main/resources/";
-
-  public void setDocsPath(String docsPath) {
-    this.docsPath = docsPath;
-  }
-
   private void processRequest(HttpServletRequest req, HttpServletResponse resp, String postBody) {
     GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
         new JacksonFactory())

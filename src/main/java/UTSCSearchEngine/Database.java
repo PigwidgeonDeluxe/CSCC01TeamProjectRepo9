@@ -9,12 +9,21 @@ import java.sql.SQLException;
 
 public class Database {
 
-  private Connection connect() {
+  private String url;
 
-    String url = "jdbc:sqlite:database.db";
+  public Database() {
+    this.url = "jdbc:sqlite:database.db";
+  }
+
+  public Database(String url) {
+    this.url = url;
+  }
+
+  public Connection connect() {
+
     Connection con = null;
     try {
-      con = DriverManager.getConnection(url);
+      con = DriverManager.getConnection(this.url);
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
