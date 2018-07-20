@@ -23,10 +23,9 @@ import org.apache.lucene.store.Directory;
 public class Search extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
-  private static String docsPath = "./src/main/resources/";
-  private static StandardAnalyzer analyzer = null;
-  private static Directory index = null;
-  private static Indexing indexer = new Indexing();
+  private StandardAnalyzer analyzer = null;
+  private Directory index = null;
+  private Indexing indexer = new Indexing();
 
   public void init(ServletConfig config1) throws ServletException {
     super.init(config1);
@@ -35,16 +34,16 @@ public class Search extends HttpServlet {
     System.out.println("Finished: init");
   }
 
-  private static void callIndexing() {
-    indexer.doIndexing();
-    analyzer = indexer.getAnalyzer();
-    index = indexer.getIndex();
+  public void callIndexing() {
+    this.indexer.doIndexing();
+    this.analyzer = indexer.getAnalyzer();
+    this.index = indexer.getIndex();
   }
 
-  static void refreshIndexer() {
-    indexer = new Indexing();
-    analyzer = indexer.getAnalyzer();
-    index = indexer.getIndex();
+  public void callIndexing(String url) {
+    this.indexer.doIndexing(url);
+    this.analyzer = indexer.getAnalyzer();
+    this.index = indexer.getIndex();
   }
 
   @Override
@@ -71,8 +70,8 @@ public class Search extends HttpServlet {
         for (int i = 0; i < hits.length; ++i) {
           int docId = hits[i].doc;
           Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-"
-              + d.get("userType") + "-" + d.get("userName") + "\n");
+          responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~"
+              + d.get("userType") + "~" + d.get("userName") + "\n");
         }
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.getWriter().write(responseBackToUser.toString());
@@ -94,8 +93,8 @@ public class Search extends HttpServlet {
         for (int i = 0; i < hits.length; ++i) {
           int docId = hits[i].doc;
           Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-"
-              + d.get("userType") + "-" + d.get("userName") + "\n");
+          responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~"
+              + d.get("userType") + "~" + d.get("userName") + "\n");
         }
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.getWriter().write(responseBackToUser.toString());
@@ -117,8 +116,8 @@ public class Search extends HttpServlet {
         for (int i = 0; i < hits.length; ++i) {
           int docId = hits[i].doc;
           Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-"
-              + d.get("userType") + "-" + d.get("userName") + "\n");
+          responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~"
+              + d.get("userType") + "~" + d.get("userName") + "\n");
         }
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.getWriter().write(responseBackToUser.toString());
@@ -140,8 +139,8 @@ public class Search extends HttpServlet {
         for (int i = 0; i < hits.length; ++i) {
           int docId = hits[i].doc;
           Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-"
-              + d.get("userType") + "-" + d.get("userName") + "\n");
+          responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~"
+              + d.get("userType") + "~" + d.get("userName") + "\n");
         }
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.getWriter().write(responseBackToUser.toString());

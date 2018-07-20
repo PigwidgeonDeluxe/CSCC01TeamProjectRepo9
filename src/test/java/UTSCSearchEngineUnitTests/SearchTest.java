@@ -1,220 +1,115 @@
 package UTSCSearchEngineUnitTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import UTSCSearchEngine.Indexing;
-import java.io.File;
+import UTSCSearchEngine.Database;
+import UTSCSearchEngine.Search;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.junit.Rule;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 public class SearchTest {
 
-//  @Rule
-//  public TemporaryFolder folder = new TemporaryFolder();
-//
-//  @Test
-//  public void testSearchByFilename() throws NoSuchFieldException, IllegalAccessException,
-//      ParseException, IOException {
-//
-//    File txtFile1 = folder.newFile("test file1.txt");
-//    File txtFile2 = folder.newFile("test file2.txt");
-//    File pdfFile = folder.newFile("sample file.pdf");
-//    File docxFile = folder.newFile("word document.docx");
-//    File testFolder = folder.newFolder();
-//
-//    List<String> case1 = Arrays.asList("test file1.txt", "test file2.txt");
-//    List<String> case2 = Arrays.asList("sample file.pdf");
-//    List<String> case3 = Arrays.asList("word document.docx");
-//
-//    Indexing indexer = new Indexing();
-//
-//    Field field = indexer.getClass().getDeclaredField("docsPath");
-//    field.setAccessible(true);
-//    field.set(indexer, folder.getRoot().toString());
-//    indexer.doIndexing();
-//
-//    Query q = new QueryParser("fileName", indexer.getAnalyzer()).parse("test");
-//    IndexReader reader = DirectoryReader.open(indexer.getIndex());
-//    IndexSearcher searcher = new IndexSearcher(reader);
-//    TopDocs docs = searcher.search(q, 10);
-//    ScoreDoc[] hits = docs.scoreDocs;
-//    List<String> case1List = new ArrayList<>();
-//    for (int i = 0; i < hits.length; ++i) {
-//      int docId = hits[i].doc;
-//      Document d = searcher.doc(docId);
-//      case1List.add(d.get("fileName"));
-//    }
-//    Collections.sort(case1List);
-//    assertEquals("improperly matched files", case1, case1List);
-//
-//    q = new QueryParser("fileName", indexer.getAnalyzer()).parse("sample");
-//    docs = searcher.search(q, 10);
-//    hits = docs.scoreDocs;
-//    List<String> case2List = new ArrayList<>();
-//    for (int i = 0; i < hits.length; ++i) {
-//      int docId = hits[i].doc;
-//      Document d = searcher.doc(docId);
-//      case2List.add(d.get("fileName"));
-//    }
-//    Collections.sort(case2List);
-//    assertEquals("improperly matched files", case2, case2List);
-//
-//    q = new QueryParser("fileName", indexer.getAnalyzer()).parse("word");
-//    docs = searcher.search(q, 10);
-//    hits = docs.scoreDocs;
-//    List<String> case3List = new ArrayList<>();
-//    for (int i = 0; i < hits.length; ++i) {
-//      int docId = hits[i].doc;
-//      Document d = searcher.doc(docId);
-//      case3List.add(d.get("fileName"));
-//    }
-//    Collections.sort(case3List);
-//    assertEquals("improperly matched files", case3, case3List);
-//  }
-//
-//  @Test
-//  public void testSearchByFileType() throws NoSuchFieldException, IllegalAccessException,
-//      ParseException, IOException {
-//
-//    File txtFile1 = folder.newFile("test file1.txt");
-//    File txtFile2 = folder.newFile("test file2.txt");
-//    File pdfFile = folder.newFile("sample file.pdf");
-//    File docxFile = folder.newFile("word document.docx");
-//    File testFolder = folder.newFolder();
-//
-//    List<String> case1 = Arrays.asList("txt", "txt");
-//    List<String> case2 = Arrays.asList("pdf");
-//    List<String> case3 = Arrays.asList("docx");
-//
-//    Indexing indexer = new Indexing();
-//
-//    Field field = indexer.getClass().getDeclaredField("docsPath");
-//    field.setAccessible(true);
-//    field.set(indexer, folder.getRoot().toString());
-//    indexer.doIndexing();
-//
-//    Query q = new QueryParser("fileType", indexer.getAnalyzer()).parse("txt");
-//    IndexReader reader = DirectoryReader.open(indexer.getIndex());
-//    IndexSearcher searcher = new IndexSearcher(reader);
-//    TopDocs docs = searcher.search(q, 10);
-//    ScoreDoc[] hits = docs.scoreDocs;
-//    List<String> case1List = new ArrayList<>();
-//    for (int i = 0; i < hits.length; ++i) {
-//      int docId = hits[i].doc;
-//      Document d = searcher.doc(docId);
-//      case1List.add(d.get("fileType"));
-//    }
-//    Collections.sort(case1List);
-//    assertEquals("improperly matched files", case1, case1List);
-//
-//    q = new QueryParser("fileType", indexer.getAnalyzer()).parse("pdf");
-//    docs = searcher.search(q, 10);
-//    hits = docs.scoreDocs;
-//    List<String> case2List = new ArrayList<>();
-//    for (int i = 0; i < hits.length; ++i) {
-//      int docId = hits[i].doc;
-//      Document d = searcher.doc(docId);
-//      case2List.add(d.get("fileType"));
-//    }
-//    Collections.sort(case2List);
-//    assertEquals("improperly matched files", case2, case2List);
-//
-//    q = new QueryParser("fileType", indexer.getAnalyzer()).parse("docx");
-//    docs = searcher.search(q, 10);
-//    hits = docs.scoreDocs;
-//    List<String> case3List = new ArrayList<>();
-//    for (int i = 0; i < hits.length; ++i) {
-//      int docId = hits[i].doc;
-//      Document d = searcher.doc(docId);
-//      case3List.add(d.get("fileType"));
-//    }
-//    Collections.sort(case3List);
-//    assertEquals("improperly matched files", case3, case3List);
-//  }
-//
-//  @Test
-//  public void testSearchByUserType() throws NoSuchFieldException, IllegalAccessException,
-//      ParseException, IOException {
-//
-//    File txtFile1 = folder.newFile("test file1.txt");
-//    File txtFile2 = folder.newFile("test file2.txt");
-//    File pdfFile = folder.newFile("sample file.pdf");
-//    File docxFile = folder.newFile("word document.docx");
-//    File testFolder = folder.newFolder();
-//
-//    List<String> testCase = Arrays.asList("sample file.pdf", "test file1.txt", "test file2.txt",
-//        "word document.docx");
-//
-//    Indexing indexer = new Indexing();
-//
-//    Field field = indexer.getClass().getDeclaredField("docsPath");
-//    field.setAccessible(true);
-//    field.set(indexer, folder.getRoot().toString());
-//    indexer.doIndexing();
-//
-//    Query q = new QueryParser("userType", indexer.getAnalyzer()).parse("student");
-//    IndexReader reader = DirectoryReader.open(indexer.getIndex());
-//    IndexSearcher searcher = new IndexSearcher(reader);
-//    TopDocs docs = searcher.search(q, 10);
-//    ScoreDoc[] hits = docs.scoreDocs;
-//    List<String> case1List = new ArrayList<>();
-//    for (int i = 0; i < hits.length; ++i) {
-//      int docId = hits[i].doc;
-//      Document d = searcher.doc(docId);
-//      case1List.add(d.get("fileName"));
-//    }
-//    Collections.sort(case1List);
-//    assertEquals("improperly matched files", testCase, case1List);
-//  }
-//
-//  @Test
-//  public void testSearchByUserName() throws NoSuchFieldException, IllegalAccessException,
-//      ParseException, IOException {
-//
-//    File txtFile1 = folder.newFile("test file1.txt");
-//    File txtFile2 = folder.newFile("test file2.txt");
-//    File pdfFile = folder.newFile("sample file.pdf");
-//    File docxFile = folder.newFile("word document.docx");
-//    File testFolder = folder.newFolder();
-//
-//    List<String> testCase = Arrays.asList("sample file.pdf", "test file1.txt", "test file2.txt",
-//        "word document.docx");
-//
-//    Indexing indexer = new Indexing();
-//
-//    Field field = indexer.getClass().getDeclaredField("docsPath");
-//    field.setAccessible(true);
-//    field.set(indexer, folder.getRoot().toString());
-//    indexer.doIndexing();
-//
-//    Query q = new QueryParser("userName", indexer.getAnalyzer()).parse("user");
-//    IndexReader reader = DirectoryReader.open(indexer.getIndex());
-//    IndexSearcher searcher = new IndexSearcher(reader);
-//    TopDocs docs = searcher.search(q, 10);
-//    ScoreDoc[] hits = docs.scoreDocs;
-//    List<String> case1List = new ArrayList<>();
-//    for (int i = 0; i < hits.length; ++i) {
-//      int docId = hits[i].doc;
-//      Document d = searcher.doc(docId);
-//      case1List.add(d.get("fileName"));
-//    }
-//    Collections.sort(case1List);
-//    assertEquals("improperly matched files", testCase, case1List);
-//  }
+  private String url = "jdbc:sqlite:test-database.db";
+
+  @Before
+  public void setUp() throws SQLException {
+
+    Database db = new Database(this.url);
+    Connection con = db.connect();
+
+    String dropTable = "DROP TABLE IF EXISTS file";
+    PreparedStatement pstmt1 = con.prepareStatement(dropTable);
+    pstmt1.execute();
+
+    String createTable = "CREATE TABLE file (id integer primary key autoincrement, file blob, "
+        + "file_name text, file_type text, file_size integer, uploader_name text, uploader_type "
+        + "text, uploaded_on integer)";
+    PreparedStatement pstmt2 = con.prepareStatement(createTable);
+    pstmt2.execute();
+  }
+
+  @Test
+  public void testSearchNonExistentFile() throws IOException {
+
+    // instantiate search controller
+    Search search = new Search();
+
+    // mock servlet
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter);
+
+    // mock servlet methods
+    when(mockRequest.getParameter("fileName")).thenReturn("test");
+    when(mockResponse.getWriter()).thenReturn(printWriter);
+
+    // call servlet
+    search.callIndexing();
+    search.doGet(mockRequest, mockResponse);
+
+    // assert
+    stringWriter.flush();
+    assertEquals("", stringWriter.toString());
+  }
+
+  @Test
+  public void testSearchExistentFile() throws IOException {
+
+    Search search = new Search();
+
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter);
+
+    Database db = new Database(this.url);
+    byte[] file = new byte[0];
+    String fileName = "test file.txt";
+    String fileType = "txt";
+    String uploaderName = "test user";
+    String uploaderType = "student";
+
+    db.insertFileData(file, fileName, fileType, uploaderName, uploaderType);
+
+    // test search by file name
+    when(mockRequest.getParameter("fileName")).thenReturn("test");
+    when(mockResponse.getWriter()).thenReturn(printWriter);
+    search.callIndexing(this.url);
+    search.doGet(mockRequest, mockResponse);
+    stringWriter.flush();
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+
+    // test search by file type
+    when(mockRequest.getParameter("fileType")).thenReturn("txt");
+    when(mockResponse.getWriter()).thenReturn(printWriter);
+    search.doGet(mockRequest, mockResponse);
+    stringWriter.flush();
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+
+    // test search by user type
+    when(mockRequest.getParameter("userType")).thenReturn("student");
+    when(mockResponse.getWriter()).thenReturn(printWriter);
+    search.doGet(mockRequest, mockResponse);
+    stringWriter.flush();
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+
+    // test search by user name
+    when(mockRequest.getParameter("userName")).thenReturn("test");
+    when(mockResponse.getWriter()).thenReturn(printWriter);
+    search.doGet(mockRequest, mockResponse);
+    stringWriter.flush();
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+  }
 }

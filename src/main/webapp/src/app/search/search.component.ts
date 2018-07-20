@@ -45,10 +45,10 @@ export class SearchComponent implements OnInit {
     resp.forEach(element => {
       if (element.length > 0) {
         this.results.push({
-          'fileName': element.split('-')[0],
-          'fileType': element.split('-')[1],
-          'userType': element.split('-')[2],
-          'userName': element.split('-')[3]
+          'fileName': element.split('~')[0],
+          'fileType': element.split('~')[1],
+          'userType': element.split('~')[2],
+          'userName': element.split('~')[3]
         });
       }
     });

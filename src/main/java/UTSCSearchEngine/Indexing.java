@@ -43,14 +43,45 @@ public class Indexing {
     }
   }
 
+  public void doIndexing(String url) {
+    this.analyzer = new StandardAnalyzer();
+    this.index = new RAMDirectory();
+    IndexWriterConfig config = new IndexWriterConfig(analyzer);
+    try {
+      config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+      IndexWriter w = new IndexWriter(index, config);
+      indexDocuments(url, w);
+      w.close();
+    } catch (IOException e) {
+      System.err.println(e);
+    }
+  }
+
   /**
    * Index all the documents for a given Path
    * 
    * @param w
    * @throws IOException
    */
-  private static void indexDocuments(final IndexWriter w) throws IOException {
+  private void indexDocuments(final IndexWriter w) throws IOException {
     Database db = new Database();
+
+    try {
+      ResultSet rs = db.getAllFiles();
+      while (rs.next()) {
+        addDoc(w,
+            rs.getString("file_name"),
+            rs.getString("file_type"),
+            rs.getString("uploader_name"),
+            rs.getString("uploader_type"));
+      }
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  private void indexDocuments(String url, final IndexWriter w) throws IOException {
+    Database db = new Database(url);
 
     try {
       ResultSet rs = db.getAllFiles();

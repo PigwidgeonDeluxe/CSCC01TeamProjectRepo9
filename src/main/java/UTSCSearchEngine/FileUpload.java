@@ -1,6 +1,5 @@
 package UTSCSearchEngine;
 
-import java.io.IOException;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,7 +14,7 @@ import org.json.JSONObject;
 public class FileUpload extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
-  private static Indexing indexer = new Indexing();
+  private Indexing indexer = new Indexing();
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) {
@@ -52,6 +51,5 @@ public class FileUpload extends HttpServlet {
 
     // reindex
     indexer.doIndexing();
-    Search.refreshIndexer();
   }
 }
