@@ -1,14 +1,9 @@
 package UTSCSearchEngine;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.apache.commons.io.FileUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -17,7 +12,6 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 
 public class Indexing {
@@ -72,8 +66,10 @@ public class Indexing {
         addDoc(w,
             rs.getString("file_name"),
             rs.getString("file_type"),
+            rs.getString("file_size"),
             rs.getString("uploader_name"),
-            rs.getString("uploader_type"));
+            rs.getString("uploader_type"),
+            rs.getString("uploaded_on"));
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
@@ -89,8 +85,10 @@ public class Indexing {
         addDoc(w,
             rs.getString("file_name"),
             rs.getString("file_type"),
+            rs.getString("file_size"),
             rs.getString("uploader_name"),
-            rs.getString("uploader_type"));
+            rs.getString("uploader_type"),
+            rs.getString("uploaded_on"));
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
@@ -108,13 +106,15 @@ public class Indexing {
    * @throws IOException
    */
   private static void addDoc(IndexWriter w, String fileName, String fileType, String userName,
-      String userType) throws IOException {
+      String userType, String fileSize, String uploadDate) throws IOException {
     Document doc = new Document();
 
     doc.add(new TextField("fileName", fileName, Field.Store.YES));
     doc.add(new TextField("fileType", fileType, Field.Store.YES));
     doc.add(new TextField("userName", userName, Field.Store.YES));
     doc.add(new StringField("userType", userType, Field.Store.YES));
+    doc.add(new TextField("fileSize", fileSize, Field.Store.YES));
+    doc.add(new TextField("uploadDate", uploadDate, Field.Store.YES));
 
     w.addDocument(doc);
     w.commit();

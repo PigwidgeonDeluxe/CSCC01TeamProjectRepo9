@@ -70,8 +70,12 @@ public class Search extends HttpServlet {
         for (int i = 0; i < hits.length; ++i) {
           int docId = hits[i].doc;
           Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~"
-              + d.get("userType") + "~" + d.get("userName") + "\n");
+          responseBackToUser.append(d.get("fileName") + "~"
+              + d.get("fileType") + "~"
+              + d.get("userType") + "~"
+              + d.get("userName") + "~"
+              + d.get("fileSize") + "~"
+              + d.get("uploadDate") + "\n");
         }
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.getWriter().write(responseBackToUser.toString());
@@ -93,8 +97,12 @@ public class Search extends HttpServlet {
         for (int i = 0; i < hits.length; ++i) {
           int docId = hits[i].doc;
           Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~"
-              + d.get("userType") + "~" + d.get("userName") + "\n");
+          responseBackToUser.append(d.get("fileName") + "~"
+              + d.get("fileType") + "~"
+              + d.get("userType") + "~"
+              + d.get("userName") + "~"
+              + d.get("fileSize") + "~"
+              + d.get("uploadDate") + "\n");
         }
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.getWriter().write(responseBackToUser.toString());
@@ -116,8 +124,12 @@ public class Search extends HttpServlet {
         for (int i = 0; i < hits.length; ++i) {
           int docId = hits[i].doc;
           Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~"
-              + d.get("userType") + "~" + d.get("userName") + "\n");
+          responseBackToUser.append(d.get("fileName") + "~"
+              + d.get("fileType") + "~"
+              + d.get("userType") + "~"
+              + d.get("userName") + "~"
+              + d.get("fileSize") + "~"
+              + d.get("uploadDate") + "\n");
         }
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.getWriter().write(responseBackToUser.toString());
@@ -139,8 +151,12 @@ public class Search extends HttpServlet {
         for (int i = 0; i < hits.length; ++i) {
           int docId = hits[i].doc;
           Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~"
-              + d.get("userType") + "~" + d.get("userName") + "\n");
+          responseBackToUser.append(d.get("fileName") + "~"
+              + d.get("fileType") + "~"
+              + d.get("userType") + "~"
+              + d.get("userName") + "~"
+              + d.get("fileSize") + "~"
+              + d.get("uploadDate") + "\n");
         }
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.getWriter().write(responseBackToUser.toString());

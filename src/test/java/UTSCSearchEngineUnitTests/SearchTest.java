@@ -89,27 +89,27 @@ public class SearchTest {
     search.callIndexing(this.url);
     search.doGet(mockRequest, mockResponse);
     stringWriter.flush();
-    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~test user~0~student"));
 
     // test search by file type
     when(mockRequest.getParameter("fileType")).thenReturn("txt");
     when(mockResponse.getWriter()).thenReturn(printWriter);
     search.doGet(mockRequest, mockResponse);
     stringWriter.flush();
-    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~test user~0~student"));
 
     // test search by user type
     when(mockRequest.getParameter("userType")).thenReturn("student");
     when(mockResponse.getWriter()).thenReturn(printWriter);
     search.doGet(mockRequest, mockResponse);
     stringWriter.flush();
-    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~test user~0~student"));
 
     // test search by user name
     when(mockRequest.getParameter("userName")).thenReturn("test");
     when(mockResponse.getWriter()).thenReturn(printWriter);
     search.doGet(mockRequest, mockResponse);
     stringWriter.flush();
-    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~test user~0~student"));
   }
 }

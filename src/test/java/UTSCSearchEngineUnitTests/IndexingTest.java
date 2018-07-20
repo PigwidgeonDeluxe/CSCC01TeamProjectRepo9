@@ -81,7 +81,8 @@ public class IndexingTest {
     search.doGet(mockRequest, mockResponse);
 
     stringWriter.flush();
-    assertTrue(stringWriter.toString().contains("test file.txt~txt~student~test user"));
+    System.out.println(stringWriter.toString());
+    assertTrue(stringWriter.toString().contains("test file.txt~txt~test user~0~student"));
   }
 
 

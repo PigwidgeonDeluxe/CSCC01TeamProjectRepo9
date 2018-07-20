@@ -47,15 +47,17 @@ export class SearchComponent implements OnInit {
         this.results.push({
           'fileName': element.split('~')[0],
           'fileType': element.split('~')[1],
-          'userType': element.split('~')[2],
-          'userName': element.split('~')[3]
+          'userName': element.split('~')[2],
+          'fileSize': Math.round(+element.split('~')[3] / 1000),
+          'userType': element.split('~')[4],
+          'uploadDate': +element.split('~')[5]
         });
       }
     });
   }
 
-  downloadFile(fileName: string) {
-    this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + fileName, true);
+  downloadFile(fileName: string, uploadDate: string) {
+    this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + fileName + '&uploadTime=' + uploadDate, true);
     this.http.responseType = 'arraybuffer';
     this.http.send(null);
 
@@ -74,7 +76,6 @@ export class SearchComponent implements OnInit {
       }
       const blob = new Blob([data], contentType);
       FileSaver.saveAs(blob, fileName);
-
     };
   }
 
