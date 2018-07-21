@@ -10,7 +10,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.*;
@@ -44,7 +47,7 @@ public class IndexingTest {
     String file2Line1 = "Line 1 foo";
     String file2Line2 = "Line 2 bar";
 
-    List<String> expectedContents = new ArrayList<String>();
+    Set<String> expectedContents = new HashSet<String>();
     expectedContents.add("Line 1 foo Line 2 fighters ");
     expectedContents.add("Line 1 foo Line 2 bar ");
     expectedContents.add("Line 1 foo Line 2 fighters ");
@@ -62,8 +65,10 @@ public class IndexingTest {
     writeToFile(file2, file2Contents);
     writeToFile(file3, file1Contents);
 
-    List<String> expectedFileNames =
-        Arrays.asList("test file 1.txt", "test file 2.txt", "test file 3.txt");
+    Set<String> expectedFileNames = new HashSet<String>();
+    expectedFileNames.add("test file 1.txt");
+    expectedFileNames.add("test file 2.txt");
+    expectedFileNames.add("test file 3.txt");
 
     Indexing indexer = new Indexing();
 
@@ -82,8 +87,8 @@ public class IndexingTest {
     // System.out.println(reader.toString());
 
     // get all the file names and contents
-    List<String> titleList = new ArrayList<String>();
-    List<String> contentsList = new ArrayList<String>();
+    Set<String> titleList = new HashSet<String>();
+    Set<String> contentsList = new HashSet<String>();
     for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
       Document d = searcher.doc(docId);
@@ -91,7 +96,7 @@ public class IndexingTest {
       contentsList.add(d.get("contents"));
     }
 
-    Collections.sort(titleList);
+    // Collections.sort(titleList);
     assertEquals("all files must be accounted for and correct", expectedFileNames, titleList);
     assertEquals("all contents must be accounted for and correct", expectedContents, contentsList);
 
@@ -113,7 +118,7 @@ public class IndexingTest {
     CreateDOCX.create(folder.getRoot().toString(), "test file 1.docx", content1);
     CreateDOCX.create(folder.getRoot().toString(), "test file 2.docx", content2);
     CreateDOCX.create(folder.getRoot().toString(), "test file 3.docx", content3);
-    
+
     List<String> expectedFileNames =
         Arrays.asList("test file 1.docx", "test file 2.docx", "test file 3.docx");
 
@@ -145,18 +150,68 @@ public class IndexingTest {
 
     Collections.sort(titleList);
     assertEquals("all files must be accounted for and correct", expectedFileNames, titleList);
-    
+
     Boolean containsContent1 = false;
     Boolean containsContent2 = false;
     Boolean containsContent3 = false;
     for (String content : contentsList) {
       containsContent1 = containsContent1 || content.contains(content1);
       containsContent2 = containsContent2 || content.contains(content2);
-      containsContent3 = containsContent3|| content.contains(content3);
+      containsContent3 = containsContent3 || content.contains(content3);
     }
     assertTrue("Content 1 must be accounted for and correct", containsContent1);
     assertTrue("Content 2 must be accounted for and correct", containsContent2);
     assertTrue("Content 3 must be accounted for and correct", containsContent3);
+
+  }
+
+  @Test
+  public void testDoIndexingHTML() throws IOException, ParseException, NoSuchFieldException,
+      SecurityException, IllegalArgumentException, IllegalAccessException {
+    // create the test html file
+    File file1 = folder.newFile("test html.html");
+    // set content of the html
+    String body =
+        "<!DOCTYPE html>\n" + "<html>\n" + "<body>\n" + "\n" + "<h1>My First Heading</h1>\n"
+            + "<p>My first paragraph.</p>\n" + "\n" + "</body>\n" + "</html>";
+    List<String> bodyText = new ArrayList<String>();
+    bodyText.add(body);
+    // write the html file
+    writeToFile(file1, bodyText);
+
+    List<String> expectedFileNames = Arrays.asList("test html.html");
+    
+    List<String> expectedContent = Arrays.asList("My First Heading My first paragraph.");
+
+    Indexing indexer = new Indexing();
+
+    // indexer.setDocsPath(folder.getRoot().toString());
+    Field field = indexer.getClass().getDeclaredField("docsPath");
+    field.setAccessible(true);
+    field.set(indexer, folder.getRoot().toString());
+    indexer.doIndexing();
+
+    // search for all test files
+    Query q = new QueryParser("fileName", indexer.getAnalyzer()).parse("test");
+    IndexReader reader = DirectoryReader.open(indexer.getIndex());
+    IndexSearcher searcher = new IndexSearcher(reader);
+    TopDocs docs = searcher.search(q, 10);
+    ScoreDoc[] hits = docs.scoreDocs;
+    // System.out.println(reader.toString());
+
+    // get all the file names and contents
+    List<String> titleList = new ArrayList<String>();
+    List<String> contentsList = new ArrayList<String>();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      titleList.add(d.get("fileName"));
+      contentsList.add(d.get("contents"));
+    }
+
+    Collections.sort(titleList);
+    assertEquals("html file must be found.", expectedFileNames, titleList);
+    assertEquals("html content must be as expected.", expectedContent, contentsList);
 
   }
 

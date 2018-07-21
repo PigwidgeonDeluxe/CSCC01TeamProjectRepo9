@@ -118,8 +118,9 @@ public class Indexing {
 
     } else if (fileType.contains("html")) { // if the file is an html
       org.jsoup.nodes.Document html = Jsoup.parse(file, "UTF-8");
-      String text = html.body().text();
-      doc.add(new TextField("contents", text, Field.Store.YES));
+      String contentsString = html.body().text();
+      // add the txt contents
+      doc.add(new TextField("contents", contentsString, Field.Store.YES));
 
     } else { // otherwise if its a generic text file
       Scanner contentsScanner = new Scanner(fr);
