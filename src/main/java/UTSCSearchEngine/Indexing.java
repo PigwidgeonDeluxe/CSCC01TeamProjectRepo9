@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -23,6 +22,8 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.*;
 
 public class Indexing {
 
@@ -99,7 +100,6 @@ public class Indexing {
     doc.add(new TextField("fileType", fileType, Field.Store.YES));
     doc.add(new TextField("userName", userName, Field.Store.YES));
     doc.add(new StringField("userType", userType, Field.Store.YES));
-    Scanner contentsScanner = new Scanner(fr);
     // if the file is a docx
     if (fileType.contains("docx")) {
       List<String> docContents = parseDocContents(file);
@@ -115,10 +115,18 @@ public class Indexing {
       }
       // add the doc contents
       doc.add(new TextField("contents", contentString, Field.Store.YES));
+
+    } else if (fileType.contains("html")) { // if the file is an html
+      org.jsoup.nodes.Document html = Jsoup.parse(file, "UTF-8");
+      String text = html.body().text();
+      doc.add(new TextField("contents", text, Field.Store.YES));
+
     } else { // otherwise if its a generic text file
+      Scanner contentsScanner = new Scanner(fr);
       String contentsString = "";
       if (contentsScanner.hasNextLine()) {
-        contentsString = contentsScanner.useDelimiter("\\A").next().replace("\n", " ").replace("\r", "");
+        contentsString =
+            contentsScanner.useDelimiter("\\A").next().replace("\n", " ").replace("\r", "");
       }
       // add the txt contents
       doc.add(new TextField("contents", contentsString, Field.Store.YES));
