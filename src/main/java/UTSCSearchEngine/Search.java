@@ -54,7 +54,7 @@ public class Search extends HttpServlet {
 		String userNameQuery = req.getParameter("userName");
 		String userTypeQuery = req.getParameter("userType");
 
-		if (fileNameQuery != null && fileTypeQuery != null && userNameQuery != null && userTypeQuery != null) {
+		if (fileNameQuery != null || fileTypeQuery != null || userNameQuery != null || userTypeQuery != null) {
 			/*
 			 * 1. Query object, created that encapusulates the user query
 			 *
