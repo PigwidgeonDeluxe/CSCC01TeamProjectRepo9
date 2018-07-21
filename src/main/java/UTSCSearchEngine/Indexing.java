@@ -128,12 +128,12 @@ public class Indexing {
       PDDocument pdf = PDDocument.load(file);
       PDFTextStripper stripper = new PDFTextStripper();
       stripper.setLineSeparator("\n");
-      stripper.setStartPage(1); // start at the first page
+      // stripper.setStartPage(1); // start at the first page
       // stripper.setEndPage(5);// this mean that it will index the first 5 pages only
-      String contentsString = stripper.getText(pdf);
+      String contentsString = stripper.getText(pdf).replace("\n", " ").replace("\r", "");
       // add the pdf contents
+      // System.out.println("Contents: " + contentsString);
       doc.add(new TextField("contents", contentsString, Field.Store.YES));
-      
     } else { // otherwise if its a generic text file or ortherwise
 
       Scanner contentsScanner = new Scanner(fr);
