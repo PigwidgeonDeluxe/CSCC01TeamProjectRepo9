@@ -25,7 +25,6 @@ import org.apache.poi.EmptyFileException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.*;
 
 public class Indexing {
 

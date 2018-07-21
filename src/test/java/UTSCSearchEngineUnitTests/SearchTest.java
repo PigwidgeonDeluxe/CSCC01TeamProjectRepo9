@@ -23,6 +23,11 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -262,8 +267,6 @@ public class SearchTest {
 
     List<String> expectedFileNames = Arrays.asList("test html.html");
 
-    List<String> expectedContent = Arrays.asList("My First Heading My first paragraph.");
-
     Indexing indexer = new Indexing();
 
     Field field = indexer.getClass().getDeclaredField("docsPath");
@@ -284,6 +287,38 @@ public class SearchTest {
     }
     Collections.sort(case1List);
     assertEquals("improperly matched files", expectedFileNames, case1List);
+  }
+  
+  @Test
+  public void testSearchByContentPDF()
+      throws InvalidPasswordException, IOException, IllegalArgumentException,
+      IllegalAccessException, NoSuchFieldException, SecurityException, ParseException {
+ // create new pdf file
+    createTestPdf();
+    
+    List<String> expectedFileNames = Arrays.asList("test file.pdf");
+    
+    Indexing indexer = new Indexing();
+    
+    Field field = indexer.getClass().getDeclaredField("docsPath");
+    field.setAccessible(true);
+    field.set(indexer, folder.getRoot().toString());
+    indexer.doIndexing();
+
+    Query q = new QueryParser("contents", indexer.getAnalyzer()).parse("fox");
+    IndexReader reader = DirectoryReader.open(indexer.getIndex());
+    IndexSearcher searcher = new IndexSearcher(reader);
+    TopDocs docs = searcher.search(q, 10);
+    ScoreDoc[] hits = docs.scoreDocs;
+    List<String> case1List = new ArrayList<>();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      case1List.add(d.get("fileName"));
+    }
+    Collections.sort(case1List);
+    assertEquals("improperly matched files", expectedFileNames, case1List);
+
   }
 
   /**
@@ -307,5 +342,42 @@ public class SearchTest {
       out.println(line);
     }
     out.close();
+  }
+  
+  private void createTestPdf() throws InvalidPasswordException, IOException {
+
+    PDDocument document = new PDDocument();
+     
+    //Retrieving the pages of the document 
+    PDPage page = new PDPage();
+    PDPageContentStream contentStream = new PDPageContentStream(document, page);
+    
+    //Begin the Content stream 
+    contentStream.beginText(); 
+     
+    //Setting the font to the Content stream  
+    contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
+
+    //Setting the position for the line 
+    contentStream.newLineAtOffset(25, 500);
+
+    String text = "The quick brown fox jumps over the lazy dog.";
+
+    //Adding text in the form of string 
+    contentStream.showText(text);      
+
+    //Ending the content stream
+    contentStream.endText();
+
+    System.out.println("Content added");
+
+    //Closing the content stream
+    contentStream.close();
+    document.addPage(page);
+    //Saving the document
+    document.save(new File(folder.getRoot() + "/test file.pdf"));
+
+    //Closing the document
+    document.close();
   }
 }

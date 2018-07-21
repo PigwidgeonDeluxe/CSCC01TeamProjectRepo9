@@ -221,14 +221,15 @@ public class IndexingTest {
   }
 
   @Test
-  public void testDoIndexingPDF() throws IOException, ParseException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+  public void testDoIndexingPDF() throws IOException, ParseException, NoSuchFieldException,
+      SecurityException, IllegalArgumentException, IllegalAccessException {
     // create new pdf file
     createTestPdf();
-    
+
     List<String> expectedFileNames = Arrays.asList("test file.pdf");
 
     List<String> expectedContent = Arrays.asList("The quick brown fox jumps over the lazy dog. ");
-    
+
     Indexing indexer = new Indexing();
 
     // indexer.setDocsPath(folder.getRoot().toString());
@@ -334,41 +335,41 @@ public class IndexingTest {
     }
     out.close();
   }
-  
+
   private void createTestPdf() throws InvalidPasswordException, IOException {
 
     PDDocument document = new PDDocument();
-     
-    //Retrieving the pages of the document 
+
+    // Retrieving the pages of the document
     PDPage page = new PDPage();
     PDPageContentStream contentStream = new PDPageContentStream(document, page);
-    
-    //Begin the Content stream 
-    contentStream.beginText(); 
-     
-    //Setting the font to the Content stream  
+
+    // Begin the Content stream
+    contentStream.beginText();
+
+    // Setting the font to the Content stream
     contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
 
-    //Setting the position for the line 
+    // Setting the position for the line
     contentStream.newLineAtOffset(25, 500);
 
     String text = "The quick brown fox jumps over the lazy dog.";
 
-    //Adding text in the form of string 
-    contentStream.showText(text);      
+    // Adding text in the form of string
+    contentStream.showText(text);
 
-    //Ending the content stream
+    // Ending the content stream
     contentStream.endText();
 
     System.out.println("Content added");
 
-    //Closing the content stream
+    // Closing the content stream
     contentStream.close();
     document.addPage(page);
-    //Saving the document
+    // Saving the document
     document.save(new File(folder.getRoot() + "/test file.pdf"));
 
-    //Closing the document
+    // Closing the document
     document.close();
   }
 
