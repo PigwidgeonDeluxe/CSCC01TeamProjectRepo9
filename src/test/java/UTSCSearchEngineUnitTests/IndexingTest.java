@@ -2,33 +2,20 @@ package UTSCSearchEngineUnitTests;
 
 import UTSCSearchEngine.Database;
 import UTSCSearchEngine.Search;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.*;
-import org.apache.lucene.queryparser.classic.*;
-import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import UTSCSearchEngine.Indexing;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -81,7 +68,6 @@ public class IndexingTest {
     search.doGet(mockRequest, mockResponse);
 
     stringWriter.flush();
-    System.out.println(stringWriter.toString());
     assertTrue(stringWriter.toString().contains("test file.txt~txt~test user~0~student"));
   }
 
