@@ -19,6 +19,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -119,10 +121,21 @@ public class Indexing {
     } else if (fileType.contains("html")) { // if the file is an html
       org.jsoup.nodes.Document html = Jsoup.parse(file, "UTF-8");
       String contentsString = html.body().text();
-      // add the txt contents
+      // add the html contents
       doc.add(new TextField("contents", contentsString, Field.Store.YES));
 
-    } else { // otherwise if its a generic text file
+    } else if (fileType.contains("pdf")) { // if the file is a pdf
+      PDDocument pdf = PDDocument.load(file);
+      PDFTextStripper stripper = new PDFTextStripper();
+      stripper.setLineSeparator("\n");
+      stripper.setStartPage(1); // start at the first page
+      // stripper.setEndPage(5);// this mean that it will index the first 5 pages only
+      String contentsString = stripper.getText(pdf);
+      // add the pdf contents
+      doc.add(new TextField("contents", contentsString, Field.Store.YES));
+      
+    } else { // otherwise if its a generic text file or ortherwise
+
       Scanner contentsScanner = new Scanner(fr);
       String contentsString = "";
       if (contentsScanner.hasNextLine()) {

@@ -180,7 +180,7 @@ public class IndexingTest {
     writeToFile(file1, bodyText);
 
     List<String> expectedFileNames = Arrays.asList("test html.html");
-    
+
     List<String> expectedContent = Arrays.asList("My First Heading My first paragraph.");
 
     Indexing indexer = new Indexing();
@@ -215,6 +215,10 @@ public class IndexingTest {
 
   }
 
+  @Test
+  public void testDoIndexingPDF() {
+
+  }
 
   @Test
   public void testSetDocsPath() throws NoSuchFieldException, SecurityException,
