@@ -246,6 +246,46 @@ public class SearchTest {
     assertEquals("improperly matched files", testCase, case1List);
   }
 
+  @Test
+  public void testSearchByContentHTML()
+      throws NoSuchFieldException, IllegalAccessException, ParseException, IOException {
+    // create the test html file
+    File file1 = folder.newFile("test html.html");
+    // set content of the html
+    String body =
+        "<!DOCTYPE html>\n" + "<html>\n" + "<body>\n" + "\n" + "<h1>My First Heading</h1>\n"
+            + "<p>My first paragraph.</p>\n" + "\n" + "</body>\n" + "</html>";
+    List<String> bodyText = new ArrayList<String>();
+    bodyText.add(body);
+    // write the html file
+    writeToFile(file1, bodyText);
+
+    List<String> expectedFileNames = Arrays.asList("test html.html");
+
+    List<String> expectedContent = Arrays.asList("My First Heading My first paragraph.");
+
+    Indexing indexer = new Indexing();
+
+    Field field = indexer.getClass().getDeclaredField("docsPath");
+    field.setAccessible(true);
+    field.set(indexer, folder.getRoot().toString());
+    indexer.doIndexing();
+
+    Query q = new QueryParser("contents", indexer.getAnalyzer()).parse("First");
+    IndexReader reader = DirectoryReader.open(indexer.getIndex());
+    IndexSearcher searcher = new IndexSearcher(reader);
+    TopDocs docs = searcher.search(q, 10);
+    ScoreDoc[] hits = docs.scoreDocs;
+    List<String> case1List = new ArrayList<>();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      case1List.add(d.get("fileName"));
+    }
+    Collections.sort(case1List);
+    assertEquals("improperly matched files", expectedFileNames, case1List);
+  }
+
   /**
    * Method that writes to given file for given contents
    * 
