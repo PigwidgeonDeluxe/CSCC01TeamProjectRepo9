@@ -45,6 +45,12 @@ public class Search extends HttpServlet {
 		index = indexer.getIndex();
 	}
 
+	static void refreshIndexer() {
+		indexer = new Indexing();
+		analyzer = indexer.getAnalyzer();
+		index = indexer.getIndex();
+	}
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain");
@@ -62,6 +68,7 @@ public class Search extends HttpServlet {
 			 *
 			 * 3. IndexSearcher that allows you to take the query and search the index.
 			 */
+  
 
 			BooleanQuery.Builder boolQuery = new BooleanQuery.Builder();
 

@@ -2,9 +2,11 @@ package UTSCSearchEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.commons.io.FileUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -13,15 +15,16 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 
 public class Indexing {
-  
+
   private String docsPath = "./src/main/resources/"; // default index directory
   private StandardAnalyzer analyzer = null;
   private Directory index = null;
   private Path docDir = null;
-  
+
   /**
    * Initialize and perform indexing with a given path, analyzer, to index (RAMDirectory)
    */
@@ -39,9 +42,10 @@ public class Indexing {
       System.err.println(e);
     }
   }
-  
+
   /**
    * Index all the documents for a given Path
+   * 
    * @param w
    * @param currentPath
    * @throws IOException
@@ -66,9 +70,10 @@ public class Indexing {
           .substring(currentPath.getFileName().toString().lastIndexOf('.') + 1), "user", "student");
     }
   }
-  
+
   /**
    * Add all the documents' attributes to the index
+   * 
    * @param w
    * @param fileName
    * @param fileType
@@ -92,15 +97,15 @@ public class Indexing {
   public void setDocsPath(String docsPath) {
     this.docsPath = docsPath;
   }
-  
+
   public Directory getIndex() {
     return this.index;
   }
-  
+
   public StandardAnalyzer getAnalyzer() {
     return this.analyzer;
   }
-  
+
   public Path getDocDir() {
     return this.docDir;
   }
