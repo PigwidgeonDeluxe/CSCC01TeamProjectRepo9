@@ -45,10 +45,9 @@ public class IndexingTest {
     String file2Line2 = "Line 2 bar";
 
     List<String> expectedContents = new ArrayList<String>();
-    expectedContents.add("Line 1 foo\nLine 2 fighters\n");
-    expectedContents.add("Line 1 foo\nLine 2 fighters\n");
-    expectedContents.add("Line 1 foo\nLine 2 bar\n");
-
+    expectedContents.add("Line 1 foo Line 2 fighters ");
+    expectedContents.add("Line 1 foo Line 2 bar ");
+    expectedContents.add("Line 1 foo Line 2 fighters ");
 
     // set up contents for the test files
     List<String> file1Contents = new ArrayList<String>();

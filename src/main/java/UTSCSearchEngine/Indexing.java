@@ -118,7 +118,7 @@ public class Indexing {
     } else { // otherwise if its a generic text file
       String contentsString = "";
       if (contentsScanner.hasNextLine()) {
-        contentsString = contentsScanner.useDelimiter("\\A").next();
+        contentsString = contentsScanner.useDelimiter("\\A").next().replace("\n", " ").replace("\r", "");
       }
       // add the txt contents
       doc.add(new TextField("contents", contentsString, Field.Store.YES));
