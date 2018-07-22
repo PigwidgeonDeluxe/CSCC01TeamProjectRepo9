@@ -1,14 +1,3 @@
-<!-- <nav *ngIf="!userInfo">
-  <label class="heading">Login</label>
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-      <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    </li>
-    <li class="breadcrumb-item">
-      <button class="btn btn-sm btn-primary" type="button">Register</button>
-    </li>
-  </ol>
-</nav> -->
 <div *ngIf="!userInfo" class="card mb-3">
   <div class="card-body">
     <div class="row">
@@ -36,9 +25,11 @@
       </div>
       <div class="col text-right">
         <label class="btn btn-sm btn-primary" style="margin: 0">
-          Upload <input (change)="upload($event.target.files)" type="file" style="display: none" multiple>
+          <i class="fa fa-upload"></i> Upload <input (change)="upload($event.target.files)" type="file" style="display: none" multiple>
         </label>
-        <button (click)="signOut(true)" type="button" class="btn btn-sm btn-secondary">Logout</button>
+        <button (click)="signOut(true)" type="button" class="btn btn-sm btn-secondary">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
       </div>
     </div>
   </div>
