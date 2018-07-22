@@ -1,0 +1,34 @@
+<div class="container content-row">
+  <div class="row" style="margin-top: 10%">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <label class="heading">User Type</label>
+              <div id="optionsList" class="form-group">
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" value="1" [(ngModel)]="registerUserType">
+                  <label class="form-check-label">Student</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" value="2" [(ngModel)]="registerUserType">
+                  <label class="form-check-label">Instructor</label>
+                </div>
+              </div>
+              <label class="heading">Register with Google</label>
+              <div class="g-signin2" data-onsuccess="onRegister"></div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col">
+              <a href="/">
+                <button class="btn btn-sm btn-danger" type="button">Back</button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
