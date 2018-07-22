@@ -1,36 +1,34 @@
 package UTSCSearchEngineUnitTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-
-import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockMultipartHttpServletRequest;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import UTSCSearchEngine.FileUpload;
 
@@ -40,20 +38,15 @@ public class FileUploadTest extends Mockito{
 	public TemporaryFolder folder = new TemporaryFolder();
 	
 	@Test
-	public void UploadFileTest() throws IOException {
+	public void UploadFileTest() throws Exception {
+		String testName = "testFile.txt";
+		String fileContents = "contents of testing file";
 		
 		// mock upload files and upload destination	
-		File testFile = folder.newFile ("testFile.txt");
-		File testFolder = folder.newFolder ("destination");
-		// ??? is what boundary is set as
-		String fileContents = "contents of testing file???";
-		// to test if file exists
-		File expect = new File(testFolder.toString() + "testFile.txt");
+		File testFile = folder.newFile (testName);
 		// allow access to read and write
 		testFile.setWritable(true);
 		testFile.setReadable(true);
-		testFolder.setWritable(true);
-		testFolder.setReadable(true);
 		// write some contents of testFile
 		Writer writer = new FileWriter(testFile.toString());
 		BufferedWriter bufferedWriter = new BufferedWriter(writer);
@@ -62,41 +55,44 @@ public class FileUploadTest extends Mockito{
 		bufferedWriter.flush();
 		bufferedWriter.close();
 		
-		// mock input stream for request
-		InputStream in = new ByteArrayInputStream (fileContents.getBytes());
-		ServletInputStream servletInputStream=mock(ServletInputStream.class);
 		// mock objects
-		HttpServletResponse res = mock(HttpServletResponse.class);
-		// HttpServletRequest req = mock(HttpServletRequest.class);
-		MockMultipartHttpServletRequest req = mock(MockMultipartHttpServletRequest.class);
-		MultipartFile contents = new MockMultipartFile(testFile.getName(),testFile.getName(),"text/*", in);
-		req.addFile(contents);
-		req.setContent(createFileContent(fileContents.getBytes(),"???","text/*",testFile.getName()));
-		req.setMethod("POST");
-		// mock request behaviour
-		when(req.getContentType()).thenReturn("multipart/form-data; boundary=???");
-		when(req.getContentLength()).thenReturn(in.available());
-		when(req.getCharacterEncoding()).thenReturn("UTF-8");
-		when(req.getInputStream()).thenReturn(servletInputStream);
-		when(servletInputStream.read()).thenReturn(in.read());
-		
+		List<FileItem> multifiles = new ArrayList<FileItem>();
+		DiskFileItem file = new DiskFileItem("fileData", "text/plain", true, testName, fileContents.length(), testFile.getParentFile());
+		InputStream input =  new FileInputStream(testFile);
+		OutputStream os = file.getOutputStream();
+		IOUtils.copy(input, os);
+		multifiles.add(file);
+
 		// set upload destination in class
 		FileUpload testUpload = new FileUpload();
-		testUpload.setDocsPath(testFolder.toString());
+		testUpload.setDocsPath("./");
 		
 		// test upload document with method
-		testUpload.doPost((HttpServletRequest)req, res);
-		// close input stream
-		in.close();
-		// check if file exist in test folder
-		assertEquals("unsuccessful upload", true, expect.exists());
-	}
-	
-    public byte[] createFileContent(byte[] data, String boundary, String contentType, String fileName){
-        String start = "--" + boundary + "\r\n Content-Disposition: form-data; name=\"file\"; filename=\""+fileName+"\"\r\n"
-                 + "Content-type: "+contentType+"\r\n\r\n";;
+		testUpload.upload(multifiles);
 
-        String end = "\r\n--" + boundary + "--"; // correction suggested @butfly 
-        return ArrayUtils.addAll(start.getBytes(),ArrayUtils.addAll(data,end.getBytes()));
-    }
+		// check if file exist in test folder
+		File expect = new File("./" + testName);
+		boolean result = expect.exists();
+		// only delete if unsuccessful upload
+		if(!result) Files.deleteIfExists(Paths.get(expect.toString()));
+		assertEquals("unsuccessful upload", true, result);
+		// check contents of file are the same
+		if(result){
+			// read file and check if last line has
+			String line = null;
+			String content_result = "";
+			BufferedReader br = new BufferedReader(new FileReader(expect.toString()));
+			while ((line = br.readLine()) != null) {
+				content_result = content_result + line;
+			}
+			br.close();
+
+			// test if file contents in right location
+			Files.deleteIfExists(Paths.get(expect.toString()));
+			assertEquals("Contents of file are not the same", fileContents, content_result);
+		} else {
+			Files.deleteIfExists(Paths.get(expect.toString()));
+			fail("testFile.txt does not exist");
+		}
+	}
 }
