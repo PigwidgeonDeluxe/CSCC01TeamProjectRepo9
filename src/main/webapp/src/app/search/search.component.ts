@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import * as FileSaver from 'file-saver';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-search',
@@ -56,7 +57,13 @@ export class SearchComponent implements OnInit {
       }
     });
 
-    console.log(this.results);
+    if (this.results.length === 0) {
+      swal({
+        title: 'No Results',
+        type: 'warning',
+        text: 'No results found'
+      });
+    }
   }
 
   downloadFile(fileName: string, uploadDate: string) {
