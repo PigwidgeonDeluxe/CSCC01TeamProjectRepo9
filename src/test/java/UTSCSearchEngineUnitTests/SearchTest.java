@@ -1,21 +1,28 @@
 package UTSCSearchEngineUnitTests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import UTSCSearchEngine.Database;
+import UTSCSearchEngine.Indexing;
 import UTSCSearchEngine.Search;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.RAMDirectory;
 import org.junit.Before;
+import java.lang.reflect.Field;
 import org.junit.Test;
 
 public class SearchTest {
@@ -63,29 +70,12 @@ public class SearchTest {
     String htmlFileName = "test file.html";
     String htmlFileType = "html";
     db.insertFileData(htmlContent, htmlFileName, htmlFileType, uploaderName, uploaderType);
-  }
 
-  @Test
-  public void testDoIndexing() throws IOException {
-
-    Search search = new Search();
-
-    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter printWriter = new PrintWriter(stringWriter);
-
-    when(mockRequest.getParameter("fileName")).thenReturn("test");
-    when(mockResponse.getWriter()).thenReturn(printWriter);
-
-    search.callIndexing(this.url);
-    search.doGet(mockRequest, mockResponse);
-
-    stringWriter.flush();
-    assertTrue(stringWriter.toString().contains("test file.txt"));
-    assertTrue(stringWriter.toString().contains("txt"));
-    assertTrue(stringWriter.toString().contains("test user"));
-    assertTrue(stringWriter.toString().contains("student"));
+    // insert a PDF file
+    byte[] pdfContent = TestUtils.createPdfFile("this is some sample text").toByteArray();
+    String pdfFileName = "test file.pdf";
+    String pdfFileType = "pdf";
+    db.insertFileData(pdfContent, pdfFileName, pdfFileType, uploaderName, uploaderType);
   }
 
   @Test
@@ -129,6 +119,26 @@ public class SearchTest {
   }
 
   @Test
+  public void testDoIndexingPdf() throws IOException {
+
+    Search search = new Search();
+
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter);
+
+    when(mockRequest.getParameter("fileType")).thenReturn("pdf");
+    when(mockResponse.getWriter()).thenReturn(printWriter);
+
+    search.callIndexing(this.url);
+    search.doGet(mockRequest, mockResponse);
+
+    stringWriter.flush();
+    assertTrue(stringWriter.toString().contains("this is some sample text"));
+  }
+
+  @Test
   public void testDoIndexingHtml() throws IOException {
 
     Search search = new Search();
@@ -146,5 +156,44 @@ public class SearchTest {
 
     stringWriter.flush();
     assertTrue(stringWriter.toString().contains("my first paragraph"));
+  }
+
+  @Test
+  public void testGetIndex() throws NoSuchFieldException, SecurityException,
+      IllegalArgumentException, IllegalAccessException {
+    Indexing indexer = new Indexing();
+    Directory testDir = new RAMDirectory();
+    Field field = indexer.getClass().getDeclaredField("index");
+    field.setAccessible(true);
+    field.set(indexer, testDir);
+    final Directory result = indexer.getIndex();
+
+    assertEquals("Directory wasn't retrieved properly", testDir, result);
+  }
+
+  @Test
+  public void testGetAnalyzer() throws NoSuchFieldException, SecurityException,
+      IllegalArgumentException, IllegalAccessException {
+    Indexing indexer = new Indexing();
+    StandardAnalyzer testAnalyzer = new StandardAnalyzer();
+    Field field = indexer.getClass().getDeclaredField("analyzer");
+    field.setAccessible(true);
+    field.set(indexer, testAnalyzer);
+    final StandardAnalyzer result = indexer.getAnalyzer();
+
+    assertEquals("Analyzer wasn't retrieved properly", testAnalyzer, result);
+  }
+
+  @Test
+  public void testGetDocDir() throws NoSuchFieldException, SecurityException,
+      IllegalArgumentException, IllegalAccessException {
+    Indexing indexer = new Indexing();
+    Path testPath = null;
+    Field field = indexer.getClass().getDeclaredField("analyzer");
+    field.setAccessible(true);
+    field.set(indexer, testPath);
+    final Path result = indexer.getDocDir();
+
+    assertEquals("Path wasn't retrieved properly", testPath, result);
   }
 }

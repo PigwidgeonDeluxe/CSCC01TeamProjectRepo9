@@ -69,6 +69,12 @@ public class IndexingTest {
     String htmlFileName = "test file.html";
     String htmlFileType = "html";
     db.insertFileData(htmlContent, htmlFileName, htmlFileType, uploaderName, uploaderType);
+
+    // insert a PDF file
+    byte[] pdfContent = TestUtils.createPdfFile("this is some sample text").toByteArray();
+    String pdfFileName = "test file.pdf";
+    String pdfFileType = "pdf";
+    db.insertFileData(pdfContent, pdfFileName, pdfFileType, uploaderName, uploaderType);
   }
 
   @Test
@@ -135,6 +141,26 @@ public class IndexingTest {
   }
 
   @Test
+  public void testDoIndexingPdf() throws IOException {
+
+    Search search = new Search();
+
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter);
+
+    when(mockRequest.getParameter("fileType")).thenReturn("pdf");
+    when(mockResponse.getWriter()).thenReturn(printWriter);
+
+    search.callIndexing(this.url);
+    search.doGet(mockRequest, mockResponse);
+
+    stringWriter.flush();
+    assertTrue(stringWriter.toString().contains("this is some sample text"));
+  }
+
+  @Test
   public void testDoIndexingHtml() throws IOException {
 
     Search search = new Search();
@@ -165,7 +191,6 @@ public class IndexingTest {
     final Directory result = indexer.getIndex();
 
     assertEquals("Directory wasn't retrieved properly", testDir, result);
-
   }
 
   @Test
@@ -193,5 +218,4 @@ public class IndexingTest {
 
     assertEquals("Path wasn't retrieved properly", testPath, result);
   }
-
 }

@@ -1,10 +1,12 @@
 package UTSCSearchEngineUnitTests;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -16,7 +18,6 @@ public class TestUtils {
 
     XWPFDocument doc = new XWPFDocument();
 
-    // setup document
     XWPFParagraph paragraph = doc.createParagraph();
     paragraph.setAlignment(ParagraphAlignment.LEFT);
     XWPFRun paragraphRun = paragraph.createRun();
@@ -24,6 +25,27 @@ public class TestUtils {
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     doc.write(out);
+    doc.close();
+    return out;
+  }
+
+  public static ByteArrayOutputStream createPdfFile(String content) throws IOException {
+
+    PDDocument doc = new PDDocument();
+
+    PDPage page = new PDPage();
+    PDPageContentStream contentStream = new PDPageContentStream(doc, page);
+
+    contentStream.beginText();
+    contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
+    contentStream.newLineAtOffset(25, 500);
+    contentStream.showText(content);
+    contentStream.close();
+
+    doc.addPage(page);
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    doc.save(out);
+    doc.close();
     return out;
   }
 }

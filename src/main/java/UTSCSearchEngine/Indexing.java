@@ -18,6 +18,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -120,7 +122,6 @@ public class Indexing {
       String userType, String fileSize, String uploadDate, byte[] fileContents) throws IOException {
     Document doc = new Document();
     InputStream in = new ByteArrayInputStream(fileContents);
-//    FileReader fr = new FileReader(file);
 
     // add the values to the index
     doc.add(new TextField("fileName", fileName, Field.Store.YES));
@@ -131,7 +132,8 @@ public class Indexing {
     doc.add(new TextField("uploadDate", uploadDate, Field.Store.YES));
 
     // restrict content analysis
-    if (fileType.contains("docx") || fileType.contains("html") || fileType.contains("txt")) {
+    if (fileType.contains("docx") || fileType.contains("html") || fileType.contains("txt") ||
+        fileType.contains("pdf")) {
       // if the file is a docx
       if (fileType.contains("docx")) {
         List<String> docContents = parseDocContents(fileContents);
@@ -152,6 +154,15 @@ public class Indexing {
         org.jsoup.nodes.Document html = Jsoup.parse(in, "UTF-8", "/");
         String contentsString = html.body().text();
         // add the txt contents
+        doc.add(new TextField("contents", contentsString, Field.Store.YES));
+
+      } else if (fileType.contains("pdf")) { // if the file is a pdf
+        PDDocument pdf = PDDocument.load(fileContents);
+        PDFTextStripper stripper = new PDFTextStripper();
+        stripper.setLineSeparator("\n");
+        String contentsString = stripper.getText(pdf).replace("\n",
+            " ").replace("\r", "");
+        pdf.close();
         doc.add(new TextField("contents", contentsString, Field.Store.YES));
 
       } else { // otherwise if its a generic text file
