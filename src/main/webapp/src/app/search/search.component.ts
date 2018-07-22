@@ -40,7 +40,7 @@ export class SearchComponent implements OnInit {
   getSearchResults(queryParam) {
     this.http.open('GET', this.TOMCAT_URL + '/search?' + queryParam + '=' + this.searchQuery, false);
     this.http.send(null);
-    const resp = this.http.response.split('\n');
+    const resp = this.http.response.split('"\n');
     this.results = [];
     resp.forEach(element => {
       if (element.length > 0) {
@@ -50,10 +50,13 @@ export class SearchComponent implements OnInit {
           'userName': element.split('~')[2],
           'fileSize': Math.round(+element.split('~')[3] / 1000),
           'userType': element.split('~')[4],
-          'uploadDate': +element.split('~')[5]
+          'uploadDate': +element.split('~')[5],
+          'fileContent': element.split('~')[6]
         });
       }
     });
+
+    console.log(this.results);
   }
 
   downloadFile(fileName: string, uploadDate: string) {

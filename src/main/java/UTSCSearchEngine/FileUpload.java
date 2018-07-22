@@ -13,7 +13,6 @@ import org.json.JSONObject;
 @WebServlet("/upload")
 public class FileUpload extends HttpServlet {
 
-  private static final long serialVersionUID = 1L;
   private Indexing indexer = new Indexing();
 
   @Override
