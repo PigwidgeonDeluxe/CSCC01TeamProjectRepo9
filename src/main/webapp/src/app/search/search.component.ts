@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
 import * as FileSaver from 'file-saver';
-import { toBase64String } from '../../../node_modules/@angular/compiler/src/output/source_map';
 
 @Component({
   selector: 'app-search',
