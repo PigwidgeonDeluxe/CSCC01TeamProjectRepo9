@@ -27,10 +27,9 @@ import org.apache.lucene.store.Directory;
 public class Search extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static String docsPath = "./src/main/resources/";
-	private static StandardAnalyzer analyzer = null;
+	private StandardAnalyzer analyzer = null;
 	private static Directory index = null;
-	private static Indexing indexer = new Indexing();
+	private Indexing indexer = new Indexing();
 
 	public void init(ServletConfig config1) throws ServletException {
 		super.init(config1);
@@ -39,20 +38,14 @@ public class Search extends HttpServlet {
 		System.out.println("Finished: init");
 	}
 
-	private static void callIndexing() {
-		indexer.doIndexing();
-		analyzer = indexer.getAnalyzer();
-		index = indexer.getIndex();
-	}
-
-	static void refreshIndexer() {
-		indexer = new Indexing();
-		analyzer = indexer.getAnalyzer();
+	public void callIndexing() {
+		this.indexer.doIndexing();
+		this.analyzer = indexer.getAnalyzer();
 		index = indexer.getIndex();
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain");
 
 		String fileNameQuery = req.getParameter("fileName");
@@ -61,14 +54,6 @@ public class Search extends HttpServlet {
 		String userTypeQuery = req.getParameter("userType");
 
 		if (fileNameQuery != null || fileTypeQuery != null || userNameQuery != null || userTypeQuery != null) {
-			/*
-			 * 1. Query object, created that encapusulates the user query
-			 *
-			 * 2. IndexReader that allows you to read the index.
-			 *
-			 * 3. IndexSearcher that allows you to take the query and search the index.
-			 */
-
 			BooleanQuery.Builder boolQuery = new BooleanQuery.Builder();
 
 			if (fileNameQuery != null) {
@@ -87,23 +72,34 @@ public class Search extends HttpServlet {
 				Query userTypeQ = new TermQuery(new Term("userType", userTypeQuery));
 				boolQuery.add(userTypeQ, BooleanClause.Occur.SHOULD);
 			}
-
-			int hitsPerPage = 10;
-			IndexReader reader = DirectoryReader.open(index);
-			IndexSearcher searcher = new IndexSearcher(reader);
-
-			TopDocs docs = searcher.search(boolQuery.build(), hitsPerPage);
-			ScoreDoc[] hits = docs.scoreDocs;
-			StringBuilder responseBackToUser = new StringBuilder();
-			for (int i = 0; i < hits.length; ++i) {
-				int docId = hits[i].doc;
-				Document d = searcher.doc(docId);
-				responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-" + d.get("userType") + "-"
-						+ d.get("userName") + "\n");
-			}
-			resp.setHeader("Access-Control-Allow-Origin", "*");
-			resp.getWriter().write(responseBackToUser.toString());
-
+			Query q = boolQuery.build();
+			search(q, resp);
 		}
+	}
+
+	/**
+	 * Search for Query q and return a response to the user containing the requested
+	 * information
+	 * 
+	 * @param q
+	 * @param resp
+	 * @throws IOException
+	 */
+	private static void search(Query q, HttpServletResponse resp) throws IOException {
+		int hitsPerPage = 10;
+		IndexReader reader = DirectoryReader.open(index);
+		IndexSearcher searcher = new IndexSearcher(reader);
+		TopDocs docs = searcher.search(q, hitsPerPage);
+		ScoreDoc[] hits = docs.scoreDocs;
+		StringBuilder responseBackToUser = new StringBuilder();
+		for (int i = 0; i < hits.length; ++i) {
+			int docId = hits[i].doc;
+			Document d = searcher.doc(docId);
+			responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~" + d.get("userType") + "~"
+					+ d.get("userName") + "~" + d.get("fileSize") + "~" + d.get("uploadDate") + "~" + "\""
+					+ d.get("contents").substring(0, Math.min(d.get("contents").length(), 160)) + "\"\n");
+		}
+		resp.setHeader("Access-Control-Allow-Origin", "*");
+		resp.getWriter().write(responseBackToUser.toString());
 	}
 }

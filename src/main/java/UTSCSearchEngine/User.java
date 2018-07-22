@@ -8,6 +8,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import java.security.GeneralSecurityException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import org.json.JSONObject;
 import javax.servlet.annotation.WebServlet;
@@ -30,57 +32,41 @@ import java.util.stream.Collectors;
 @WebServlet("/user")
 public class User extends HttpServlet {
 
-  private static String docsPath = "./src/main/resources/";
-
-  public void setDocsPath(String docsPath) {
-    this.docsPath = docsPath;
-  }
-
   private void processRequest(HttpServletRequest req, HttpServletResponse resp, String postBody) {
     GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
         new JacksonFactory())
         .setAudience(Collections.singletonList("262727309060-6bg972cbt6p1k27318l7ubk8saflsski.apps.googleusercontent.com"))
         .build();
+
+    Database db = new Database();
     JSONObject response = new JSONObject();
 
     String createUserQuery = req.getParameter("create");
     if (createUserQuery != null) {
       JSONObject json = new JSONObject(postBody);
-      Path path = Paths.get(docsPath + "users.csv");
 
       try {
         GoogleIdToken idToken = verifier.verify(json.getString("token"));
         if (idToken != null) {
           Payload payload = idToken.getPayload();
-          boolean userExists = false;
+          String userId = payload.getSubject();
 
           try {
-            Scanner scanner = new Scanner(new File(docsPath + "users.csv"));
-            while (scanner.hasNext()) {
-              String[] user = scanner.next().split(",");
-              String userId = payload.getSubject();
-              if (user[0].equals(userId)) {
-                userExists = true;
-              }
+            ResultSet rs = db.getUserById(userId);
+            if (rs.next()) {
+              // user already exists
+              response.put("status", "FAILURE");
+              response.put("message", "User already exists");
+              resp.getWriter().write(response.toString());
+            } else {
+              // user doesn't exist
+              db.insertUser(userId, json.getString("userType"));
+              response.put("status", "SUCCESS");
+              response.put("message", "Successfully created new " + json.getString("userType"));
+              resp.getWriter().write(response.toString());
             }
-          } catch (FileNotFoundException ex) {
+          } catch (SQLException ex) {
             ex.printStackTrace();
-          }
-
-          // package client response
-          if (!userExists) {
-            response.put("status", "SUCCESS");
-            response.put("message", "Successfully created new " + json.getString("userType"));
-
-            // save user data
-            String userId = payload.getSubject();
-            List<String> lines = Arrays.asList(userId + "," + json.getString("userType"));
-            Files.write(path, lines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            resp.getWriter().write(response.toString());
-          } else {
-            response.put("status", "FAILURE");
-            response.put("message", "User already exists");
-            resp.getWriter().write(response.toString());
           }
         } else {
           response.put("status", "FAILURE");
@@ -102,33 +88,23 @@ public class User extends HttpServlet {
         GoogleIdToken idToken = verifier.verify(json.getString("token"));
         if (idToken != null) {
           Payload payload = idToken.getPayload();
-          boolean userExists = false;
+          String userId = payload.getSubject();
 
-          // get client data
           try {
-            Scanner scanner = new Scanner(new File(docsPath + "users.csv"));
-
-            while (scanner.hasNext()) {
-              String[] user = scanner.next().split(",");
-              String userId = payload.getSubject();
-              if (user[0].equals(userId)) {
-                response.put("userType", user[1]);
-                userExists = true;
-              }
+            ResultSet rs = db.getUserById(userId);
+            if (rs.next()) {
+              // user exists
+              response.put("status", "SUCCESS");
+              response.put("message", "Successfully logged in");
+              resp.getWriter().write(response.toString());
+            } else {
+              // user doesn't exist
+              response.put("status", "FAILURE");
+              response.put("message", "User does not exist");
+              resp.getWriter().write(response.toString());
             }
-          } catch (FileNotFoundException ex) {
+          } catch (SQLException ex) {
             ex.printStackTrace();
-          }
-
-          // package client response
-          if (userExists) {
-            response.put("status", "SUCCESS");
-            response.put("message", "Successfully logged in");
-            resp.getWriter().write(response.toString());
-          } else {
-            response.put("status", "FAILURE");
-            response.put("message", "User does not exist");
-            resp.getWriter().write(response.toString());
           }
         } else {
           response.put("status", "FAILURE");
@@ -141,7 +117,6 @@ public class User extends HttpServlet {
         ex.printStackTrace();
       }
     }
-
   }
 
   @Override

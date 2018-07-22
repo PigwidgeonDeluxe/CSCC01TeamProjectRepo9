@@ -244,4 +244,78 @@ public class SearchTest {
 		Collections.sort(case1List);
 		assertEquals("improperly matched files", testCase, case1List);
 	}
+
+	public void testSearchByMultiple()
+			throws NoSuchFieldException, IllegalAccessException, ParseException, IOException {
+
+		File txtFile1 = folder.newFile("test file1.txt");
+		File txtFile2 = folder.newFile("test file2.txt");
+		File txtFile3 = folder.newFile("sample file.txt");
+		File pdfFile = folder.newFile("test file.pdf");
+		File docxFile = folder.newFile("word document.docx");
+		File testFolder = folder.newFolder();
+
+		List<String> case1 = Arrays.asList("test file1.txt", "test file2.txt", "sample file2.txt");
+		List<String> case2 = Arrays.asList("test file1.txt", "test file2.txt");
+		List<String> case3 = Arrays.asList("word document.docx");
+
+		Indexing indexer = new Indexing();
+
+		Field field = indexer.getClass().getDeclaredField("docsPath");
+		field.setAccessible(true);
+		field.set(indexer, folder.getRoot().toString());
+		indexer.doIndexing();
+
+		BooleanQuery.Builder boolQuery = new BooleanQuery.Builder();
+		Query q1 = new TermQuery(new Term("fileType", "txt"));
+		Query q2 = new TermQuery(new Term("userType", "student"));
+		boolQuery.add(q1, BooleanClause.Occur.SHOULD);
+		boolQuery.add(q2, BooleanClause.Occur.SHOULD);
+
+		IndexReader reader = DirectoryReader.open(indexer.getIndex());
+		IndexSearcher searcher = new IndexSearcher(reader);
+		TopDocs docs = searcher.search(boolQuery.build(), 10);
+		ScoreDoc[] hits = docs.scoreDocs;
+		List<String> case1List = new ArrayList<>();
+		for (int i = 0; i < hits.length; ++i) {
+			int docId = hits[i].doc;
+			Document d = searcher.doc(docId);
+			case1List.add(d.get("fileName"));
+		}
+		Collections.sort(case1List);
+		assertEquals("improperly matched files", case1, case1List);
+
+		boolQuery = new BooleanQuery.Builder();
+		q1 = new TermQuery(new Term("fileName", "test"));
+		q2 = new TermQuery(new Term("fileType", "txt"));
+		boolQuery.add(q1, BooleanClause.Occur.SHOULD);
+		boolQuery.add(q2, BooleanClause.Occur.SHOULD);
+
+		docs = searcher.search(boolQuery.build(), 10);
+		hits = docs.scoreDocs;
+		List<String> case2List = new ArrayList<>();
+		for (int i = 0; i < hits.length; ++i) {
+			int docId = hits[i].doc;
+			Document d = searcher.doc(docId);
+			case2List.add(d.get("fileName"));
+		}
+		Collections.sort(case2List);
+		assertEquals("improperly matched files", case2, case2List);
+
+		boolQuery = new BooleanQuery.Builder();
+		q1 = new TermQuery(new Term("fileName", "word"));
+		q2 = new TermQuery(new Term("userName", "user"));
+		boolQuery.add(q1, BooleanClause.Occur.SHOULD);
+		boolQuery.add(q2, BooleanClause.Occur.SHOULD);
+		docs = searcher.search(boolQuery.build(), 10);
+		hits = docs.scoreDocs;
+		List<String> case3List = new ArrayList<>();
+		for (int i = 0; i < hits.length; ++i) {
+			int docId = hits[i].doc;
+			Document d = searcher.doc(docId);
+			case3List.add(d.get("fileName"));
+		}
+		Collections.sort(case3List);
+		assertEquals("improperly matched files", case3, case3List);
+	}
 }
