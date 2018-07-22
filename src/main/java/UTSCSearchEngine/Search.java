@@ -124,7 +124,8 @@ public class Search extends HttpServlet {
           + d.get("userName") + "~"
           + d.get("fileSize") + "~"
           + d.get("uploadDate") + "~"
-          + "\"" + d.get("contents") + "\"\n");
+          + "\"" + d.get("contents").substring(0, Math.min(d.get("contents").length(), 160))
+          + "\"\n");
     }
     resp.setHeader("Access-Control-Allow-Origin", "*");
     resp.getWriter().write(responseBackToUser.toString());
