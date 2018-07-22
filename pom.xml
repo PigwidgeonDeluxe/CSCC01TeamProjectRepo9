@@ -55,25 +55,6 @@
 			<version>2.10.0</version>
 			<scope>test</scope>
 		</dependency>
-
-
-		<!-- 	new		-->
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>5.0.7.RELEASE</version>
-			<scope>test</scope>
-		</dependency>
-
-	<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-web</artifactId>
-		<version>3.0.4.RELEASE</version>
-	</dependency>
-
-	
 		
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
