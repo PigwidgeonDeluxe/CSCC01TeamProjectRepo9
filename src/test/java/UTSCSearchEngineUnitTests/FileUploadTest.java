@@ -1,98 +1,72 @@
 package UTSCSearchEngineUnitTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import UTSCSearchEngine.Database;
+import UTSCSearchEngine.FileUpload;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.io.IOUtils;
-import org.junit.Rule;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import org.mockito.Mockito;
+public class FileUploadTest {
 
-import UTSCSearchEngine.FileUpload;
-
-public class FileUploadTest extends Mockito{
-
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
-	
-	@Test
-	public void UploadFileTest() throws Exception {
-		String testName = "testFile.txt";
-		String fileContents = "contents of testing file";
-		
-		// mock upload files and upload destination	
-		File testFile = folder.newFile (testName);
-		// allow access to read and write
-		testFile.setWritable(true);
-		testFile.setReadable(true);
-		// write some contents of testFile
-		Writer writer = new FileWriter(testFile.toString());
-		BufferedWriter bufferedWriter = new BufferedWriter(writer);
-		bufferedWriter.write(fileContents);
-		bufferedWriter.newLine();
-		bufferedWriter.flush();
-		bufferedWriter.close();
-		
-		// mock objects
-		List<FileItem> multifiles = new ArrayList<FileItem>();
-		DiskFileItem file = new DiskFileItem("fileData", "text/plain", true, testName, fileContents.length(), testFile.getParentFile());
-		InputStream input =  new FileInputStream(testFile);
-		OutputStream os = file.getOutputStream();
-		IOUtils.copy(input, os);
-		multifiles.add(file);
-
-		// set upload destination in class
-		FileUpload testUpload = new FileUpload();
-		testUpload.setDocsPath("./");
-		
-		// test upload document with method
-		testUpload.upload(multifiles);
-
-		// check if file exist in test folder
-		File expect = new File("./" + testName);
-		boolean result = expect.exists();
-		// only delete if unsuccessful upload
-		if(!result) Files.deleteIfExists(Paths.get(expect.toString()));
-		assertEquals("unsuccessful upload", true, result);
-		// check contents of file are the same
-		if(result){
-			// read file and check if last line has
-			String line = null;
-			String content_result = "";
-			BufferedReader br = new BufferedReader(new FileReader(expect.toString()));
-			while ((line = br.readLine()) != null) {
-				content_result = content_result + line;
-			}
-			br.close();
-
-			// test if file contents in right location
-			Files.deleteIfExists(Paths.get(expect.toString()));
-			assertEquals("Contents of file are not the same", fileContents, content_result);
-		} else {
-			Files.deleteIfExists(Paths.get(expect.toString()));
-			fail("testFile.txt does not exist");
-		}
-	}
+//  private String url = "jdbc:sqlite:test-database.db";
+//
+//  @Before
+//  public void setUp() throws SQLException {
+//
+//    Database db = new Database(this.url);
+//    Connection con = db.connect();
+//
+//    // cleanup
+//    String dropTable = "DROP TABLE IF EXISTS file";
+//    PreparedStatement pstmt1 = con.prepareStatement(dropTable);
+//    pstmt1.executeUpdate();
+//    pstmt1.close();
+//
+//    // create table
+//    String createTable = "CREATE TABLE file (id integer primary key autoincrement, file blob, "
+//        + "file_name text, file_type text, file_size integer, uploader_name text, uploader_type "
+//        + "text, uploaded_on integer)";
+//    PreparedStatement pstmt2 = con.prepareStatement(createTable);
+//    pstmt2.executeUpdate();
+//    pstmt2.close();
+//  }
+//
+//  @Test
+//  public void testFileUpload() throws IOException {
+//
+//    FileUpload upload = new FileUpload();
+//
+//    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+//    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+//    FileItem mockFileItem = mock(FileItem.class);
+//    StringWriter stringWriter = new StringWriter();
+//    PrintWriter printWriter = new PrintWriter(stringWriter);
+//
+//    when(mockRequest.getParameter("userName")).thenReturn("test user");
+//    when(mockRequest.getParameter("userType")).thenReturn("student");
+//    when(mockResponse.getWriter()).thenReturn(printWriter);
+//    when(mockFileItem.isFormField()).thenReturn(false);
+//    when(mockFileItem.get()).thenReturn("this is a test".getBytes());
+//    when(mockFileItem.getName()).thenReturn("test file.txt");
+//    when(mockFileItem.getName().substring(mockFileItem.getName().lastIndexOf('.')
+//        + 1)).thenReturn("txt");
+//
+//    upload.doPost(mockRequest, mockResponse);
+//
+//    stringWriter.flush();
+//    assertTrue(stringWriter.toString().contains("SUCCESS"));
+//  }
 }

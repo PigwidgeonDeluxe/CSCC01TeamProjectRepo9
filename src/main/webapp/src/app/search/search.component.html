@@ -40,16 +40,20 @@
           <tr>
             <th>File Name</th>
             <th>File Type</th>
+            <th>File Size</th>
             <th>User Name</th>
             <th>User Type</th>
+            <th>Uploaded On</th>
           </tr>
         </thead>
         <tbody id="resultsBody">
           <tr *ngFor="let result of results">
-            <td><a (click)="downloadFile(result.fileName)" href="#">{{ result.fileName }}</a></td>
+            <td><a (click)="downloadFile(result.fileName, result.uploadDate)" href="#">{{ result.fileName }}</a></td>
             <td>{{ result.fileType }}</td>
+            <td>{{ result.fileSize }} KB</td>
             <td>{{ result.userName }}</td>
             <td>{{ result.userType }}</td>
+            <td>{{ result.uploadDate | date: 'yyyy-MM-dd' }}</td>
           </tr>
         </tbody>
       </table>
