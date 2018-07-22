@@ -89,11 +89,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-<<<<<<< HEAD
         <version>3.2.2</version>
-=======
-				<version>3.2.2</version>
->>>>>>> develop
         <configuration>
           <warSourceExcludes>
             node_modules/**
