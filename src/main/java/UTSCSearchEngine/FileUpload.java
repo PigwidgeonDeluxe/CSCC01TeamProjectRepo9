@@ -36,7 +36,8 @@ public class FileUpload extends HttpServlet {
               item.getName(),
               item.getName().substring(item.getName().lastIndexOf('.') + 1),
               uploaderName,
-              uploaderType);
+              uploaderType,
+							null);
         }
       }
 

@@ -32,7 +32,7 @@ public class Database {
   }
 
   public void insertFileData(byte[] file, String fileName, String fileType, String uploaderName,
-      String uploaderType) {
+      String uploaderType, Long date) {
 
     String sql = "INSERT INTO file(file, file_name, file_type, file_size, uploader_name, "
         + "uploader_type, uploaded_on) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -44,7 +44,8 @@ public class Database {
       pstmt.setInt(4, file.length);
       pstmt.setString(5, uploaderName);
       pstmt.setString(6, uploaderType);
-      pstmt.setDate(7, new Date(System.currentTimeMillis()));
+      pstmt.setDate(7, date != null ? new Date(date) :
+          new Date(System.currentTimeMillis()));
       pstmt.executeUpdate();
     } catch (SQLException ex) {
       ex.printStackTrace();

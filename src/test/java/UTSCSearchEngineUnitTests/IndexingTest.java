@@ -54,13 +54,13 @@ public class IndexingTest {
     String txtFileType = "txt";
     String uploaderName = "test user";
     String uploaderType = "student";
-    db.insertFileData(fileContent, txtFileName, txtFileType, uploaderName, uploaderType);
+    db.insertFileData(fileContent, txtFileName, txtFileType, uploaderName, uploaderType, null);
 
     // insert a sample doc file
     byte[] docContent = TestUtils.createDocFile("this is some sample text").toByteArray();
     String docFileName = "test file.docx";
     String docFileType = "docx";
-    db.insertFileData(docContent, docFileName, docFileType, uploaderName, uploaderType);
+    db.insertFileData(docContent, docFileName, docFileType, uploaderName, uploaderType, null);
 
     // insert an HTML file
     byte[] htmlContent = ("<!DOCTYPE html>\n" + "<html>\n" + "<body>\n" + "\n"
@@ -68,13 +68,13 @@ public class IndexingTest {
         + "</body>\n" + "</html>").getBytes(Charset.forName("UTF-8"));
     String htmlFileName = "test file.html";
     String htmlFileType = "html";
-    db.insertFileData(htmlContent, htmlFileName, htmlFileType, uploaderName, uploaderType);
+    db.insertFileData(htmlContent, htmlFileName, htmlFileType, uploaderName, uploaderType, null);
 
     // insert a PDF file
     byte[] pdfContent = TestUtils.createPdfFile("this is some sample text").toByteArray();
     String pdfFileName = "test file.pdf";
     String pdfFileType = "pdf";
-    db.insertFileData(pdfContent, pdfFileName, pdfFileType, uploaderName, uploaderType);
+    db.insertFileData(pdfContent, pdfFileName, pdfFileType, uploaderName, uploaderType, null);
   }
 
   @Test
