@@ -50,7 +50,7 @@ public class Search extends HttpServlet {
 		analyzer = indexer.getAnalyzer();
 		index = indexer.getIndex();
 	}
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain");
@@ -68,7 +68,6 @@ public class Search extends HttpServlet {
 			 *
 			 * 3. IndexSearcher that allows you to take the query and search the index.
 			 */
-  
 
 			BooleanQuery.Builder boolQuery = new BooleanQuery.Builder();
 
@@ -77,15 +76,15 @@ public class Search extends HttpServlet {
 				boolQuery.add(fileNameQ, BooleanClause.Occur.SHOULD);
 			}
 			if (fileTypeQuery != null) {
-				Query fileTypeQ = new TermQuery(new Term("fileName", fileNameQuery));
+				Query fileTypeQ = new TermQuery(new Term("fileType", fileTypeQuery));
 				boolQuery.add(fileTypeQ, BooleanClause.Occur.SHOULD);
 			}
 			if (userNameQuery != null) {
-				Query userNameQ = new TermQuery(new Term("fileName", fileNameQuery));
+				Query userNameQ = new TermQuery(new Term("userName", userNameQuery));
 				boolQuery.add(userNameQ, BooleanClause.Occur.SHOULD);
 			}
 			if (userTypeQuery != null) {
-				Query userTypeQ = new TermQuery(new Term("fileName", fileNameQuery));
+				Query userTypeQ = new TermQuery(new Term("userType", userTypeQuery));
 				boolQuery.add(userTypeQ, BooleanClause.Occur.SHOULD);
 			}
 
