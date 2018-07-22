@@ -41,6 +41,11 @@ public class Search extends HttpServlet {
     index = indexer.getIndex();
   }
 
+  static void refreshIndexer() {
+    indexer = new Indexing();
+    analyzer = indexer.getAnalyzer();
+    index = indexer.getIndex();
+  }
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

@@ -46,7 +46,7 @@
         </thead>
         <tbody id="resultsBody">
           <tr *ngFor="let result of results">
-            <td>{{ result.fileName }}</td>
+            <td><a (click)="downloadFile(result.fileName)" href="#">{{ result.fileName }}</a></td>
             <td>{{ result.fileType }}</td>
             <td>{{ result.userName }}</td>
             <td>{{ result.userType }}</td>
