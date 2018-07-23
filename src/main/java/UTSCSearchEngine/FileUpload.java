@@ -50,6 +50,6 @@ public class FileUpload extends HttpServlet {
     }
 
     // reindex
-    indexer.doIndexing();
+    Search.callIndexing();
   }
 }

@@ -24,9 +24,9 @@ import org.apache.lucene.store.Directory;
 public class Search extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
-  private StandardAnalyzer analyzer = null;
+  private static StandardAnalyzer analyzer = null;
   private static Directory index = null;
-  private Indexing indexer = new Indexing();
+  private static Indexing indexer = new Indexing();
 
   public void init(ServletConfig config1) throws ServletException {
     super.init(config1);
@@ -35,15 +35,15 @@ public class Search extends HttpServlet {
     System.out.println("Finished: init");
   }
 
-  public void callIndexing() {
-    this.indexer.doIndexing();
-    this.analyzer = indexer.getAnalyzer();
+  public static void callIndexing() {
+    indexer.doIndexing();
+    analyzer = indexer.getAnalyzer();
     index = indexer.getIndex();
   }
 
   public void callIndexing(String url) {
-    this.indexer.doIndexing(url);
-    this.analyzer = indexer.getAnalyzer();
+    indexer.doIndexing(url);
+    analyzer = indexer.getAnalyzer();
     index = indexer.getIndex();
   }
 
