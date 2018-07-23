@@ -1,0 +1,6 @@
+Our team did not finish all of the tasks in this sprint.
+All of remaining primary functionality was implemented this sprint (database and indexing file contents).
+The remaining optional features (profile page, following users, commenting functionality) was not completed because the database functionality ended up taking much longer than initially estimated.
+Again, the team mainly had issues regarding availability due to lots of final projects being assigned due to the end of the semester nearing
+
+

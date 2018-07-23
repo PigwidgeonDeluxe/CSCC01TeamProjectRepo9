@@ -1,6 +1,7 @@
 package UTSCSearchEngine;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +24,6 @@ import org.apache.lucene.store.Directory;
 public class Search extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
-  private static String docsPath = "./src/main/resources/";
   private static StandardAnalyzer analyzer = null;
   private static Directory index = null;
   private static Indexing indexer = new Indexing();
@@ -35,42 +35,32 @@ public class Search extends HttpServlet {
     System.out.println("Finished: init");
   }
 
-  private static void callIndexing() {
+  public static void callIndexing() {
     indexer.doIndexing();
     analyzer = indexer.getAnalyzer();
     index = indexer.getIndex();
   }
 
+  public void callIndexing(String url) {
+    indexer.doIndexing(url);
+    analyzer = indexer.getAnalyzer();
+    index = indexer.getIndex();
+  }
 
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
+
+    String responseBackToUser = "";
 
     String fileNameQuery = req.getParameter("fileName");
     if (fileNameQuery != null) {
       try {
-        /*
-         * 1. Query object, created that encapusulates the user query
-         *
-         * 2. IndexReader that allows you to read the index.
-         *
-         * 3. IndexSearcher that allows you to take the query and search the index.
-         */
         Query q = new QueryParser("fileName", analyzer).parse(fileNameQuery);
-        int hitsPerPage = 10;
-        IndexReader reader = DirectoryReader.open(index);
-        IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs docs = searcher.search(q, hitsPerPage);
-        ScoreDoc[] hits = docs.scoreDocs;
-        StringBuilder responseBackToUser = new StringBuilder();
-        for (int i = 0; i < hits.length; ++i) {
-          int docId = hits[i].doc;
-          Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-"
-              + d.get("userType") + "-" + d.get("userName") + "\n");
+        String result = search(q);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
         }
-        resp.setHeader("Access-Control-Allow-Origin", "*");
-        resp.getWriter().write(responseBackToUser.toString());
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -80,20 +70,10 @@ public class Search extends HttpServlet {
     if (fileTypeQuery != null) {
       try {
         Query q = new QueryParser("fileType", analyzer).parse(fileTypeQuery);
-        int hitsPerPage = 10;
-        IndexReader reader = DirectoryReader.open(index);
-        IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs docs = searcher.search(q, hitsPerPage);
-        ScoreDoc[] hits = docs.scoreDocs;
-        StringBuilder responseBackToUser = new StringBuilder();
-        for (int i = 0; i < hits.length; ++i) {
-          int docId = hits[i].doc;
-          Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-"
-              + d.get("userType") + "-" + d.get("userName") + "\n");
+        String result = search(q);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
         }
-        resp.setHeader("Access-Control-Allow-Origin", "*");
-        resp.getWriter().write(responseBackToUser.toString());
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -103,20 +83,10 @@ public class Search extends HttpServlet {
     if (userNameQuery != null) {
       try {
         Query q = new QueryParser("userName", analyzer).parse(userNameQuery);
-        int hitsPerPage = 10;
-        IndexReader reader = DirectoryReader.open(index);
-        IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs docs = searcher.search(q, hitsPerPage);
-        ScoreDoc[] hits = docs.scoreDocs;
-        StringBuilder responseBackToUser = new StringBuilder();
-        for (int i = 0; i < hits.length; ++i) {
-          int docId = hits[i].doc;
-          Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-"
-              + d.get("userType") + "-" + d.get("userName") + "\n");
+        String result = search(q);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
         }
-        resp.setHeader("Access-Control-Allow-Origin", "*");
-        resp.getWriter().write(responseBackToUser.toString());
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -126,23 +96,59 @@ public class Search extends HttpServlet {
     if (userTypeQuery != null) {
       try {
         Query q = new QueryParser("userType", analyzer).parse(userTypeQuery);
-        int hitsPerPage = 10;
-        IndexReader reader = DirectoryReader.open(index);
-        IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs docs = searcher.search(q, hitsPerPage);
-        ScoreDoc[] hits = docs.scoreDocs;
-        StringBuilder responseBackToUser = new StringBuilder();
-        for (int i = 0; i < hits.length; ++i) {
-          int docId = hits[i].doc;
-          Document d = searcher.doc(docId);
-          responseBackToUser.append(d.get("fileName") + "-" + d.get("fileType") + "-"
-              + d.get("userType") + "-" + d.get("userName") + "\n");
+        String result = search(q);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
         }
-        resp.setHeader("Access-Control-Allow-Origin", "*");
-        resp.getWriter().write(responseBackToUser.toString());
       } catch (ParseException e) {
         e.printStackTrace();
       }
     }
+
+    String userContentQuery = req.getParameter("contents");
+    if (userContentQuery != null) {
+      try {
+        Query q = new QueryParser("contents", analyzer).parse(userContentQuery);
+        String result = search(q);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
+        }
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+    }
+
+    resp.setHeader("Access-Control-Allow-Origin", "*");
+    resp.getWriter().write(responseBackToUser);
+
+  }
+
+  /**
+   * Search for Query q and return a response to the user containing the requested information
+   * 
+   * @param q
+   * @throws IOException
+   */
+  private String search(Query q) throws IOException {
+    int hitsPerPage = 10;
+    IndexReader reader = DirectoryReader.open(index);
+    IndexSearcher searcher = new IndexSearcher(reader);
+    TopDocs docs = searcher.search(q, hitsPerPage);
+    ScoreDoc[] hits = docs.scoreDocs;
+    StringBuilder responseBackToUser = new StringBuilder();
+    for (int i = 0; i < hits.length; ++i) {
+      int docId = hits[i].doc;
+      Document d = searcher.doc(docId);
+      String contents = d.get("contents");
+      contents = contents != null ? contents.substring(0, Math.min(contents.length(), 160)) : "";
+      responseBackToUser.append(d.get("fileName") + "~"
+          + d.get("fileType") + "~"
+          + d.get("userType") + "~"
+          + d.get("userName") + "~"
+          + d.get("fileSize") + "~"
+          + d.get("uploadDate") + "~"
+          + "\"" + contents + "\"\n");
+    }
+    return responseBackToUser.toString();
   }
 }
