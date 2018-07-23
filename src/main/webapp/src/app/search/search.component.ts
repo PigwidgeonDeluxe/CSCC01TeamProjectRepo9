@@ -21,6 +21,7 @@ export class SearchComponent implements OnInit {
   results: any;
   http: XMLHttpRequest;
   selectedSearchOption: any;
+  loading: boolean;
 
   constructor() { }
 
@@ -45,6 +46,7 @@ export class SearchComponent implements OnInit {
 
   getSearchResults(fileName, fileType, userName, userType) {
     let url = this.TOMCAT_URL + '/search';
+    this.loading = true;
 
     if (fileName) {
       if (url.indexOf('?') === -1) {
@@ -100,6 +102,8 @@ export class SearchComponent implements OnInit {
         text: 'No results found'
       });
     }
+
+    this.loading = false;
   }
 
 

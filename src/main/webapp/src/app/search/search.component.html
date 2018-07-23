@@ -27,7 +27,7 @@
 <div class="card mt-3 mb-5">
   <div class="card-body">
     <label class="heading">Results</label>
-    <div *ngFor="let result of results" class="mb-3">
+    <div *ngFor="let result of results" class="mt-3 mb-3">
       <div class="row">
         <div class="col-md-1 text-center">
           <i *ngIf="result.fileType !== 'docx' && result.fileType !== 'pdf' && result.fileType !== 'html'" class="far fa-file fa-3x"></i>
@@ -48,7 +48,7 @@
           </div>
           <div class="row">
             <div class="col">
-              <span tooltip="File Size" class="badge badge-success">
+              <span tooltip="File Size" class="badge badge-info">
                 <i class="fa fa-file"></i> {{ result.fileSize != 0 ? result.fileSize : '>1' }} KB
               </span>
               <span tooltip="Uploaded By: {{ result.userName }} ({{ result.userType }})"
