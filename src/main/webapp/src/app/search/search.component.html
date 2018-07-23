@@ -48,7 +48,7 @@
           <div class="row">
             <div class="col">
               <span tooltip="File Size" class="badge badge-success">
-                <i class="fa fa-file"></i> {{ result.fileSize }} KB
+                <i class="fa fa-file"></i> {{ result.fileSize != 0 ? result.fileSize : '>1' }} KB
               </span>
               <span tooltip="Uploaded By: {{ result.userName }} ({{ result.userType }})"
                     [ngClass]="{'badge-success': result.userType === 'student', 'badge-warning': result.userType === 'instructor'}"

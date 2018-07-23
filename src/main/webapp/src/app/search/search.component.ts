@@ -86,7 +86,7 @@ export class SearchComponent implements OnInit {
           'fileType': element.split('~')[1],
           'userType': element.split('~')[2],
           'userName': element.split('~')[3],
-          'fileSize': Math.round(+element.split('~')[4] / 1000),
+          'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
           'uploadDate': +element.split('~')[5],
           'fileContent': element.split('~')[6]
         });
