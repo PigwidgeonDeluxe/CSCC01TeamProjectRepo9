@@ -5,57 +5,69 @@
       <div class="input-group">
         <input [(ngModel)]="searchQuery" type="text" class="form-control form-control-sm" id="searchBox" placeholder="Enter search query">
         <span class="input-group-btn">
-          <button (click)="search()" type="submit" class="btn btn-success btn-sm" id="searchButton">Search</button>
+          <button (click)="search()" type="submit" class="btn btn-success btn-sm" id="searchButton">
+            <i class="fa fa-search"></i> Search
+          </button>
         </span>
       </div>
       <br>
-      <label class="heading">Search By</label>
-      <div id="optionsList" class="form-group">
-        <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="1" [(ngModel)]="selectedSearchOption">
-          <label class="form-check-label">File Name</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="2" [(ngModel)]="selectedSearchOption">
-          <label class="form-check-label">File Type</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="3" [(ngModel)]="selectedSearchOption">
-          <label class="form-check-label">User Name</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="4" [(ngModel)]="selectedSearchOption">
-          <label class="form-check-label">User Type</label>
-        </div>
+      <span (click)="advancedOptions = !advancedOptions" style="cursor: poniter">
+        <label class="heading">
+          Advanced Options
+          <i *ngIf="advancedOptions" class="fa fa-caret-up"></i>
+          <i *ngIf="!advancedOptions" class="fa fa-caret-down"></i>
+        </label>
+      </span>
+      <div *ngIf="advancedOptions" class="input-group">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="fileTypeQuery" placeholder="File Type">
+        <span class="mr-1"></span>
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="userNameQuery" placeholder="User Name">
+        <span class="mr-1"></span>
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="userTypeQuery" placeholder="User Type">
       </div>
     </div>
   </div>
 </div>
-<div class="card mt-3">
+<div *ngIf="results.length > 0" class="card mt-3 mb-5">
     <div class="card-body">
       <label class="heading">Results</label>
-      <table id="resultsTable" class="table table-sm table-bordered table-hover">
-        <caption id="resultsList">{{ results.length > 0 ? results.length + ' results' : 'No results' }}</caption>
-        <thead class="thead-light">
-          <tr>
-            <th>File Name</th>
-            <th>File Type</th>
-            <th>File Size</th>
-            <th>User Name</th>
-            <th>User Type</th>
-            <th>Uploaded On</th>
-          </tr>
-        </thead>
-        <tbody id="resultsBody">
-          <tr *ngFor="let result of results">
-            <td><a (click)="downloadFile(result.fileName, result.uploadDate)" href="#">{{ result.fileName }}</a></td>
-            <td>{{ result.fileType }}</td>
-            <td>{{ result.fileSize }} KB</td>
-            <td>{{ result.userName }}</td>
-            <td>{{ result.userType }}</td>
-            <td>{{ result.uploadDate | date: 'yyyy-MM-dd' }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div *ngFor="let result of results" class="mb-3">
+        <div class="row">
+          <div class="col-md-1 text-center">
+            <i *ngIf="result.fileType !== 'docx' && result.fileType !== 'pdf'" class="far fa-file fa-3x"></i>
+            <i *ngIf="result.fileType === 'docx'" class="far fa-file-word fa-3x"></i>
+            <i *ngIf="result.fileType === 'pdf'" class="far fa-file-pdf fa-3x"></i>
+          </div>
+          <div class="col-md-11">
+            <div class="row">
+              <div class="col">
+                <span tooltip="{{ result.fileSize }} KB"
+                      class="heading">{{ result.fileName }}</span>
+              </div>
+            </div>
+            <div class="row mt-2 mb-2">
+              <div class="col text-monospace">
+                {{ result.fileContent }}..."
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <span tooltip="{{ result.userType }}"
+                      [ngClass]="{'badge-success': result.userType === 'student', 'badge-warning': result.userType === 'instructor'}"
+                      class="badge">
+                  {{ result.userName }}
+                </span>
+                <span tooltip="Upload Date"
+                      class="badge badge-secondary">
+                  <i class="far fa-calendar-alt"></i> {{ result.uploadDate | date: 'yyyy-MM-dd' }}
+                </span>
+                <span (click)="downloadFile(result.fileName, result.uploadDate)" class="badge badge-primary" style="cursor: pointer">
+                  <i class="fa fa-download"></i> Download
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
