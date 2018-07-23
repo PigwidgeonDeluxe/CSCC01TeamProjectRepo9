@@ -77,9 +77,9 @@ public class Indexing {
         addDoc(w,
             rs.getString("file_name"),
             rs.getString("file_type"),
-            rs.getString("file_size"),
             rs.getString("uploader_name"),
             rs.getString("uploader_type"),
+            rs.getString("file_size"),
             rs.getString("uploaded_on"),
             rs.getBytes("file"));
       }
@@ -97,9 +97,9 @@ public class Indexing {
         addDoc(w,
             rs.getString("file_name"),
             rs.getString("file_type"),
-            rs.getString("file_size"),
             rs.getString("uploader_name"),
             rs.getString("uploader_type"),
+            rs.getString("file_size"),
             rs.getString("uploaded_on"),
             rs.getBytes("file"));
       }
@@ -126,7 +126,7 @@ public class Indexing {
     // add the values to the index
     doc.add(new TextField("fileName", fileName, Field.Store.YES));
     doc.add(new TextField("fileType", fileType, Field.Store.YES));
-    doc.add(new TextField("userName", userName, Field.Store.YES));
+    doc.add(new TextField("userName", userName.replaceAll("%20", " "), Field.Store.YES));
     doc.add(new StringField("userType", userType, Field.Store.YES));
     doc.add(new TextField("fileSize", fileSize, Field.Store.YES));
     doc.add(new TextField("uploadDate", uploadDate, Field.Store.YES));

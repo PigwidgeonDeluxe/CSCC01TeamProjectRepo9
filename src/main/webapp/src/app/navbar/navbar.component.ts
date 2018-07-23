@@ -42,6 +42,7 @@ export class NavbarComponent implements OnInit {
     this.http.send(JSON.stringify(request));
 
     const resp = JSON.parse(this.http.response);
+    console.log(resp);
     if (resp.status === 'SUCCESS') {
       swal({
         title: 'Success',

@@ -57,7 +57,7 @@ public class Search extends HttpServlet {
     if (fileNameQuery != null) {
       try {
         Query q = new QueryParser("fileName", analyzer).parse(fileNameQuery);
-        String result = search(q, resp);
+        String result = search(q);
         if (!responseBackToUser.contains(result)) {
           responseBackToUser += result;
         }
@@ -70,7 +70,7 @@ public class Search extends HttpServlet {
     if (fileTypeQuery != null) {
       try {
         Query q = new QueryParser("fileType", analyzer).parse(fileTypeQuery);
-        String result = search(q, resp);
+        String result = search(q);
         if (!responseBackToUser.contains(result)) {
           responseBackToUser += result;
         }
@@ -83,7 +83,7 @@ public class Search extends HttpServlet {
     if (userNameQuery != null) {
       try {
         Query q = new QueryParser("userName", analyzer).parse(userNameQuery);
-        String result = search(q, resp);
+        String result = search(q);
         if (!responseBackToUser.contains(result)) {
           responseBackToUser += result;
         }
@@ -96,7 +96,7 @@ public class Search extends HttpServlet {
     if (userTypeQuery != null) {
       try {
         Query q = new QueryParser("userType", analyzer).parse(userTypeQuery);
-        String result = search(q, resp);
+        String result = search(q);
         if (!responseBackToUser.contains(result)) {
           responseBackToUser += result;
         }
@@ -109,7 +109,7 @@ public class Search extends HttpServlet {
     if (userContentQuery != null) {
       try {
         Query q = new QueryParser("contents", analyzer).parse(userContentQuery);
-        String result = search(q, resp);
+        String result = search(q);
         if (!responseBackToUser.contains(result)) {
           responseBackToUser += result;
         }
@@ -127,10 +127,9 @@ public class Search extends HttpServlet {
    * Search for Query q and return a response to the user containing the requested information
    * 
    * @param q
-   * @param resp
    * @throws IOException
    */
-  private String search(Query q, HttpServletResponse resp) throws IOException {
+  private String search(Query q) throws IOException {
     int hitsPerPage = 10;
     IndexReader reader = DirectoryReader.open(index);
     IndexSearcher searcher = new IndexSearcher(reader);
@@ -140,14 +139,15 @@ public class Search extends HttpServlet {
     for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
       Document d = searcher.doc(docId);
+      String contents = d.get("contents");
+      contents = contents != null ? contents.substring(0, Math.min(contents.length(), 160)) : "";
       responseBackToUser.append(d.get("fileName") + "~"
           + d.get("fileType") + "~"
           + d.get("userType") + "~"
           + d.get("userName") + "~"
           + d.get("fileSize") + "~"
           + d.get("uploadDate") + "~"
-          + "\"" + d.get("contents").substring(0, Math.min(d.get("contents").length(), 160))
-          + "\"\n");
+          + "\"" + contents + "\"\n");
     }
     return responseBackToUser.toString();
   }
