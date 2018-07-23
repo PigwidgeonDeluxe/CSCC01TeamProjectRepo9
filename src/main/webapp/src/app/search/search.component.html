@@ -11,24 +11,19 @@
         </span>
       </div>
       <br>
-      <label class="heading">Search By</label>
-      <div id="optionsList" class="form-group">
-        <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="1" [(ngModel)]="selectedSearchOption">
-          <label class="form-check-label">File Name</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="2" [(ngModel)]="selectedSearchOption">
-          <label class="form-check-label">File Type</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="3" [(ngModel)]="selectedSearchOption">
-          <label class="form-check-label">User Name</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="4" [(ngModel)]="selectedSearchOption">
-          <label class="form-check-label">User Type</label>
-        </div>
+      <span (click)="advancedOptions = !advancedOptions" style="cursor: poniter">
+        <label class="heading">
+          Advanced Options
+          <i *ngIf="advancedOptions" class="fa fa-caret-up"></i>
+          <i *ngIf="!advancedOptions" class="fa fa-caret-down"></i>
+        </label>
+      </span>
+      <div *ngIf="advancedOptions" class="input-group">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="fileTypeQuery" placeholder="File Type">
+        <span class="mr-1"></span>
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="userNameQuery" placeholder="User Name">
+        <span class="mr-1"></span>
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="userTypeQuery" placeholder="User Type">
       </div>
     </div>
   </div>

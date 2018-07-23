@@ -1,6 +1,7 @@
 package UTSCSearchEngine;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -50,11 +51,16 @@ public class Search extends HttpServlet {
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
 
+    String responseBackToUser = "";
+
     String fileNameQuery = req.getParameter("fileName");
     if (fileNameQuery != null) {
       try {
         Query q = new QueryParser("fileName", analyzer).parse(fileNameQuery);
-        search(q, resp);
+        String result = search(q, resp);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
+        }
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -64,7 +70,10 @@ public class Search extends HttpServlet {
     if (fileTypeQuery != null) {
       try {
         Query q = new QueryParser("fileType", analyzer).parse(fileTypeQuery);
-        search(q, resp);
+        String result = search(q, resp);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
+        }
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -74,7 +83,10 @@ public class Search extends HttpServlet {
     if (userNameQuery != null) {
       try {
         Query q = new QueryParser("userName", analyzer).parse(userNameQuery);
-        search(q, resp);
+        String result = search(q, resp);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
+        }
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -84,7 +96,10 @@ public class Search extends HttpServlet {
     if (userTypeQuery != null) {
       try {
         Query q = new QueryParser("userType", analyzer).parse(userTypeQuery);
-        search(q, resp);
+        String result = search(q, resp);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
+        }
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -94,11 +109,18 @@ public class Search extends HttpServlet {
     if (userContentQuery != null) {
       try {
         Query q = new QueryParser("contents", analyzer).parse(userContentQuery);
-        search(q, resp);
+        String result = search(q, resp);
+        if (!responseBackToUser.contains(result)) {
+          responseBackToUser += result;
+        }
       } catch (ParseException e) {
         e.printStackTrace();
       }
     }
+
+    resp.setHeader("Access-Control-Allow-Origin", "*");
+    resp.getWriter().write(responseBackToUser);
+
   }
 
   /**
@@ -108,7 +130,7 @@ public class Search extends HttpServlet {
    * @param resp
    * @throws IOException
    */
-  private static void search(Query q, HttpServletResponse resp) throws IOException {
+  private String search(Query q, HttpServletResponse resp) throws IOException {
     int hitsPerPage = 10;
     IndexReader reader = DirectoryReader.open(index);
     IndexSearcher searcher = new IndexSearcher(reader);
@@ -127,7 +149,6 @@ public class Search extends HttpServlet {
           + "\"" + d.get("contents").substring(0, Math.min(d.get("contents").length(), 160))
           + "\"\n");
     }
-    resp.setHeader("Access-Control-Allow-Origin", "*");
-    resp.getWriter().write(responseBackToUser.toString());
+    return responseBackToUser.toString();
   }
 }

@@ -11,7 +11,12 @@ import swal from 'sweetalert2';
 export class SearchComponent implements OnInit {
 
   TOMCAT_URL: string;
+
   searchQuery: string;
+  fileTypeQuery: string;
+  userNameQuery: string;
+  userTypeQuery: string;
+
   option: string;
   results: any;
   http: XMLHttpRequest;
@@ -27,19 +32,50 @@ export class SearchComponent implements OnInit {
   }
 
   search() {
-    if (this.searchQuery && this.selectedSearchOption === 1) {
-      this.getSearchResults('fileName');
-    } else if (this.searchQuery && this.selectedSearchOption === 2) {
-      this.getSearchResults('fileType');
-    } else if (this.searchQuery && this.selectedSearchOption === 3) {
-      this.getSearchResults('userName');
-    } else if (this.searchQuery && this.selectedSearchOption === 4) {
-      this.getSearchResults('userType');
+    if (!this.searchQuery && !this.fileTypeQuery && !this.userNameQuery && !this.userTypeQuery) {
+      swal({
+        title: 'No query',
+        type: 'warning',
+        text: 'Please submit a query to use the search functionality'
+      });
+    } else {
+      this.getSearchResults(this.searchQuery, this.fileTypeQuery, this.userNameQuery, this.userTypeQuery);
     }
   }
 
-  getSearchResults(queryParam) {
-    this.http.open('GET', this.TOMCAT_URL + '/search?' + queryParam + '=' + this.searchQuery, false);
+  getSearchResults(fileName, fileType, userName, userType) {
+    let url = this.TOMCAT_URL + '/search';
+
+    if (fileName) {
+      if (url.indexOf('?') === -1) {
+        url += '?fileName=' + fileName;
+      } else {
+        url += '&fileName=' + fileName;
+      }
+    }
+    if (fileType) {
+      if (url.indexOf('?') === -1) {
+        url += '?fileType=' + fileType;
+      } else {
+        url += '&fileType=' + fileType;
+      }
+    }
+    if (userName) {
+      if (url.indexOf('?') === -1) {
+        url += '?userName=' + userName;
+      } else {
+        url += '&userName=' + userName;
+      }
+    }
+    if (userType) {
+      if (url.indexOf('?') === -1) {
+        url += '?userType=' + userType;
+      } else {
+        url += '&userType=' + userType;
+      }
+    }
+
+    this.http.open('GET', url, false);
     this.http.send(null);
     const resp = this.http.response.split('"\n');
     this.results = [];
@@ -65,6 +101,7 @@ export class SearchComponent implements OnInit {
       });
     }
   }
+
 
   downloadFile(fileName: string, uploadDate: string) {
     this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + fileName + '&uploadTime=' + uploadDate, true);
