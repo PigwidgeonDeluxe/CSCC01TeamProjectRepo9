@@ -44,6 +44,12 @@ public class Search extends HttpServlet {
 		index = indexer.getIndex();
 	}
 
+	public void callIndexing(String url) {
+		this.indexer.doIndexing(url);
+		this.analyzer = indexer.getAnalyzer();
+		index = indexer.getIndex();
+	}
+
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain");
