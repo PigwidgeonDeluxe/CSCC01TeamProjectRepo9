@@ -57,7 +57,7 @@
                 <i class="fa fa-user"></i> {{ result.userName }}
               </span>
               <span tooltip="Upload Date" class="badge badge-secondary">
-                <i class="far fa-calendar-alt"></i> {{ result.uploadDate | date: 'yyyy-MM-dd' }}
+                <i class="far fa-calendar-alt"></i> {{ result.uploadDate | date: 'medium' }}
               </span>
               <span (click)="downloadFile(result.fileName, result.uploadDate)" class="badge badge-primary" style="cursor: pointer">
                 <i class="fa fa-download"></i> Download
