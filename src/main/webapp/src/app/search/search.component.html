@@ -30,9 +30,10 @@
     <div *ngFor="let result of results" class="mb-3">
       <div class="row">
         <div class="col-md-1 text-center">
-          <i *ngIf="result.fileType !== 'docx' && result.fileType !== 'pdf'" class="far fa-file fa-3x"></i>
-          <i *ngIf="result.fileType === 'docx'" class="far fa-file-word fa-3x"></i>
-          <i *ngIf="result.fileType === 'pdf'" class="far fa-file-pdf fa-3x"></i>
+          <i *ngIf="result.fileType !== 'docx' && result.fileType !== 'pdf' && result.fileType !== 'html'" class="far fa-file fa-3x"></i>
+          <i *ngIf="result.fileType === 'docx'" class="text-primary far fa-file-word fa-3x"></i>
+          <i *ngIf="result.fileType === 'pdf'" class="text-danger far fa-file-pdf fa-3x"></i>
+          <i *ngIf="result.fileType === 'html'" class="text-warning fa fa-globe fa-3x"></i>
         </div>
         <div class="col-md-11">
           <div class="row">
