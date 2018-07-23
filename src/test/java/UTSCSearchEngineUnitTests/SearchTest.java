@@ -51,7 +51,7 @@ public class SearchTest {
 
     // insert a sample txt file
     byte[] fileContent = "this is some sample text".getBytes(Charset.forName("UTF-8"));
-    String txtFileName = "test file.txt";
+    String txtFileName = "text file.txt";
     String txtFileType = "txt";
     String uploaderName = "test user";
     String uploaderType = "student";
@@ -59,7 +59,7 @@ public class SearchTest {
 
     // insert a sample doc file
     byte[] docContent = TestUtils.createDocFile("this is some sample text").toByteArray();
-    String docFileName = "test file.docx";
+    String docFileName = "word file.docx";
     String docFileType = "docx";
     db.insertFileData(docContent, docFileName, docFileType, uploaderName, uploaderType, null);
 
@@ -67,13 +67,13 @@ public class SearchTest {
     byte[] htmlContent = ("<!DOCTYPE html>\n" + "<html>\n" + "<body>\n" + "\n"
         + "<h1>My First Heading</h1>\n<p>my first paragraph</p>\n" + "\n"
         + "</body>\n" + "</html>").getBytes(Charset.forName("UTF-8"));
-    String htmlFileName = "test file.html";
+    String htmlFileName = "html file.html";
     String htmlFileType = "html";
     db.insertFileData(htmlContent, htmlFileName, htmlFileType, uploaderName, uploaderType, null);
 
     // insert a PDF file
     byte[] pdfContent = TestUtils.createPdfFile("this is some sample text").toByteArray();
-    String pdfFileName = "test file.pdf";
+    String pdfFileName = "pdf file.pdf";
     String pdfFileType = "pdf";
     db.insertFileData(pdfContent, pdfFileName, pdfFileType, uploaderName, uploaderType, null);
   }
@@ -156,6 +156,28 @@ public class SearchTest {
 
     stringWriter.flush();
     assertTrue(stringWriter.toString().contains("my first paragraph"));
+  }
+
+  @Test
+  public void testMultipleOptions() throws IOException {
+
+    Search search = new Search();
+
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter);
+
+    when(mockRequest.getParameter("fileType")).thenReturn("html");
+    when(mockRequest.getParameter("fileName")).thenReturn("pdf");
+    when(mockResponse.getWriter()).thenReturn(printWriter);
+
+    search.callIndexing(this.url);
+    search.doGet(mockRequest, mockResponse);
+
+    stringWriter.flush();
+    assertTrue(stringWriter.toString().contains("my first paragraph"));
+    assertTrue(stringWriter.toString().contains("pdf file.pdf"));
   }
 
   @Test
