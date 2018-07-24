@@ -12,19 +12,19 @@
       <label class="heading">Search By</label>
       <div id="optionsList" class="form-group">
         <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="1" [(ngModel)]="selectedSearchOption">
+          <input type="checkbox" name="searchOptions" class="form-check-input" [(ngModel)]="selectedSearchOption.value1" [(ngInit)]="checked=true">
           <label class="form-check-label">File Name</label>
         </div>
         <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="2" [(ngModel)]="selectedSearchOption">
+          <input type="checkbox" name="searchOptions" class="form-check-input" [(ngModel)]="selectedSearchOption.value2">
           <label class="form-check-label">File Type</label>
         </div>
         <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="3" [(ngModel)]="selectedSearchOption">
+          <input type="checkbox" name="searchOptions" class="form-check-input" [(ngModel)]="selectedSearchOption.value3">
           <label class="form-check-label">User Name</label>
         </div>
         <div class="form-check form-check-inline">
-          <input type="radio" name="searchOptions" class="form-check-input" [value]="4" [(ngModel)]="selectedSearchOption">
+          <input type="checkbox" name="searchOptions" class="form-check-input" [(ngModel)]="selectedSearchOption.value4">
           <label class="form-check-label">User Type</label>
         </div>
       </div>
