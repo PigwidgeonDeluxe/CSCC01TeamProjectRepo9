@@ -51,7 +51,9 @@ export class NavbarComponent implements OnInit {
       }).then(() => {
         localStorage.setItem('user', JSON.stringify({
           'userName': profile.getName(),
-          'userType': resp.userType
+          'userType': resp.userType,
+          'createdOn': resp.createdOn,
+          'profileImage': profile.getImageUrl()
         }));
         location.reload();
       });

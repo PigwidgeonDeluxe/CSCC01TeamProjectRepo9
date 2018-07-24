@@ -96,6 +96,7 @@ public class User extends HttpServlet {
               // user exists
               response.put("status", "SUCCESS");
               response.put("userType", rs.getString("user_type"));
+              response.put("createdOn", rs.getString("created_on"));
               response.put("message", "Successfully logged in");
               resp.getWriter().write(response.toString());
             } else {

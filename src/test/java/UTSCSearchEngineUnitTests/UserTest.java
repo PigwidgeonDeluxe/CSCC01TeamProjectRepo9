@@ -24,7 +24,7 @@ public class UserTest {
     pstmt1.execute();
 
     String createTable = "CREATE TABLE user(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, "
-        + "user_type TEXT)";
+        + "user_type TEXT, created_on INTEGER)";
     PreparedStatement pstmt2 = con.prepareStatement(createTable);
     pstmt2.execute();
   }

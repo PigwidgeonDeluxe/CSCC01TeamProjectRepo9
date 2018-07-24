@@ -75,11 +75,12 @@ public class Database {
 
   public void insertUser(String userId, String userType) {
 
-    String sql = "INSERT INTO user(user_id, user_type) VALUES(?, ?)";
+    String sql = "INSERT INTO user(user_id, user_type, created_on) VALUES(?, ?, ?)";
 
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
       pstmt.setString(1, userId);
       pstmt.setString(2, userType);
+      pstmt.setDate(3, new Date(System.currentTimeMillis()));
       pstmt.executeUpdate();
     } catch (SQLException ex) {
       ex.printStackTrace();
