@@ -22,6 +22,7 @@ export class SearchComponent implements OnInit {
   http: XMLHttpRequest;
   selectedSearchOption: any;
   loading: boolean;
+  user: any;
 
   constructor() { }
 
@@ -30,6 +31,7 @@ export class SearchComponent implements OnInit {
     this.TOMCAT_URL = 'http://localhost:8080';
     this.selectedSearchOption = 1;
     this.results = [];
+    this.user = JSON.parse(localStorage.getItem('user'));
   }
 
   search() {

@@ -1,5 +1,6 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { Router } from '@angular/router';
 
 declare var gapi: any;
 import swal from 'sweetalert2';
@@ -18,7 +19,7 @@ export class NavbarComponent implements OnInit {
   modalRef: BsModalRef;
   userInfo: object;
 
-  constructor() {
+  constructor(private router: Router) {
     window['onSignIn'] = ((user) => {
       this.onSignIn(user);
     });
@@ -81,6 +82,7 @@ export class NavbarComponent implements OnInit {
         const auth2 = gapi.auth2.getAuthInstance();
         localStorage.clear();
         auth2.signOut();
+        this.router.navigateByUrl('/');
         location.reload();
       });
     } else {
