@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '../../../node_modules/@angular/router';
 
 declare var gapi: any;
 import swal from 'sweetalert2';
-import { Router } from '../../../node_modules/@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit {
   registerUsername: string;
   registerUserType: string;
 
-  constructor() {
+  constructor(private router: Router) {
     window['onRegister'] = ((user) => {
       this.onRegister(user);
     });
@@ -52,8 +52,11 @@ export class RegisterComponent implements OnInit {
       }).then(() => {
         localStorage.setItem('user', JSON.stringify({
           'userName': profile.getName(),
-          'userType': this.registerUserType === '1' ? 'student' : 'instructor'
+          'userType': this.registerUserType === '1' ? 'student' : 'instructor',
+          'createdOn': resp.createdOn,
+          'profileImage': profile.getImageUrl()
         }));
+        this.router.navigateByUrl('/');
         location.reload();
       });
     } else {
@@ -80,6 +83,7 @@ export class RegisterComponent implements OnInit {
         const auth2 = gapi.auth2.getAuthInstance();
         localStorage.clear();
         auth2.signOut();
+        this.router.navigateByUrl('/');
         location.reload();
       });
     } else {

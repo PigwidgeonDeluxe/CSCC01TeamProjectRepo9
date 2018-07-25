@@ -63,6 +63,7 @@ public class User extends HttpServlet {
               db.insertUser(userId, json.getString("userType"));
               response.put("status", "SUCCESS");
               response.put("message", "Successfully created new " + json.getString("userType"));
+              response.put("createdOn", System.currentTimeMillis());
               resp.getWriter().write(response.toString());
             }
           } catch (SQLException ex) {
