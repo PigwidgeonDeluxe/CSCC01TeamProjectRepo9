@@ -46,14 +46,14 @@ export class SearchComponent implements OnInit {
     }
   }
 
-  getSearchResults(fileName, fileType, userName, userType) {
+  getSearchResults(searchParam, fileType, userName, userType) {
     let url = this.TOMCAT_URL + '/search';
 
-    if (fileName) {
+    if (searchParam) {
       if (url.indexOf('?') === -1) {
-        url += '?fileName=' + fileName;
+        url += '?fileName=' + searchParam + '&contents=' + searchParam;
       } else {
-        url += '&fileName=' + fileName;
+        url += '&fileName=' + searchParam + '&contents=' + searchParam;
       }
     }
     if (fileType) {
