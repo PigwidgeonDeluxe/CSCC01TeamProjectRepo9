@@ -1,5 +1,6 @@
 package UTSCSearchEngine;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
@@ -9,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 @WebServlet("/comments")
-public class Commenting extends HttpServlet {
+public class Comments extends HttpServlet {
   @Override
-  public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+  public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     JSONObject response = new JSONObject();
     resp.setContentType("multipart/form-data");
     resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -21,6 +22,7 @@ public class Commenting extends HttpServlet {
 
     Database db = new Database();
 
+    // get all comments for a given document ID
     try {
       ResultSet comments = db.getFileComments(docId);
       while (comments.next()) {
@@ -31,10 +33,10 @@ public class Commenting extends HttpServlet {
             + comments.getString("date") + "\"\n");
       }
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
+    // write response back to user
+    resp.getWriter().write(responseBackToUser.toString());
 
   }
 }
