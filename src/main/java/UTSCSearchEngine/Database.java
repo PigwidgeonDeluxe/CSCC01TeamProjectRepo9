@@ -73,6 +73,36 @@ public class Database {
     return pstmt.executeQuery();
   }
 
+  public ResultSet getFileTypeStatistics() throws SQLException {
+
+    String sql = "SELECT file_type, COUNT(file_type) FROM file GROUP BY file_type";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    return pstmt.executeQuery();
+  }
+
+  public ResultSet getFileUploaderStatistics() throws SQLException {
+
+    String sql = "SELECT uploader_name, COUNT(uploader_name) FROM file GROUP BY uploader_name";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    return pstmt.executeQuery();
+  }
+
+  public ResultSet getFileSizeStatistics() throws SQLException {
+
+    String sql = "SELECT file_name, file_size FROM file";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    return pstmt.executeQuery();
+  }
+
   public void insertUser(String userId, String userType) {
 
     String sql = "INSERT INTO user(user_id, user_type, created_on) VALUES(?, ?, ?)";
