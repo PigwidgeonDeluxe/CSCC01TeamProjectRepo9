@@ -98,27 +98,42 @@ public class Database {
   }
 
   /**
+   * Insert into the database comments table a comment for a file_id
    * 
-   * @param fileName
+   * @param file_id
    * @param comment
-   * @param commenter
-   * @param commenterType
+   * @param comment_user
    * @param date
    */
-  public void insertFileComment(String fileName, String comment, String commenter,
-      String commenterType, Long date) {
+  public void insertFileComment(String file_id, String comment, String comment_user, Long date) {
     String sql =
         "INSERT INTO comments(fileName, comment, commenter, commenterType, date) VALUES (?, ?, ?, ?, ?)";
 
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
-      pstmt.setString(1, fileName);
+      pstmt.setString(1, file_id);
       pstmt.setString(2, comment);
-      pstmt.setString(3, commenter);
-      pstmt.setString(4, commenterType);
-      pstmt.setDate(5, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
+      pstmt.setString(3, comment_user);
+      pstmt.setDate(4, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
       pstmt.executeUpdate();
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
+  }
+
+  /**
+   * Get all comments for a given file
+   * 
+   * @param file_id
+   * @return
+   * @throws SQLException
+   */
+  public ResultSet getFileComments(String file_id) throws SQLException {
+    String sql = "SELECT * FROM comments WHERE file_id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    pstmt.setString(1, file_id);
+    return pstmt.executeQuery();
   }
 }
