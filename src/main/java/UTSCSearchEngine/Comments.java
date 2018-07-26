@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
+/**
+ * Class for retrieving all comments for a given docID
+ *
+ */
 @WebServlet("/comments")
 public class Comments extends HttpServlet {
   @Override
