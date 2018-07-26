@@ -15,6 +15,12 @@ export class ProfileComponent implements OnInit {
   http: XMLHttpRequest;
   results: any;
 
+  fileTypeData: any;
+  fileSizeData: any;
+
+  popularFileType: any;
+  largestFile: any;
+
   constructor() { }
 
   ngOnInit() {
@@ -23,7 +29,69 @@ export class ProfileComponent implements OnInit {
     this.user = JSON.parse(localStorage.getItem('user'));
     this.results = [];
 
+    this.fileTypeData = {
+      chartType: 'PieChart',
+      dataTable: [
+        ['File Type', 'Quantity']
+      ],
+      options: {
+        width: 500
+      }
+    };
+
+    this.fileSizeData = {
+      chartType: 'Histogram',
+      dataTable: [
+        ['Name', 'Size (B)']
+      ],
+      options: {
+        width: 500,
+        legend: 'none',
+        histogram: { bucketSize: 80000 },
+        colors: ['green']
+      }
+    };
+
     this.getUserFiles();
+    this.getStatistics();
+  }
+
+  getStatistics() {
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    const url = this.TOMCAT_URL + '/statistics?userName=' + user.userName;
+
+    this.http.open('GET', url, false);
+    this.http.send(null);
+    const resp = JSON.parse(this.http.response);
+
+    for (const key in resp.fileType) {
+      if (resp.fileType.hasOwnProperty(key)) {
+        this.fileTypeData.dataTable.push([key, resp.fileType[key]]);
+        if (this.popularFileType) {
+          if (resp.fileType[key] > this.popularFileType.files) {
+            this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
+          }
+        } else {
+          this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
+        }
+      }
+    }
+
+    for (const key in resp.fileSize) {
+      if (resp.fileSize.hasOwnProperty(key)) {
+        this.fileSizeData.dataTable.push([key, resp.fileSize[key]]);
+        if (this.largestFile) {
+          if (resp.fileSize[key] > this.largestFile) {
+            this.largestFile = resp.fileSize[key];
+          }
+        } else {
+          this.largestFile = resp.fileSize[key];
+        }
+      }
+    }
+
+    this.largestFile = Math.round(this.largestFile / 1000) / 100;
   }
 
   getUserFiles() {

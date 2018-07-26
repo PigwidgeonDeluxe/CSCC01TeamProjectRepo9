@@ -75,45 +75,41 @@ export class StatisticsComponent implements OnInit {
     this.http.send(null);
     const resp = JSON.parse(this.http.response);
 
-    const fileTypeStats = JSON.parse(resp.fileType);
-    const fileUploaderStats = JSON.parse(resp.uploaderStats);
-    const fileSizeStats = JSON.parse(resp.fileSize);
-
-    for (const key in fileTypeStats) {
-      if (fileTypeStats.hasOwnProperty(key)) {
-        this.fileTypeData.dataTable.push([key, fileTypeStats[key]]);
+    for (const key in resp.fileType) {
+      if (resp.fileType.hasOwnProperty(key)) {
+        this.fileTypeData.dataTable.push([key, resp.fileType[key]]);
         if (this.popularFileType) {
-          if (fileTypeStats[key] > this.popularFileType.files) {
-            this.popularFileType = {'fileType': key, 'files': fileTypeStats[key]};
+          if (resp.fileType[key] > this.popularFileType.files) {
+            this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
           }
         } else {
-          this.popularFileType = {'fileType': key, 'files': fileTypeStats[key]};
+          this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
         }
       }
     }
 
-    for (const key in fileUploaderStats) {
-      if (fileUploaderStats.hasOwnProperty(key)) {
-        this.fileUploaderData.dataTable.push([key, fileUploaderStats[key]]);
+    for (const key in resp.uploaderStats) {
+      if (resp.uploaderStats.hasOwnProperty(key)) {
+        this.fileUploaderData.dataTable.push([key, resp.uploaderStats[key]]);
         if (this.topContributor) {
-          if (fileUploaderStats[key] > this.topContributor.files) {
-            this.topContributor = {'name': key, 'files': fileUploaderStats[key]};
+          if (resp.uploaderStats[key] > this.topContributor.files) {
+            this.topContributor = {'name': key, 'files': resp.uploaderStats[key]};
           }
         } else {
-          this.topContributor = {'name': key, 'files': fileUploaderStats[key]};
+          this.topContributor = {'name': key, 'files': resp.uploaderStats[key]};
         }
       }
     }
 
-    for (const key in fileSizeStats) {
-      if (fileSizeStats.hasOwnProperty(key)) {
-        this.fileSizeData.dataTable.push([key, fileSizeStats[key]]);
+    for (const key in resp.fileSize) {
+      if (resp.fileSize.hasOwnProperty(key)) {
+        this.fileSizeData.dataTable.push([key, resp.fileSize[key]]);
         if (this.largestFile) {
-          if (fileSizeStats[key] > this.largestFile) {
-            this.largestFile = fileSizeStats[key];
+          if (resp.fileSize[key] > this.largestFile) {
+            this.largestFile = resp.fileSize[key];
           }
         } else {
-          this.largestFile = fileSizeStats[key];
+          this.largestFile = resp.fileSize[key];
         }
       }
     }

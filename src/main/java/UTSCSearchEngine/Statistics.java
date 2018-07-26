@@ -19,39 +19,72 @@ public class Statistics extends HttpServlet {
     Database db = new Database();
     JSONObject responseJSON = new JSONObject();
 
+    // general statistics
     JSONObject fileTypeStats = new JSONObject();
     JSONObject fileUploaderStats = new JSONObject();
     JSONObject fileSizeStats = new JSONObject();
 
-    try {
-      ResultSet fileTypeRs = db.getFileTypeStatistics();
-      while(fileTypeRs.next()) {
-        fileTypeStats.put(fileTypeRs.getString("file_type"),
-            fileTypeRs.getInt("count(file_type)"));
+    // user statistics
+    JSONObject userFileTypeStats = new JSONObject();
+    JSONObject userFileSizeStats = new JSONObject();
+
+    String userName = req.getParameter("userName");
+
+    if (userName != null) {
+      try {
+        ResultSet fileTypeRs = db.getUserFileTypeStatistics(userName);
+        while(fileTypeRs.next()) {
+          userFileTypeStats.put(fileTypeRs.getString("file_type"),
+              fileTypeRs.getInt("count(file_type)"));
+        }
+
+        ResultSet fileSizeRs = db.getUserFileSizeStatistics(userName);
+        while(fileSizeRs.next()) {
+          userFileSizeStats.put(fileSizeRs.getString("file_name"),
+              fileSizeRs.getInt("file_size"));
+        }
+      } catch (SQLException ex) {
+        ex.printStackTrace();
       }
 
-      ResultSet fileUploaderRs = db.getFileUploaderStatistics();
-      while(fileUploaderRs.next()) {
-        fileUploaderStats.put(fileUploaderRs.getString("uploader_name"),
-            fileUploaderRs.getInt("count(uploader_name)"));
-      }
+      // package statistics in response JSON
+      responseJSON.put("fileType", userFileTypeStats);
+      responseJSON.put("fileSize", userFileSizeStats);
 
-      ResultSet fileSizeRs = db.getFileSizeStatistics();
-      while(fileSizeRs.next()) {
-        fileSizeStats.put(fileSizeRs.getString("file_name"),
-            fileSizeRs.getInt("file_size"));
+      resp.setHeader("Access-Control-Allow-Origin", "*");
+      resp.getWriter().write(responseJSON.toString());
+    } else {
+        try {
+          ResultSet fileTypeRs = db.getFileTypeStatistics();
+          while(fileTypeRs.next()) {
+            fileTypeStats.put(fileTypeRs.getString("file_type"),
+                fileTypeRs.getInt("count(file_type)"));
+          }
+
+          ResultSet fileUploaderRs = db.getFileUploaderStatistics();
+          while(fileUploaderRs.next()) {
+            fileUploaderStats.put(fileUploaderRs.getString("uploader_name"),
+                fileUploaderRs.getInt("count(uploader_name)"));
+          }
+
+          ResultSet fileSizeRs = db.getFileSizeStatistics();
+          while(fileSizeRs.next()) {
+            fileSizeStats.put(fileSizeRs.getString("file_name"),
+                fileSizeRs.getInt("file_size"));
+          }
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+
+        // package statistics in response JSON
+        responseJSON.put("fileType", fileTypeStats);
+        responseJSON.put("uploaderStats", fileUploaderStats);
+        responseJSON.put("fileSize", fileSizeStats);
+
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.getWriter().write(responseJSON.toString());
+
       }
-    } catch (SQLException ex) {
-      ex.printStackTrace();
     }
 
-    // package statistics in response JSON
-    responseJSON.put("fileType", fileTypeStats.toString());
-    responseJSON.put("uploaderStats", fileUploaderStats.toString());
-    responseJSON.put("fileSize", fileSizeStats.toString());
-
-    resp.setHeader("Access-Control-Allow-Origin", "*");
-    resp.getWriter().write(responseJSON.toString());
-
-  }
 }

@@ -103,6 +103,29 @@ public class Database {
     return pstmt.executeQuery();
   }
 
+  public ResultSet getUserFileTypeStatistics(String userName) throws SQLException {
+
+    String sql = "SELECT file_type, COUNT(file_type) FROM file WHERE uploader_name = "
+        + "? GROUP BY file_type";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+    pstmt.setString(1, userName);
+
+    return pstmt.executeQuery();
+  }
+
+  public ResultSet getUserFileSizeStatistics(String userName) throws SQLException {
+
+    String sql = "SELECT file_name, file_size FROM file WHERE uploader_name = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+    pstmt.setString(1, userName);
+
+    return pstmt.executeQuery();
+  }
+
   public void insertUser(String userId, String userType) {
 
     String sql = "INSERT INTO user(user_id, user_type, created_on) VALUES(?, ?, ?)";
