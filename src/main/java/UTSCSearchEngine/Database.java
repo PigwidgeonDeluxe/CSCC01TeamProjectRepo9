@@ -44,8 +44,7 @@ public class Database {
       pstmt.setInt(4, file.length);
       pstmt.setString(5, uploaderName);
       pstmt.setString(6, uploaderType);
-      pstmt.setDate(7, date != null ? new Date(date) :
-          new Date(System.currentTimeMillis()));
+      pstmt.setDate(7, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
       pstmt.executeUpdate();
     } catch (SQLException ex) {
       ex.printStackTrace();
@@ -96,5 +95,30 @@ public class Database {
 
     pstmt.setString(1, userId);
     return pstmt.executeQuery();
+  }
+
+  /**
+   * 
+   * @param fileName
+   * @param comment
+   * @param commenter
+   * @param commenterType
+   * @param date
+   */
+  public void insertFileComment(String fileName, String comment, String commenter,
+      String commenterType, Long date) {
+    String sql =
+        "INSERT INTO comments(fileName, comment, commenter, commenterType, date) VALUES (?, ?, ?, ?, ?)";
+
+    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+      pstmt.setString(1, fileName);
+      pstmt.setString(2, comment);
+      pstmt.setString(3, commenter);
+      pstmt.setString(4, commenterType);
+      pstmt.setDate(5, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
+      pstmt.executeUpdate();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
   }
 }
