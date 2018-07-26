@@ -107,7 +107,7 @@ public class Database {
    */
   public void insertFileComment(String file_id, String comment, String comment_user, Long date) {
     String sql =
-        "INSERT INTO comments(fileName, comment, commenter, commenterType, date) VALUES (?, ?, ?, ?, ?)";
+        "INSERT INTO comments(file_id, comment, commenter, comment_user, date) VALUES (?, ?, ?, ?, ?)";
 
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
       pstmt.setString(1, file_id);

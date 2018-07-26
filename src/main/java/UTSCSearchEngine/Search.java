@@ -119,6 +119,7 @@ public class Search extends HttpServlet {
     }
 
     resp.setHeader("Access-Control-Allow-Origin", "*");
+    System.out.println(responseBackToUser);
     resp.getWriter().write(responseBackToUser);
 
   }
