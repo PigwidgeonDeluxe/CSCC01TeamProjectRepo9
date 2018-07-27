@@ -32,7 +32,6 @@ public class Comments extends HttpServlet {
       while (comments.next()) {
         responseBackToUser.append(comments.getString("file_id") + "~"
             + comments.getString("comment") + "~"
-            + comments.getString("commenter") + "~"
             + comments.getString("comment_user") + "~"
             + comments.getString("date") + "\"\n");
       }

@@ -32,6 +32,7 @@ export class CommentsComponent implements OnInit {
       });
       console.log("docId:" + this.docId);
       console.log(this.comment_user)
+    this.getComments();
   }
 
   getComments(){
