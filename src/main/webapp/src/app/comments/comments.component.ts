@@ -63,14 +63,12 @@ export class CommentsComponent implements OnInit {
   }
 
   insertComment(){
-  	if (this.comment !== undefined){
+  	if (this.comment !== undefined && this.comment !== ""){
 	  	let url = this.TOMCAT_URL + '/commenting?docId=' + this.docId + "&comment=" + this.comment + "&comment_user=" + this.comment_user.userName;
 	  	this.http.open('POST', url, false);
 	    this.http.send(null);
 	    console.log("comment:" + this.comment);
-    }
-
-    if (this.comment === undefined) {
+    } else {
   		swal({
     	title: 'No Comment',
     	type: 'warning',
@@ -84,4 +82,5 @@ export class CommentsComponent implements OnInit {
     	text: 'No document here'
   		});
   	}
+}
 }
