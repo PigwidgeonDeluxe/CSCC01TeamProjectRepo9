@@ -44,8 +44,7 @@ public class Database {
       pstmt.setInt(4, file.length);
       pstmt.setString(5, uploaderName);
       pstmt.setString(6, uploaderType);
-      pstmt.setDate(7, date != null ? new Date(date) :
-          new Date(System.currentTimeMillis()));
+      pstmt.setDate(7, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
       pstmt.executeUpdate();
     } catch (SQLException ex) {
       ex.printStackTrace();
@@ -58,6 +57,42 @@ public class Database {
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);
+    return pstmt.executeQuery();
+  }
+
+  public ResultSet getFileById(String fileId) throws SQLException {
+
+    String sql = "SELECT * FROM file WHERE id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt =  con.prepareStatement(sql);
+
+    pstmt.setString(1, fileId);
+    return pstmt.executeQuery();
+  }
+
+  public void insertFileComment(String fileId, String comment, String comment_user, Long date) {
+    String sql =
+        "INSERT INTO comments(file_id, comment, comment_user, date) VALUES (?, ?, ?, ?)";
+
+    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+      pstmt.setString(1, fileId);
+      pstmt.setString(2, comment);
+      pstmt.setString(3, comment_user);
+      pstmt.setDate(4, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
+      pstmt.executeUpdate();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public ResultSet getFileComments(String fileId) throws SQLException {
+    String sql = "SELECT * FROM comments WHERE file_id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    pstmt.setString(1, fileId);
     return pstmt.executeQuery();
   }
 
@@ -150,4 +185,5 @@ public class Database {
     pstmt.setString(1, userId);
     return pstmt.executeQuery();
   }
+
 }

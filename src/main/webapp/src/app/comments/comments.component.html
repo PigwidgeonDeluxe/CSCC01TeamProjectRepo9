@@ -1,0 +1,95 @@
+<div class="container content-row mt-5">
+<app-navbar></app-navbar>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-1 text-center">
+        <i *ngIf="fileData.fileType !== 'docx' && fileData.fileType !== 'pdf' && fileData.fileType !== 'html'" class="far fa-file fa-3x"></i>
+        <i *ngIf="fileData.fileType === 'docx'" class="text-primary far fa-file-word fa-3x"></i>
+        <i *ngIf="fileData.fileType === 'pdf'" class="text-danger far fa-file-pdf fa-3x"></i>
+        <i *ngIf="fileData.fileType === 'html'" class="text-warning fa fa-globe fa-3x"></i>
+      </div>
+      <div class="col-md-11">
+        <div class="row">
+          <div class="col">
+            <label class="heading">{{ fileData.fileName }}</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <span tooltip="File Size" class="badge badge-info">
+              <i class="fa fa-file"></i> {{ fileData.fileSize != 0 ? fileData.fileSize : '<1' }} MB
+            </span>
+            <span tooltip="Uploaded By: {{ fileData.uploaderName }} ({{ fileData.uploaderType }})"
+                  [ngClass]="{'badge-success': fileData.uploaderType === 'student', 'badge-warning': fileData.uploaderType === 'instructor'}"
+                  class="badge">
+              <i class="fa fa-user"></i> {{ fileData.uploaderName }}
+            </span>
+            <span tooltip="Upload Date" class="badge badge-secondary">
+              <i class="far fa-calendar-alt"></i> {{ fileData.uploadedOn | date: 'medium' }}
+            </span>
+            <span (click)="downloadFile(fileData.fileName, fileData.uploadDate)" class="badge badge-primary" style="cursor: pointer">
+              <i class="fa fa-download"></i> Download
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <label class="heading">Comments</label>
+    <div *ngFor="let result of results" class="mt-3 card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <div class="row">
+              <div class="col-md-2 text-center text-capitalize">
+                <img src="{{ commentUser.profileImage }}?sz=75" alt="profileImage">
+                <span class="heading badge badge-warning badge-sm">
+                  <i class="fa fa-user"></i> {{ commentUser.userType }}
+                </span>
+              </div>
+              <div class="col">
+                <div class="row">
+                  <div class="col">
+                    <span class="heading">{{ result.commentUser }}</span>
+                    <span class="badge badge-secondary badge-sm ml-1">
+                      <i class="fa fa-calendar-alt"></i> {{ result.date | date: 'medium' }}
+                    </span>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col text-monospace">
+                    {{ result.comment }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="row mt-3">
+        <div class="col text-left">
+          <a href="/">Back</a>
+        </div>
+        <div class="col text-right">
+          {{ results.length === 0 ? 'No comments' : results.length + ' comments' }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="card mb-5">
+  <div class="card-body">
+    <div class="form-group">
+      <label class="heading">Write a Comment</label>
+      <textarea type="text" class="form-control form-control-sm" [(ngModel)]="comment" placeholder="Enter a comment" rows="5"></textarea>
+    </div>
+    <button (click)="insertComment()" class="btn btn-success btn-sm">
+      <i class="fa fa-comment"></i> Comment
+    </button>
+  </div>
+</div>
+</div>
