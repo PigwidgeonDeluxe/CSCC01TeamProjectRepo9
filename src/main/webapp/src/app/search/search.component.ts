@@ -11,11 +11,18 @@ import swal from 'sweetalert2';
 export class SearchComponent implements OnInit {
 
   TOMCAT_URL: string;
+
   searchQuery: string;
+  fileTypeQuery: string;
+  userNameQuery: string;
+  userTypeQuery: string;
+
   option: string;
   results: any;
   http: XMLHttpRequest;
   selectedSearchOption: any;
+  loading: boolean;
+  user: any;
 
   constructor() { }
 
@@ -24,22 +31,54 @@ export class SearchComponent implements OnInit {
     this.TOMCAT_URL = 'http://localhost:8080';
     this.selectedSearchOption = 1;
     this.results = [];
+    this.user = JSON.parse(localStorage.getItem('user'));
   }
 
   search() {
-    if (this.searchQuery && this.selectedSearchOption === 1) {
-      this.getSearchResults('fileName');
-    } else if (this.searchQuery && this.selectedSearchOption === 2) {
-      this.getSearchResults('fileType');
-    } else if (this.searchQuery && this.selectedSearchOption === 3) {
-      this.getSearchResults('userName');
-    } else if (this.searchQuery && this.selectedSearchOption === 4) {
-      this.getSearchResults('userType');
+    if (!this.searchQuery && !this.fileTypeQuery && !this.userNameQuery && !this.userTypeQuery) {
+      swal({
+        title: 'No query',
+        type: 'warning',
+        text: 'Please submit a query to use the search functionality'
+      });
+    } else {
+      this.getSearchResults(this.searchQuery, this.fileTypeQuery, this.userNameQuery, this.userTypeQuery);
     }
   }
 
-  getSearchResults(queryParam) {
-    this.http.open('GET', this.TOMCAT_URL + '/search?' + queryParam + '=' + this.searchQuery, false);
+  getSearchResults(searchParam, fileType, userName, userType) {
+    let url = this.TOMCAT_URL + '/search';
+
+    if (searchParam) {
+      if (url.indexOf('?') === -1) {
+        url += '?fileName=' + searchParam + '&contents=' + searchParam;
+      } else {
+        url += '&fileName=' + searchParam + '&contents=' + searchParam;
+      }
+    }
+    if (fileType) {
+      if (url.indexOf('?') === -1) {
+        url += '?fileType=' + fileType;
+      } else {
+        url += '&fileType=' + fileType;
+      }
+    }
+    if (userName) {
+      if (url.indexOf('?') === -1) {
+        url += '?userName=' + userName;
+      } else {
+        url += '&userName=' + userName;
+      }
+    }
+    if (userType) {
+      if (url.indexOf('?') === -1) {
+        url += '?userType=' + userType;
+      } else {
+        url += '&userType=' + userType;
+      }
+    }
+
+    this.http.open('GET', url, false);
     this.http.send(null);
     const resp = this.http.response.split('"\n');
     this.results = [];
@@ -48,9 +87,9 @@ export class SearchComponent implements OnInit {
         this.results.push({
           'fileName': element.split('~')[0],
           'fileType': element.split('~')[1],
-          'userName': element.split('~')[2],
-          'fileSize': Math.round(+element.split('~')[3] / 1000),
-          'userType': element.split('~')[4],
+          'userType': element.split('~')[2],
+          'userName': element.split('~')[3],
+          'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
           'uploadDate': +element.split('~')[5],
           'fileContent': element.split('~')[6]
         });
@@ -65,6 +104,7 @@ export class SearchComponent implements OnInit {
       });
     }
   }
+
 
   downloadFile(fileName: string, uploadDate: string) {
     this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + fileName + '&uploadTime=' + uploadDate, true);

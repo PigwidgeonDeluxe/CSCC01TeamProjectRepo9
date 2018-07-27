@@ -76,9 +76,9 @@ public class Indexing {
 		try {
 			ResultSet rs = db.getAllFiles();
 			while (rs.next()) {
-				addDoc(w, rs.getString("file_name"), rs.getString("file_type"), rs.getString("file_size"),
-						rs.getString("uploader_name"), rs.getString("uploader_type"), rs.getString("uploaded_on"),
-						rs.getBytes("file"));
+				addDoc(w, rs.getString("id"), rs.getString("file_name"), rs.getString("file_type"),
+						rs.getString("uploader_name"), rs.getString("uploader_type"), rs.getString("file_size"),
+						rs.getString("uploaded_on"), rs.getBytes("file"));
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -91,9 +91,9 @@ public class Indexing {
 		try {
 			ResultSet rs = db.getAllFiles();
 			while (rs.next()) {
-				addDoc(w, rs.getString("file_name"), rs.getString("file_type"), rs.getString("file_size"),
-						rs.getString("uploader_name"), rs.getString("uploader_type"), rs.getString("uploaded_on"),
-						rs.getBytes("file"));
+				addDoc(w, rs.getString("id"), rs.getString("file_name"), rs.getString("file_type"),
+						rs.getString("uploader_name"), rs.getString("uploader_type"), rs.getString("file_size"),
+						rs.getString("uploaded_on"), rs.getBytes("file"));
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -110,15 +110,16 @@ public class Indexing {
 	 * @param userType
 	 * @throws IOException
 	 */
-	private static void addDoc(IndexWriter w, String fileName, String fileType, String userName, String userType,
-			String fileSize, String uploadDate, byte[] fileContents) throws IOException {
+	private static void addDoc(IndexWriter w, String fileId, String fileName, String fileType, String userName,
+			String userType, String fileSize, String uploadDate, byte[] fileContents) throws IOException {
 		Document doc = new Document();
 		InputStream in = new ByteArrayInputStream(fileContents);
 
 		// add the values to the index
+		doc.add(new StringField("fileId", fileId, Field.Store.YES));
 		doc.add(new TextField("fileName", fileName, Field.Store.YES));
 		doc.add(new TextField("fileType", fileType, Field.Store.YES));
-		doc.add(new TextField("userName", userName, Field.Store.YES));
+		doc.add(new TextField("userName", userName.replaceAll("%20", " "), Field.Store.YES));
 		doc.add(new StringField("userType", userType, Field.Store.YES));
 		doc.add(new TextField("fileSize", fileSize, Field.Store.YES));
 		doc.add(new TextField("uploadDate", uploadDate, Field.Store.YES));

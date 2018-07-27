@@ -27,9 +27,9 @@ import org.apache.lucene.store.Directory;
 public class Search extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private StandardAnalyzer analyzer = null;
+	private static StandardAnalyzer analyzer = null;
 	private static Directory index = null;
-	private Indexing indexer = new Indexing();
+	private static Indexing indexer = new Indexing();
 
 	public void init(ServletConfig config1) throws ServletException {
 		super.init(config1);
@@ -38,15 +38,15 @@ public class Search extends HttpServlet {
 		System.out.println("Finished: init");
 	}
 
-	public void callIndexing() {
-		this.indexer.doIndexing();
-		this.analyzer = indexer.getAnalyzer();
+	public static void callIndexing() {
+		indexer.doIndexing();
+		analyzer = indexer.getAnalyzer();
 		index = indexer.getIndex();
 	}
 
 	public void callIndexing(String url) {
-		this.indexer.doIndexing(url);
-		this.analyzer = indexer.getAnalyzer();
+		indexer.doIndexing(url);
+		analyzer = indexer.getAnalyzer();
 		index = indexer.getIndex();
 	}
 
@@ -58,25 +58,30 @@ public class Search extends HttpServlet {
 		String fileTypeQuery = req.getParameter("fileType");
 		String userNameQuery = req.getParameter("userName");
 		String userTypeQuery = req.getParameter("userType");
+		String userContentQuery = req.getParameter("contents");
 
 		if (fileNameQuery != null || fileTypeQuery != null || userNameQuery != null || userTypeQuery != null) {
 			BooleanQuery.Builder boolQuery = new BooleanQuery.Builder();
 
 			if (fileNameQuery != null) {
 				Query fileNameQ = new TermQuery(new Term("fileName", fileNameQuery));
-				boolQuery.add(fileNameQ, BooleanClause.Occur.SHOULD);
+				boolQuery.add(fileNameQ, BooleanClause.Occur.MUST);
 			}
 			if (fileTypeQuery != null) {
 				Query fileTypeQ = new TermQuery(new Term("fileType", fileTypeQuery));
-				boolQuery.add(fileTypeQ, BooleanClause.Occur.SHOULD);
+				boolQuery.add(fileTypeQ, BooleanClause.Occur.MUST);
 			}
 			if (userNameQuery != null) {
 				Query userNameQ = new TermQuery(new Term("userName", userNameQuery));
-				boolQuery.add(userNameQ, BooleanClause.Occur.SHOULD);
+				boolQuery.add(userNameQ, BooleanClause.Occur.MUST);
 			}
 			if (userTypeQuery != null) {
 				Query userTypeQ = new TermQuery(new Term("userType", userTypeQuery));
-				boolQuery.add(userTypeQ, BooleanClause.Occur.SHOULD);
+				boolQuery.add(userTypeQ, BooleanClause.Occur.MUST);
+			}
+			if (userContentQuery != null) {
+				Query userContentQ = new TermQuery(new Term("contents", userContentQuery));
+				boolQuery.add(userContentQ, BooleanClause.Occur.MUST);
 			}
 			Query q = boolQuery.build();
 			search(q, resp);
@@ -101,9 +106,11 @@ public class Search extends HttpServlet {
 		for (int i = 0; i < hits.length; ++i) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			responseBackToUser.append(d.get("fileName") + "~" + d.get("fileType") + "~" + d.get("userType") + "~"
-					+ d.get("userName") + "~" + d.get("fileSize") + "~" + d.get("uploadDate") + "~" + "\""
-					+ d.get("contents").substring(0, Math.min(d.get("contents").length(), 160)) + "\"\n");
+			String contents = d.get("contents");
+			contents = contents != null ? contents.substring(0, Math.min(contents.length(), 160)) : "";
+			responseBackToUser.append(
+					d.get("fileName") + "~" + d.get("fileType") + "~" + d.get("userType") + "~" + d.get("userName")
+							+ "~" + d.get("fileSize") + "~" + d.get("uploadDate") + "~" + "\"" + contents + "\"\n");
 		}
 		resp.setHeader("Access-Control-Allow-Origin", "*");
 		resp.getWriter().write(responseBackToUser.toString());
