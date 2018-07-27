@@ -147,7 +147,7 @@ public class Search extends HttpServlet {
           + d.get("userName") + "~"
           + d.get("fileSize") + "~"
           + d.get("uploadDate") + "~"
-          + docId + "~"
+          + d.get("fileId") + "~"
           + "\"" + contents + "\"\n");
     }
     return responseBackToUser.toString();

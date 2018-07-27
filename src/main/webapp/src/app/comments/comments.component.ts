@@ -18,6 +18,7 @@ export class CommentsComponent implements OnInit {
   docId: string;
   comment: string;
   commentUser: any;
+  fileData: any;
 
   constructor(private activatedRoute: ActivatedRoute) { }
 
@@ -33,11 +34,13 @@ export class CommentsComponent implements OnInit {
   }
 
   getComments() {
-    const url = this.TOMCAT_URL + '/comments?docId=' + this.docId;
+    const url = this.TOMCAT_URL + '/comment?docId=' + this.docId;
     if (this.docId !== undefined) {
       this.http.open('GET', url, false);
       this.http.send(null);
-      const resp = this.http.response.split('"\n');
+      this.fileData = JSON.parse(this.http.response);
+      this.fileData.fileSize = Math.round(this.fileData.fileSize / 1000) / 100;
+      const resp = JSON.parse(this.http.response).comments.split('\n');
       this.results = [];
       resp.forEach(element => {
         if (element.length > 0) {
@@ -50,33 +53,19 @@ export class CommentsComponent implements OnInit {
         }
       });
     }
-    if (this.docId === undefined) {
-      swal({
-      title: 'No Document',
-      type: 'warning',
-      text: 'No document here'
-      });
-    }
   }
 
   insertComment() {
-    if (this.comment !== undefined && this.comment !== '') {
-      const url = this.TOMCAT_URL + '/commenting?docId=' + this.docId + '&comment=' + this.comment +
-        '&comment_user=' + this.commentUser.userName;
+    if (this.comment) {
+      const url = this.TOMCAT_URL + '/comment?docId=' + this.docId + '&comment=' + this.comment +
+        '&commentUser=' + this.commentUser.userName;
       this.http.open('POST', url, false);
       this.http.send(null);
     } else {
       swal({
-      title: 'No Comment',
-      type: 'warning',
-      text: 'No comment written'
-      });
-    }
-    if (this.docId === undefined) {
-      swal({
-      title: 'No Document',
-      type: 'warning',
-      text: 'No document here'
+        title: 'No Comment',
+        type: 'warning',
+        text: 'No comment written'
       });
     }
   }

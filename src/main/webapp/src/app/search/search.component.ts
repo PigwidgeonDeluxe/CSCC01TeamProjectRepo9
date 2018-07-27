@@ -32,7 +32,6 @@ export class SearchComponent implements OnInit {
     this.selectedSearchOption = 1;
     this.results = [];
     this.user = JSON.parse(localStorage.getItem('user'));
-    console.log(this.user);
   }
 
   search() {
@@ -131,12 +130,8 @@ export class SearchComponent implements OnInit {
     };
   }
 
-  viewComments(docId: string){
-    //this.http.open('GET', this.TOMCAT_URL + '/comments', true);
-    //this.http.responseType = null;
-    //this.http.send(null);
+  viewComments(docId: string) {
     this.router.navigateByUrl('/comments?docId=' + docId);
-    console.log("router:" + docId);
   }
 
 }

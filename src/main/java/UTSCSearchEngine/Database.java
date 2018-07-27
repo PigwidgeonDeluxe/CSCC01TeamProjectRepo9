@@ -60,6 +60,42 @@ public class Database {
     return pstmt.executeQuery();
   }
 
+  public ResultSet getFileById(String fileId) throws SQLException {
+
+    String sql = "SELECT * FROM file WHERE id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt =  con.prepareStatement(sql);
+
+    pstmt.setString(1, fileId);
+    return pstmt.executeQuery();
+  }
+
+  public void insertFileComment(String fileId, String comment, String comment_user, Long date) {
+    String sql =
+        "INSERT INTO comments(file_id, comment, comment_user, date) VALUES (?, ?, ?, ?)";
+
+    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+      pstmt.setString(1, fileId);
+      pstmt.setString(2, comment);
+      pstmt.setString(3, comment_user);
+      pstmt.setDate(4, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
+      pstmt.executeUpdate();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public ResultSet getFileComments(String fileId) throws SQLException {
+    String sql = "SELECT * FROM comments WHERE file_id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    pstmt.setString(1, fileId);
+    return pstmt.executeQuery();
+  }
+
   public ResultSet getFileData(String fileName, Long uploadTime) throws SQLException {
 
     String sql = "SELECT * FROM file WHERE file_name = ? AND uploaded_on = ?";
@@ -97,43 +133,4 @@ public class Database {
     return pstmt.executeQuery();
   }
 
-  /**
-   * Insert into the database comments table a comment for a file_id
-   * 
-   * @param file_id
-   * @param comment
-   * @param comment_user
-   * @param date
-   */
-  public void insertFileComment(String file_id, String comment, String comment_user, Long date) {
-    String sql =
-        "INSERT INTO comments(file_id, comment, comment_user, date) VALUES (?, ?, ?, ?)";
-
-    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
-      pstmt.setString(1, file_id);
-      pstmt.setString(2, comment);
-      pstmt.setString(3, comment_user);
-      pstmt.setDate(4, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
-      pstmt.executeUpdate();
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
-  }
-
-  /**
-   * Get all comments for a given file
-   * 
-   * @param file_id
-   * @return
-   * @throws SQLException
-   */
-  public ResultSet getFileComments(String file_id) throws SQLException {
-    String sql = "SELECT * FROM comments WHERE file_id = ?";
-
-    Connection con = connect();
-    PreparedStatement pstmt = con.prepareStatement(sql);
-
-    pstmt.setString(1, file_id);
-    return pstmt.executeQuery();
-  }
 }
