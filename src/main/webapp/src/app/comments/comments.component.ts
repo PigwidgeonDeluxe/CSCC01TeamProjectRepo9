@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
 
 @Component({
@@ -78,4 +79,27 @@ export class CommentsComponent implements OnInit {
     }
   }
 
+  downloadFile(fileName: string, uploadDate: string) {
+    this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + this.fileData.fileName + '&uploadTime=' + this.fileData.uploadedOn,
+     true);
+    this.http.responseType = 'arraybuffer';
+    this.http.send(null);
+
+    this.http.onload = () => {
+      const data = this.http.response;
+      const extension = fileName.split('.').pop();
+      let contentType;
+      if (extension === 'pdf') {
+        contentType = {type: 'application/pdf'};
+      } else if (extension === 'doc' || extension === 'docx') {
+        contentType = {type: 'application/msword'};
+      } else if (extension === 'html') {
+        contentType = {type: 'text/html'};
+      } else {
+        contentType = {type: 'text/plain'};
+      }
+      const blob = new Blob([data], contentType);
+      FileSaver.saveAs(blob, fileName);
+    };
+  }
 }
