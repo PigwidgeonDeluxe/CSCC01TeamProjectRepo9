@@ -61,6 +61,14 @@ export class CommentsComponent implements OnInit {
         '&commentUser=' + this.commentUser.userName;
       this.http.open('POST', url, false);
       this.http.send(null);
+      swal({
+        title: 'Success',
+        type: 'success',
+        text: 'Successfully added new comment'
+      }).then(() => {
+        this.getComments();
+        this.comment = null;
+      });
     } else {
       swal({
         title: 'No Comment',
