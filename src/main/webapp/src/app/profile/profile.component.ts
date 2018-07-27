@@ -110,7 +110,8 @@ export class ProfileComponent implements OnInit {
           'userName': element.split('~')[3],
           'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
           'uploadDate': +element.split('~')[5],
-          'fileContent': element.split('~')[6]
+          'fileId': element.split('~')[6],
+          'fileContent': element.split('~')[7]
         });
       }
     });
