@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
 import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-search',
@@ -24,7 +24,7 @@ export class SearchComponent implements OnInit {
   loading: boolean;
   user: any;
 
-  constructor() { }
+  constructor(private router : Router) { }
 
   ngOnInit() {
     this.http = new XMLHttpRequest();
@@ -32,6 +32,7 @@ export class SearchComponent implements OnInit {
     this.selectedSearchOption = 1;
     this.results = [];
     this.user = JSON.parse(localStorage.getItem('user'));
+    console.log(this.user);
   }
 
   search() {
@@ -91,7 +92,8 @@ export class SearchComponent implements OnInit {
           'userName': element.split('~')[3],
           'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
           'uploadDate': +element.split('~')[5],
-          'fileContent': element.split('~')[6]
+          'docId': element.split('~')[6],
+          'fileContent': element.split('~')[7]
         });
       }
     });
@@ -127,6 +129,14 @@ export class SearchComponent implements OnInit {
       const blob = new Blob([data], contentType);
       FileSaver.saveAs(blob, fileName);
     };
+  }
+
+  viewComments(docId: string){
+    //this.http.open('GET', this.TOMCAT_URL + '/comments', true);
+    //this.http.responseType = null;
+    //this.http.send(null);
+    this.router.navigateByUrl('/comments?docId=' + docId);
+    console.log("router:" + docId);
   }
 
 }

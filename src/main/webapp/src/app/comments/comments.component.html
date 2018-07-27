@@ -1,0 +1,42 @@
+<div class="container content-row mt-5">
+<div class="card mt-3 mb-5">
+  <div class="card-body">
+    <label class="heading">Comments</label>
+    <div *ngFor="let result of results" class="mt-3 mb-3">
+      <div class="row">
+        <div class="col-md-11">
+          <div class="row">
+            <div class="col">
+              <span class="heading">{{ result.fileName }}</span>
+            </div>
+          </div>
+          <div class="row mt-2 mb-2">
+            <div class="col text-monospace">
+              {{ result.fileContent }}..."
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div [ngClass]="{'mt-3': results.length > 0}">
+      {{ results.length === 0 ? 'No comments' : results.length + ' comments' }}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="form-group">
+      <label class="heading">Write a Comment</label>
+      <div class="input-group">
+        <input (keyup.enter)="insertComment()" type="text" class="form-control form-control-sm" [(ngModel)]="comment" id="commentBox" placeholder="Enter comment">
+        <span class="input-group-btn">
+          <button (click)="insertComment()" type="submit" class="btn btn-success btn-sm" id="commentButton">
+            <i class="fa fa-submit"></i> Submit
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

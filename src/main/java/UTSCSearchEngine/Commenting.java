@@ -29,7 +29,6 @@ public class Commenting extends HttpServlet {
     Long date = System.currentTimeMillis(); // current time (system)
 
     Database db = new Database();
-
     db.insertFileComment(docId, comment, comment_user, date);
   }
 }

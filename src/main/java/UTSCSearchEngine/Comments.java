@@ -16,7 +16,7 @@ import org.json.JSONObject;
 @WebServlet("/comments")
 public class Comments extends HttpServlet {
   @Override
-  public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     JSONObject response = new JSONObject();
     resp.setContentType("multipart/form-data");
     resp.setHeader("Access-Control-Allow-Origin", "*");
