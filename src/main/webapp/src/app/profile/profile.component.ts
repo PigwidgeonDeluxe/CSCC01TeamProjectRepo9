@@ -17,17 +17,13 @@ export class ProfileComponent implements OnInit {
   http: XMLHttpRequest;
   results: any;
 
-<<<<<<< HEAD
   fileTypeData: any;
   fileSizeData: any;
 
   popularFileType: any;
   largestFile: any;
 
-  constructor() { }
-=======
   constructor(private router: Router) { }
->>>>>>> 6fed28289922204123f9106132dbe7a6b1f9442b
 
   ngOnInit() {
     this.http = new XMLHttpRequest();
