@@ -78,7 +78,6 @@ public class Comment extends HttpServlet {
     String commentUser = req.getParameter("commentUser");
     Long date = System.currentTimeMillis(); // current time (system)
 
-    Database db = new Database();
     db.insertFileComment(docId, comment, commentUser, date);
   }
 }

@@ -8,7 +8,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,9 +50,10 @@ public class CommentTest {
     PreparedStatement pstmt2 = con.prepareStatement(createTable);
     pstmt2.executeUpdate();
     pstmt2.close();
-    
+
     // insert test comment
     db.insertFileComment("0", "test comment", "comment_user", (long) 100);
+    con.close();
   }
 
   @Test
@@ -75,8 +78,39 @@ public class CommentTest {
   }
 
   @Test
-  public void testDoPost() {
-    // fail("Not yet implemented");
-  }
+  public void testDoPost() throws SQLException {
+    Database db = new Database(this.url);
+    Comment comment = new Comment(db);
+    HttpServletRequest req = mock(HttpServletRequest.class);
+    HttpServletResponse resp = mock(HttpServletResponse.class);
 
+    // mock user requests
+    when(req.getParameter("docId")).thenReturn("0");
+    when(req.getParameter("comment")).thenReturn("test comment 2");
+    when(req.getParameter("commentUser")).thenReturn("test user 2");
+
+    comment.doPost(req, resp);
+
+    ResultSet result = db.getFileComments("0");
+    ArrayList<String> idList = new ArrayList<String>();
+    ArrayList<String> commentList = new ArrayList<String>();
+    ArrayList<String> userList = new ArrayList<String>();
+    ArrayList<String> dateList = new ArrayList<String>();
+
+    while (result.next()) {
+      idList.add(result.getString("file_id"));
+      commentList.add(result.getString("comment"));
+      userList.add(result.getString("comment_user"));
+      dateList.add(result.getString("date"));
+    }
+    // check that both comments exist and are correct
+    assertEquals(2, idList.size());
+    assertEquals("0", idList.get(0));
+    assertEquals("test comment", commentList.get(0));
+    assertEquals("comment_user", userList.get(0));
+    assertEquals("0", idList.get(1));
+    assertEquals("test comment 2", commentList.get(1));
+    assertEquals("test user 2", userList.get(1));
+
+  }
 }
