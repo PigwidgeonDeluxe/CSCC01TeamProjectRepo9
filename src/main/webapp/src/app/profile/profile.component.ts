@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
+import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
 
 @Component({
@@ -15,7 +17,7 @@ export class ProfileComponent implements OnInit {
   http: XMLHttpRequest;
   results: any;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.http = new XMLHttpRequest();
@@ -42,7 +44,8 @@ export class ProfileComponent implements OnInit {
           'userName': element.split('~')[3],
           'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
           'uploadDate': +element.split('~')[5],
-          'fileContent': element.split('~')[6]
+          'docId': element.split('~')[6],
+          'fileContent': element.split('~')[7]
         });
       }
     });
@@ -54,6 +57,33 @@ export class ProfileComponent implements OnInit {
         text: 'No results found'
       });
     }
+  }
+
+  downloadFile(fileName: string, uploadDate: string) {
+    this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + fileName + '&uploadTime=' + uploadDate, true);
+    this.http.responseType = 'arraybuffer';
+    this.http.send(null);
+
+    this.http.onload = () => {
+      const data = this.http.response;
+      const extension = fileName.split('.').pop();
+      let contentType;
+      if (extension === 'pdf') {
+        contentType = {type: 'application/pdf'};
+      } else if (extension === 'doc' || extension === 'docx') {
+        contentType = {type: 'application/msword'};
+      } else if (extension === 'html') {
+        contentType = {type: 'text/html'};
+      } else {
+        contentType = {type: 'text/plain'};
+      }
+      const blob = new Blob([data], contentType);
+      FileSaver.saveAs(blob, fileName);
+    };
+  }
+
+  viewComments(docId: string) {
+    this.router.navigateByUrl('/comments?docId=' + docId);
   }
 
 }
