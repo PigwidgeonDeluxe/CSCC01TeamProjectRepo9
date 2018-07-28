@@ -1,0 +1,82 @@
+<div class="container content-row mt-5">
+  <div class="row">
+    <div class="col">
+      <app-navbar></app-navbar>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link" href="/">
+            <i class="fa fa-search"></i> Search
+          </a>
+        </li>
+        <li *ngIf="user" class="nav-item">
+          <a class="nav-link" href="/profile">
+            <i class="fa fa-user"></i> Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/users">
+            <i class="fa fa-users"></i> Users
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/statistics">
+            <i class="fa fa-chart-pie"></i> Statistics
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label class="heading">Search for a User</label>
+        <div class="input-group">
+          <input (keyup.enter)="search()" [(ngModel)]="searchQuery" type="text" class="form-control form-control-sm" id="searchBox" placeholder="Enter a user name">
+          <span class="input-group-btn">
+            <button (click)="search()" type="submit" class="btn btn-success btn-sm" id="searchButton">
+              <i class="fa fa-search"></i> Search
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card mt-3 mb-5">
+    <div class="card-body">
+      <label class="heading">Results</label>
+      <div *ngFor="let result of results" class="mt-3 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-2">
+                <img src="{{ result.profileImage }}?sz=75" alt="{{ result.userName }}">
+              </div>
+              <div class="col-md-10">
+                <div class="row">
+                  <div class="col">
+                    <h4>{{ result.userName }}</h4>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <span [ngClass]="{'badge-success': result.userType === 'student', 'badge-warning': result.userType === 'instructor'}" class="badge badge-sm text-capitalize">
+                      <i class="fa fa-user"></i> {{ result.userType }}
+                    </span>
+                    <span tooltip="Created On" class="badge badge-secondary">
+                      <i class="far fa-calendar-alt"></i> {{ result.createdOn | date: 'medium' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div [ngClass]="{'mt-3': results.length > 0}">
+        {{ results.length === 0 ? 'No results' : 'Found ' + results.length + ' results' }}
+      </div>
+    </div>
+  </div>
+</div>

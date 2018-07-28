@@ -137,6 +137,17 @@ public class Database {
     pstmt.setString(1, userId);
     return pstmt.executeQuery();
   }
+  
+  public ResultSet getUserByName(String name) throws SQLException {
+
+    String sql = "SELECT * FROM user WHERE user_name LIKE ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    pstmt.setString(1, "%" + name + "%");
+    return pstmt.executeQuery();
+  }
 
   public ResultSet getFileTypeStatistics() throws SQLException {
 
