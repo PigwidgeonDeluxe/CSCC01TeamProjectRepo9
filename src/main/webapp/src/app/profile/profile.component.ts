@@ -32,7 +32,20 @@ export class ProfileComponent implements OnInit {
     this.http.open('GET', url, false);
     this.http.send(null);
     const resp = this.http.response.split('\n');
-
+    this.results = [];
+    resp.forEach(element => {
+      if (element.length > 0) {
+        this.results.push({
+          'fileName': element.split('~')[0],
+          'fileType': element.split('~')[1],
+          'userType': element.split('~')[2],
+          'userName': element.split('~')[3],
+          'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
+          'uploadDate': +element.split('~')[5],
+          'fileContent': element.split('~')[6]
+        });
+      }
+    });
   }
 
   getUserFiles() {
