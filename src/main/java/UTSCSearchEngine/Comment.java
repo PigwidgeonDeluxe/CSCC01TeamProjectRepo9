@@ -16,6 +16,14 @@ import org.json.JSONObject;
 @WebServlet("/comment")
 public class Comment extends HttpServlet {
 
+  private Database db;
+  public Comment() {
+    this.db = new Database();
+  }
+  public Comment(Database db) {
+    this.db = db;
+  }
+
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("multipart/form-data");
@@ -24,7 +32,7 @@ public class Comment extends HttpServlet {
     String docId = req.getParameter("docId");
     StringBuilder responseBackToUser = new StringBuilder();
 
-    Database db = new Database();
+    
     JSONObject response = new JSONObject();
 
     // package file data
