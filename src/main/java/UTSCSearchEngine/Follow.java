@@ -34,9 +34,12 @@ public class Follow extends HttpServlet {
 			ResultSet user = db.getUserFollow(userId);
 			while (user.next()) {
 				String userIdFollow = user.getString("follow_id");
-				ResultSet update = db.getUserUpdate(userIdFollow);
-				responseBackToUser.append(update.getString("user_id") + "~" + update.getString("file_id") + "\n");
+				ResultSet userFollow = db.getUserById(userIdFollow);
+				responseBackToUser
+						.append(userFollow.getString("user_id") + "~" + userFollow.getString("update_file_id") + "\n");
+				userFollow.close();
 			}
+			user.close();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
@@ -61,11 +64,12 @@ public class Follow extends HttpServlet {
 			while (user.next()) {
 				followNum = user.getInt("follow_num");
 			}
+			user.close();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 
 		db.insertUserFollow(userId, userIdFollow);
-		db.updateUserFollow(userId, followNum);
+		db.updateUserFollowNum(userId, followNum);
 	}
 }

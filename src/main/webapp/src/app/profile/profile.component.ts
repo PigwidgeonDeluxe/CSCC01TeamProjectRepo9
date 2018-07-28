@@ -26,6 +26,15 @@ export class ProfileComponent implements OnInit {
     this.getUserFiles();
   }
 
+  getUserFollow(){
+    const url = this.TOMCAT_URL + '/follow?userId=' + this.user.userId;
+
+    this.http.open('GET', url, false);
+    this.http.send(null);
+    const resp = this.http.response.split('\n');
+
+  }
+
   getUserFiles() {
     const url = this.TOMCAT_URL + '/search?userName=' + this.user.userName;
 

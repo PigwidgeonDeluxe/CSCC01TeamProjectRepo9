@@ -109,13 +109,14 @@ public class Database {
 
 	public void insertUser(String userId, String userType) {
 
-		String sql = "INSERT INTO user(user_id, user_type, created_on, follow_num) VALUES(?, ?, ?, ?)";
+		String sql = "INSERT INTO user(user_id, user_type, created_on, follow_num, update_file_id) VALUES(?, ?, ?, ?, ?)";
 
 		try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
 			pstmt.setString(1, userId);
 			pstmt.setString(2, userType);
 			pstmt.setDate(3, new Date(System.currentTimeMillis()));
 			pstmt.setInt(4, 0);
+			pstmt.setString(5, "none");
 			pstmt.executeUpdate();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -146,7 +147,7 @@ public class Database {
 		}
 	}
 
-	public void updateUserFollow(String userId, int followNum) {
+	public void updateUserFollowNum(String userId, int followNum) {
 
 		String sql = "UPDATE users SET follow_num = ? WHERE user_id = ?";
 
@@ -161,7 +162,7 @@ public class Database {
 
 	public ResultSet getUserFollow(String userId) throws SQLException {
 
-		String sql = "SELECT * FROM comments WHERE user_id = ?";
+		String sql = "SELECT * FROM follow WHERE user_id = ?";
 
 		Connection con = connect();
 		PreparedStatement pstmt = con.prepareStatement(sql);
@@ -170,27 +171,16 @@ public class Database {
 		return pstmt.executeQuery();
 	}
 
-	public void insertUserUpdate(String userId, String fileId) {
+	public void updateUserUpdate(String userId, String fileId) {
 
-		String sql = "INSERT INTO update(user_id, file_id) VALUES (?, ?)";
+		String sql = "UPDATE user SET update_file_id = ? WHERE user_id = ?";
 
 		try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
-			pstmt.setString(1, userId);
-			pstmt.setString(2, fileId);
+			pstmt.setString(1, fileId);
+			pstmt.setString(2, userId);
 			pstmt.executeUpdate();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	public ResultSet getUserUpdate(String userId) throws SQLException {
-
-		String sql = "SELECT * FROM comments WHERE user_id = ?";
-
-		Connection con = connect();
-		PreparedStatement pstmt = con.prepareStatement(sql);
-
-		pstmt.setString(1, userId);
-		return pstmt.executeQuery();
 	}
 }
