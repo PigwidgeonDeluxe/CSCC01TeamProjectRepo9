@@ -138,4 +138,59 @@ public class Database {
     return pstmt.executeQuery();
   }
 
+  public ResultSet getFileTypeStatistics() throws SQLException {
+
+    String sql = "SELECT file_type, COUNT(file_type) FROM file GROUP BY file_type";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    return pstmt.executeQuery();
+  }
+
+  public ResultSet getFileUploaderStatistics() throws SQLException {
+
+    String sql = "SELECT user_name, COUNT(user_name) FROM file INNER JOIN user ON file.user_id = "
+        + "user.user_id GROUP BY user_name";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    return pstmt.executeQuery();
+  }
+
+  public ResultSet getFileSizeStatistics() throws SQLException {
+
+    String sql = "SELECT file_name, file_size FROM file";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    return pstmt.executeQuery();
+  }
+
+  public ResultSet getUserFileTypeStatistics(String userName) throws SQLException {
+
+    String sql = "SELECT file_type, COUNT(file_type) FROM file INNER JOIN user ON file.user_id = "
+        + "user.user_id WHERE user_name = ? GROUP BY file_type";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+    pstmt.setString(1, userName);
+
+    return pstmt.executeQuery();
+  }
+
+  public ResultSet getUserFileSizeStatistics(String userName) throws SQLException {
+
+    String sql = "SELECT file_name, file_size FROM file INNER JOIN user ON file.user_id = "
+        + "user.user_id WHERE user_name = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+    pstmt.setString(1, userName);
+
+    return pstmt.executeQuery();
+  }
+
 }
