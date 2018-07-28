@@ -18,51 +18,32 @@ import org.apache.lucene.search.Query;
  * Search for a user
  */
 
-@WebServlet("/usersearch")
+@WebServlet("/userSearch")
 public class UserSearch extends HttpServlet {
 
-  private static final long serialVersionUID = 1L;
-  private static StandardAnalyzer analyzer = null;
-  
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
 
-    String responseBackToUser = "";
+    String userName = req.getParameter("userName");
+    Database db = new Database();
+    StringBuilder responseBackToUser = new StringBuilder();
 
-    String userNameQuery = req.getParameter("userName");
-    if (userNameQuery != null) {
-      try {
-        Query q = new QueryParser("userName", analyzer).parse(userNameQuery);
-        String result = search(q);
-        if (!responseBackToUser.contains(result)) {
-          responseBackToUser += result;
-        }
-      } catch (ParseException | SQLException e) {
-        e.printStackTrace();
+    try {
+      ResultSet allNames = db.getUserByName(userName);
+      while(allNames.next()) {
+        responseBackToUser.append(allNames.getString("user_name") + "~"
+            + allNames.getString("user_type") + "~"
+            + allNames.getString("user_id") + "~"
+            + allNames.getString("created_on") + "~"
+            + allNames.getString("profile_image") + "\n");
       }
+    } catch (SQLException ex) {
+      ex.printStackTrace();
     }
 
     resp.setHeader("Access-Control-Allow-Origin", "*");
-    resp.getWriter().write(responseBackToUser);
+    resp.getWriter().write(responseBackToUser.toString());
 
-  }
-
-  /**
-   * Search for Query q and return a response to the user containing the requested information
-   * 
-   * @param q
-   * @throws IOException
-   * @throws SQLException 
-   */
-  private String search(Query q) throws IOException, SQLException {
-    Database db = new Database();
-    ResultSet allNames = db.getUserByName(q.toString());
-    StringBuilder responseBackToUser = new StringBuilder();
-    
-    while(allNames.next()) {
-      responseBackToUser.append(allNames.getString("user_name") + "\n"); // string list using newline character
-    }
-    return responseBackToUser.toString();
   }
 }

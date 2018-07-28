@@ -5,6 +5,7 @@ import { RegisterComponent } from '../register/register.component';
 import { ProfileComponent } from '../profile/profile.component';
 import { StatisticsComponent } from '../statistics/statistics.component';
 import { CommentsComponent } from '../comments/comments.component';
+import { UsersComponent } from '../users/users.component';
 
 const routes: Routes = [
   {
@@ -19,13 +20,17 @@ const routes: Routes = [
     path: 'profile',
     component: ProfileComponent
   },
-    {
-    path: 'comments',
-    component: CommentsComponent
+  {
+    path: 'users',
+    component: UsersComponent
   },
   {
     path: 'statistics',
     component: StatisticsComponent
+  },
+  {
+    path: 'comments',
+    component: CommentsComponent
   },
   {
     path: '**',
