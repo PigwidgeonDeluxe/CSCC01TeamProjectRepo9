@@ -9,11 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.Query;
-
 /**
  * Search for a user
  */
@@ -22,7 +17,16 @@ import org.apache.lucene.search.Query;
 public class UserSearch extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
-  private static StandardAnalyzer analyzer = null;
+  
+  private Database db;
+  
+  public UserSearch() {
+    this.db = new Database();
+  }
+  
+  public UserSearch(Database db) {
+    this.db = db;
+  }
   
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -33,12 +37,11 @@ public class UserSearch extends HttpServlet {
     String userNameQuery = req.getParameter("userName");
     if (userNameQuery != null) {
       try {
-        Query q = new QueryParser("userName", analyzer).parse(userNameQuery);
-        String result = search(q);
+        String result = search(userNameQuery);
         if (!responseBackToUser.contains(result)) {
           responseBackToUser += result;
         }
-      } catch (ParseException | SQLException e) {
+      } catch (SQLException e) {
         e.printStackTrace();
       }
     }
@@ -55,9 +58,8 @@ public class UserSearch extends HttpServlet {
    * @throws IOException
    * @throws SQLException 
    */
-  private String search(Query q) throws IOException, SQLException {
-    Database db = new Database();
-    ResultSet allNames = db.getUserByName(q.toString());
+  private String search(String name) throws IOException, SQLException {
+    ResultSet allNames = db.getUserByName(name);
     StringBuilder responseBackToUser = new StringBuilder();
     
     while(allNames.next()) {
