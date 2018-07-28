@@ -34,9 +34,9 @@ public class Comment extends HttpServlet {
         response.put("fileName", rs.getString("file_name"));
         response.put("fileType", rs.getString("file_type"));
         response.put("fileSize", rs.getString("file_size"));
-        response.put("uploaderName", rs.getString("uploader_name"));
-        response.put("uploaderType", rs.getString("uploader_type"));
         response.put("uploadedOn", rs.getString("uploaded_on"));
+        response.put("uploaderName", rs.getString("user_name"));
+        response.put("uploaderType", rs.getString("user_type"));
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
@@ -48,7 +48,9 @@ public class Comment extends HttpServlet {
       while (comments.next()) {
         responseBackToUser.append(comments.getString("file_id") + "~"
             + comments.getString("comment") + "~"
-            + comments.getString("comment_user") + "~"
+            + comments.getString("user_name") + "~"
+            + comments.getString("user_type") + "~"
+            + comments.getString("profile_image") + "~"
             + comments.getString("date")+ "\n");
       }
       response.put("comments", responseBackToUser.toString());

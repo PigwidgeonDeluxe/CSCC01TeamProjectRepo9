@@ -36,32 +36,43 @@ public class SearchTest {
     Connection con = db.connect();
 
     // cleanup
-    String dropTable = "DROP TABLE IF EXISTS file";
-    PreparedStatement pstmt1 = con.prepareStatement(dropTable);
+    String dropFile = "DROP TABLE IF EXISTS file";
+    PreparedStatement pstmt1 = con.prepareStatement(dropFile);
     pstmt1.executeUpdate();
     pstmt1.close();
-
-    // create table
-    String createTable = "CREATE TABLE file (id integer primary key autoincrement, file blob, "
-        + "file_name text, file_type text, file_size integer, uploader_name text, uploader_type "
-        + "text, uploaded_on integer)";
-    PreparedStatement pstmt2 = con.prepareStatement(createTable);
+    String dropUser = "DROP TABLE IF EXISTS user";
+    PreparedStatement pstmt2 = con.prepareStatement(dropUser);
     pstmt2.executeUpdate();
     pstmt2.close();
+
+    // create file table
+    String createFile = "CREATE TABLE file (id integer primary key autoincrement, file blob, "
+        + "file_name text, file_type text, file_size integer, user_id text, uploaded_on integer)";
+    PreparedStatement pstmt3 = con.prepareStatement(createFile);
+    pstmt3.executeUpdate();
+    pstmt3.close();
+
+    // create user table
+    String createUser = "CREATE TABLE user (id integer primary key autoincrement, user_id text, "
+        + "user_type text, created_on integer, user_name text, profile_image text)";
+    PreparedStatement pstmt4 = con.prepareStatement(createUser);
+    pstmt4.executeUpdate();
+    pstmt4.close();
+
+    // create test user
+    db.insertUser("1234", "student", "test user", "testurl");
 
     // insert a sample txt file
     byte[] fileContent = "this is some sample text".getBytes(Charset.forName("UTF-8"));
     String txtFileName = "text file.txt";
     String txtFileType = "txt";
-    String uploaderName = "test user";
-    String uploaderType = "student";
-    db.insertFileData(fileContent, txtFileName, txtFileType, uploaderName, uploaderType, null);
+    db.insertFileData(fileContent, txtFileName, txtFileType, "1234", null);
 
     // insert a sample doc file
     byte[] docContent = TestUtils.createDocFile("this is some sample text").toByteArray();
     String docFileName = "word file.docx";
     String docFileType = "docx";
-    db.insertFileData(docContent, docFileName, docFileType, uploaderName, uploaderType, null);
+    db.insertFileData(docContent, docFileName, docFileType, "1234", null);
 
     // insert an HTML file
     byte[] htmlContent = ("<!DOCTYPE html>\n" + "<html>\n" + "<body>\n" + "\n"
@@ -69,13 +80,13 @@ public class SearchTest {
         + "</body>\n" + "</html>").getBytes(Charset.forName("UTF-8"));
     String htmlFileName = "html file.html";
     String htmlFileType = "html";
-    db.insertFileData(htmlContent, htmlFileName, htmlFileType, uploaderName, uploaderType, null);
+    db.insertFileData(htmlContent, htmlFileName, htmlFileType, "1234", null);
 
     // insert a PDF file
     byte[] pdfContent = TestUtils.createPdfFile("this is some sample text").toByteArray();
     String pdfFileName = "pdf file.pdf";
     String pdfFileType = "pdf";
-    db.insertFileData(pdfContent, pdfFileName, pdfFileType, uploaderName, uploaderType, null);
+    db.insertFileData(pdfContent, pdfFileName, pdfFileType, "1234", null);
   }
 
   @Test

@@ -26,7 +26,7 @@ public class UserTest {
 		pstmt1.execute();
 
 		String createTable = "CREATE TABLE user(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, "
-				+ "user_type TEXT, created_on INTEGER, follow_num Integer)";
+				+ "user_type TEXT, created_on INTEGER, user_name TEXT, profile_image TEXT, follow_num INTEGER, update_file_id TEXT)";
 		PreparedStatement pstmt2 = con.prepareStatement(createTable);
 		pstmt2.execute();
 	}
@@ -35,7 +35,7 @@ public class UserTest {
 	public void testDatabaseInsertStudent() throws SQLException {
 
 		Database db = new Database(this.url);
-		db.insertUser("1234", "student");
+		db.insertUser("1234", "student", "test_user", "testurl");
 		ResultSet rs = db.getUserById("1234");
 		assertEquals("1234", rs.getString("user_id"));
 		assertEquals("student", rs.getString("user_type"));
@@ -46,9 +46,9 @@ public class UserTest {
 	public void testDatabaseInsertInstructor() throws SQLException {
 
 		Database db = new Database(this.url);
-		db.insertUser("2345", "instructor");
-		ResultSet rs = db.getUserById("2345");
-		assertEquals("2345", rs.getString("user_id"));
+		db.insertUser("1234", "instructor", "test_user", "testurl");
+		ResultSet rs = db.getUserById("1234");
+		assertEquals("1234", rs.getString("user_id"));
 		assertEquals("instructor", rs.getString("user_type"));
 		rs.close();
 	}

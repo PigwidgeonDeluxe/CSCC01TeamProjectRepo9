@@ -39,7 +39,9 @@ export class RegisterComponent implements OnInit {
     // package request
     const request = {
       'token': idToken,
-      'userType': this.registerUserType === '1' ? 'student' : 'instructor'
+      'userType': this.registerUserType === '1' ? 'student' : 'instructor',
+      'userName': profile.getName(),
+      'profileImage': profile.getImageUrl()
     };
     this.http.send(JSON.stringify(request));
 
@@ -51,6 +53,7 @@ export class RegisterComponent implements OnInit {
         text: resp.message
       }).then(() => {
         localStorage.setItem('user', JSON.stringify({
+          'userId': profile.getId(),
           'userName': profile.getName(),
           'userType': this.registerUserType === '1' ? 'student' : 'instructor',
           'createdOn': resp.createdOn,

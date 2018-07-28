@@ -35,8 +35,8 @@ public class Follow extends HttpServlet {
 			while (user.next()) {
 				String userIdFollow = user.getString("follow_id");
 				ResultSet userFollow = db.getUserById(userIdFollow);
-				responseBackToUser
-						.append(userFollow.getString("user_id") + "~" + userFollow.getString("update_file_id") + "\n");
+				responseBackToUser.append(userFollow.getString("user_name") + " ~"
+						+ userFollow.getShort("profile_image") + "~" + userFollow.getString("update_file_name") + "\n");
 				userFollow.close();
 			}
 			user.close();

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
 
 @Component({
@@ -17,7 +18,7 @@ export class CommentsComponent implements OnInit {
 
   docId: string;
   comment: string;
-  commentUser: any;
+  user: any;
   fileData: any;
 
   constructor(private activatedRoute: ActivatedRoute) { }
@@ -26,7 +27,7 @@ export class CommentsComponent implements OnInit {
     this.http = new XMLHttpRequest();
     this.TOMCAT_URL = 'http://localhost:8080';
     this.results = [];
-    this.commentUser = JSON.parse(localStorage.getItem('user'));
+    this.user = JSON.parse(localStorage.getItem('user'));
     this.activatedRoute.queryParams.subscribe((params: Params) => {
         this.docId = params['docId'];
       });
@@ -47,8 +48,10 @@ export class CommentsComponent implements OnInit {
           this.results.push({
             'docId': element.split('~')[0],
             'comment': element.split('~')[1],
-            'commentUser': element.split('~')[2],
-            'date': element.split('~')[3]
+            'userName': element.split('~')[2],
+            'userType': element.split('~')[3],
+            'profileImage': element.split('~')[4],
+            'date': element.split('~')[5]
           });
         }
       });
@@ -58,7 +61,7 @@ export class CommentsComponent implements OnInit {
   insertComment() {
     if (this.comment) {
       const url = this.TOMCAT_URL + '/comment?docId=' + this.docId + '&comment=' + this.comment +
-        '&commentUser=' + this.commentUser.userName;
+        '&commentUser=' + this.user.userId;
       this.http.open('POST', url, false);
       this.http.send(null);
       swal({
@@ -78,4 +81,27 @@ export class CommentsComponent implements OnInit {
     }
   }
 
+  downloadFile(fileName: string, uploadDate: string) {
+    this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + this.fileData.fileName + '&uploadTime=' + this.fileData.uploadedOn,
+     true);
+    this.http.responseType = 'arraybuffer';
+    this.http.send(null);
+
+    this.http.onload = () => {
+      const data = this.http.response;
+      const extension = fileName.split('.').pop();
+      let contentType;
+      if (extension === 'pdf') {
+        contentType = {type: 'application/pdf'};
+      } else if (extension === 'doc' || extension === 'docx') {
+        contentType = {type: 'application/msword'};
+      } else if (extension === 'html') {
+        contentType = {type: 'text/html'};
+      } else {
+        contentType = {type: 'text/plain'};
+      }
+      const blob = new Blob([data], contentType);
+      FileSaver.saveAs(blob, fileName);
+    };
+  }
 }

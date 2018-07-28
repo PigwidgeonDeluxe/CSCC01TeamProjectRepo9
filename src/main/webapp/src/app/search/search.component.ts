@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
 import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
-import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-search',
@@ -24,7 +25,7 @@ export class SearchComponent implements OnInit {
   loading: boolean;
   user: any;
 
-  constructor(private router : Router) { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.http = new XMLHttpRequest();

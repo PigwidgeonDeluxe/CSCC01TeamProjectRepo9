@@ -43,15 +43,15 @@
           <div class="col">
             <div class="row">
               <div class="col-md-2 text-center text-capitalize">
-                <img src="{{ commentUser.profileImage }}?sz=75" alt="profileImage">
+                <img src="{{ result.profileImage }}?sz=75" alt="profileImage">
                 <span class="heading badge badge-warning badge-sm">
-                  <i class="fa fa-user"></i> {{ commentUser.userType }}
+                  <i class="fa fa-user"></i> {{ result.userType }}
                 </span>
               </div>
               <div class="col">
                 <div class="row">
                   <div class="col">
-                    <span class="heading">{{ result.commentUser }}</span>
+                    <span class="heading">{{ result.userName }}</span>
                     <span class="badge badge-secondary badge-sm ml-1">
                       <i class="fa fa-calendar-alt"></i> {{ result.date | date: 'medium' }}
                     </span>
@@ -81,7 +81,7 @@
     </div>
   </div>
 </div>
-<div class="card mb-5">
+<div *ngIf="user" class="card mb-5">
   <div class="card-body">
     <div class="form-group">
       <label class="heading">Write a Comment</label>

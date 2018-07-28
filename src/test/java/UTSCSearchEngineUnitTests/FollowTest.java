@@ -43,8 +43,8 @@ public class FollowTest {
 	@Test
 	public void testDatabaseFollow() throws SQLException {
 		Database db = new Database(this.url);
-		db.insertUser("1234", "student");
-		db.insertUser("5678", "student");
+		db.insertUser("1234", "student", "test_user1", "testurl");
+		db.insertUser("5678", "student", "test_user2", "testurl");
 		db.insertUserFollow("1234", "5678");
 		db.updateUserFollowNum("1234", 1);
 
@@ -63,8 +63,8 @@ public class FollowTest {
 	@Test
 	public void testDatabaseUpdate() throws SQLException {
 		Database db = new Database(this.url);
-		db.insertUser("1234", "student");
-		db.insertUser("5678", "student");
+		db.insertUser("1234", "student", "test_user1", "testurl");
+		db.insertUser("5678", "student", "test_user2", "testurl");
 		db.updateUserUpdate("1234", "file");
 
 		ResultSet user1 = db.getUserById("1234");

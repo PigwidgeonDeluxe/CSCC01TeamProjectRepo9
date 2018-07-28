@@ -95,6 +95,9 @@
                     <span (click)="downloadFile(result.fileName, result.uploadDate)" class="badge badge-primary" style="cursor: pointer">
                       <i class="fa fa-download"></i> Download
                     </span>
+                    <span (click)="viewComments(result.docId)" class="badge badge-primary" style="cursor: pointer">
+                      <i class="fa fa-comments"></i> Commments
+                    </span>
                   </div>
                 </div>
               </div>
@@ -112,6 +115,26 @@
       <div class="card">
         <div class="card-body">
           <label class="heading">Following</label>
+          <div *ngFor="let follow of following" class="mt-3 mb-5">
+            <div class="row">
+              <div class="col-md-1 text-center">
+                <img src="{{ follow.profileImage }}?sz=125" alt="profile image" class="float-right"></i>
+              </div>
+              <div class="col-md-11">
+                  <div class="row">
+                     <i class="fa fa-user"></i> {{ follow.userName }}
+                  </div>
+                  <div class="row">
+                    <div class="col text-monospace">
+                      Last Updated File: {{ follow.fileName }}
+                    </div>
+                  </div>  
+              </div>
+            </div>
+          </div>
+          <div [ngClass]="{'mt-3': follow.length > 0}">
+            {{ follow.length === 0 ? 'You haven\'t uploaded any users...' : follow.length + ' users' }}
+          </div>
         </div>
       </div>
     </div>
