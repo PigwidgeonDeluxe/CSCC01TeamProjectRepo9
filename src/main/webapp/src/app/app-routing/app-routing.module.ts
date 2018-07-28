@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from '../home/home.component';
 import { RegisterComponent } from '../register/register.component';
 import { ProfileComponent } from '../profile/profile.component';
-import { SearchResultsComponent } from '../search-results/search-results.component';
+import { SearchResultsComponent } from '../results/results.component';
 
 const routes: Routes = [
   {
@@ -19,7 +19,7 @@ const routes: Routes = [
     component: ProfileComponent
   },
   {
-    path: 'search-results',
+    path: 'results',
     component: SearchResultsComponent
   },
   {

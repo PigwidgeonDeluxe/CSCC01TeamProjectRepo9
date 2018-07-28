@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
@@ -24,7 +24,26 @@ export class SearchComponent implements OnInit {
   loading: boolean;
   user: any;
 
+  message: string;
+  @Output() messageEvent = new EventEmitter<string>();
+
   constructor() { }
+
+  sendMessage() {
+    if (!this.searchQuery && !this.fileTypeQuery && !this.userNameQuery && !this.userTypeQuery) {
+      swal({
+        title: 'No Results',
+        type: 'warning',
+        text: 'No results found'
+      });
+    } else {
+      this.message = this.searchQuery + '~'
+      + this.fileTypeQuery + '~'
+      + this.userNameQuery + '~'
+      + this.userTypeQuery;
+      this.messageEvent.emit(this.message);
+    }
+  }
 
   ngOnInit() {
     this.http = new XMLHttpRequest();

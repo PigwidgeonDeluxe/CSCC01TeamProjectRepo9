@@ -11,7 +11,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
-import { SearchResultsComponent } from './search-results/search-results.component';
+import { SearchResultsComponent } from './results/results.component';
 
 
 @NgModule({

@@ -22,11 +22,11 @@
     <div class="form-group">
       <label class="heading">Search</label>
       <div class="input-group">
-        <input (keyup.enter)="search()" [(ngModel)]="searchQuery" type="text" class="form-control form-control-sm" id="searchBox" placeholder="Enter search query">
+        <input (keyup.enter)="sendMessage()" [(ngModel)]="searchQuery" type="text" class="form-control form-control-sm" id="searchBox" placeholder="Enter search query">
         <span class="input-group-btn">
-          <a class="nav-link" href="/search-results">
-            <button (click)="search()" type="submit" class="btn btn-success btn-sm" id="searchButton">
-              <i class="fa fa-search"></i> Search
+          <a class="nav-link" href="/results">
+            <button (click)="sendMessage()" type="submit" class="btn btn-success btn-sm" id="searchButton">
+              Search
             </button>
           </a>
         </span>

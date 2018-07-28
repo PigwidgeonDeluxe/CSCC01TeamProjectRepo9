@@ -4,9 +4,9 @@ import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-search-results',
-  templateUrl: './search-results.component.html',
-  styleUrls: ['./search-results.component.css']
+  selector: 'app-results',
+  templateUrl: './results.component.html',
+  styleUrls: ['./results.component.css']
 })
 export class SearchResultsComponent implements OnInit {
 
@@ -18,19 +18,38 @@ export class SearchResultsComponent implements OnInit {
   userTypeQuery: string;
 
   option: string;
-  results: any;
+  results: any = [];
   http: XMLHttpRequest;
   selectedSearchOption: any;
   loading: boolean;
   user: any;
 
+  message: string;
+
   constructor() { }
+
+  receiveMessage($event) {
+    if ($event === !null) {
+      this.message = $event;
+      this.searchQuery = this.message.split('~')[0];
+      this.fileTypeQuery = this.message.split('~')[1];
+      this.userNameQuery = this.message.split('~')[2];
+      this.userTypeQuery = this.message.split('~')[3];
+      this.search();
+      this.message = '';
+    } else {
+      swal({
+        title: 'No Results',
+        type: 'warning',
+        text: 'No results found'
+      });
+    }
+  }
 
   ngOnInit() {
     this.http = new XMLHttpRequest();
     this.TOMCAT_URL = 'http://localhost:8080';
     this.selectedSearchOption = 1;
-    this.results = [];
     this.user = JSON.parse(localStorage.getItem('user'));
   }
 
