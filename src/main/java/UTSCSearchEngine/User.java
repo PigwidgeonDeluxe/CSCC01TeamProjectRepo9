@@ -60,7 +60,8 @@ public class User extends HttpServlet {
               resp.getWriter().write(response.toString());
             } else {
               // user doesn't exist
-              db.insertUser(userId, json.getString("userType"));
+              db.insertUser(userId, json.getString("userType"),
+                  json.getString("userName"), json.getString("profileImage"));
               response.put("status", "SUCCESS");
               response.put("message", "Successfully created new " + json.getString("userType"));
               response.put("createdOn", System.currentTimeMillis());
