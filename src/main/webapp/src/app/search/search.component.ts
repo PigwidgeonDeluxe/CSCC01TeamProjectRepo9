@@ -22,7 +22,6 @@ export class SearchComponent implements OnInit {
   results: any;
   http: XMLHttpRequest;
   selectedSearchOption: any;
-  loading: boolean;
   user: any;
 
   constructor(private router: Router) { }
