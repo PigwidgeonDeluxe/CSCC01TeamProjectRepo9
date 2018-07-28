@@ -21,8 +21,7 @@ public class FileUpload extends HttpServlet {
     Database db = new Database();
     resp.setContentType("multipart/form-data");
     resp.setHeader("Access-Control-Allow-Origin", "*");
-    String uploaderName = req.getParameter("userName");
-    String uploaderType = req.getParameter("userType");
+    String userId = req.getParameter("userId");
 
     try {
       // parse files
@@ -35,8 +34,7 @@ public class FileUpload extends HttpServlet {
           db.insertFileData(item.get(),
               item.getName(),
               item.getName().substring(item.getName().lastIndexOf('.') + 1),
-              uploaderName,
-              uploaderType,
+              userId,
 							null);
         }
       }

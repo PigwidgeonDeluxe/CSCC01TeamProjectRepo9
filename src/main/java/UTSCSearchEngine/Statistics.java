@@ -63,8 +63,8 @@ public class Statistics extends HttpServlet {
 
           ResultSet fileUploaderRs = db.getFileUploaderStatistics();
           while(fileUploaderRs.next()) {
-            fileUploaderStats.put(fileUploaderRs.getString("uploader_name"),
-                fileUploaderRs.getInt("count(uploader_name)"));
+            fileUploaderStats.put(fileUploaderRs.getString("user_name"),
+                fileUploaderRs.getInt("count(user_name)"));
           }
 
           ResultSet fileSizeRs = db.getFileSizeStatistics();

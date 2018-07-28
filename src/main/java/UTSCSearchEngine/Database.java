@@ -31,20 +31,19 @@ public class Database {
     return con;
   }
 
-  public void insertFileData(byte[] file, String fileName, String fileType, String uploaderName,
-      String uploaderType, Long date) {
+  public void insertFileData(byte[] file, String fileName, String fileType, String userId,
+      Long date) {
 
-    String sql = "INSERT INTO file(file, file_name, file_type, file_size, uploader_name, "
-        + "uploader_type, uploaded_on) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO file(file, file_name, file_type, file_size, user_id, uploaded_on) "
+        + "VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
       pstmt.setBytes(1, file);
       pstmt.setString(2, fileName);
       pstmt.setString(3, fileType);
       pstmt.setInt(4, file.length);
-      pstmt.setString(5, uploaderName);
-      pstmt.setString(6, uploaderType);
-      pstmt.setDate(7, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
+      pstmt.setString(5, userId);
+      pstmt.setDate(6, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
       pstmt.executeUpdate();
     } catch (SQLException ex) {
       ex.printStackTrace();
@@ -53,7 +52,8 @@ public class Database {
 
   public ResultSet getAllFiles() throws SQLException {
 
-    String sql = "SELECT * FROM file";
+    String sql = "SELECT file.id, file, file_name, file_type, file_size, user_name, user_type, "
+        + "uploaded_on FROM file INNER JOIN user ON file.user_id = user.user_id";
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);
@@ -62,7 +62,8 @@ public class Database {
 
   public ResultSet getFileById(String fileId) throws SQLException {
 
-    String sql = "SELECT * FROM file WHERE id = ?";
+    String sql = "SELECT file_name, file_type, file_size, uploaded_on, user_name, user_type, "
+        + "profile_image FROM file INNER JOIN user ON file.user_id = user.user_id WHERE file.id = ?";
 
     Connection con = connect();
     PreparedStatement pstmt =  con.prepareStatement(sql);
@@ -71,14 +72,14 @@ public class Database {
     return pstmt.executeQuery();
   }
 
-  public void insertFileComment(String fileId, String comment, String comment_user, Long date) {
+  public void insertFileComment(String fileId, String comment, String userId, Long date) {
     String sql =
-        "INSERT INTO comments(file_id, comment, comment_user, date) VALUES (?, ?, ?, ?)";
+        "INSERT INTO comments(file_id, comment, user_id, date) VALUES (?, ?, ?, ?)";
 
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
       pstmt.setString(1, fileId);
       pstmt.setString(2, comment);
-      pstmt.setString(3, comment_user);
+      pstmt.setString(3, userId);
       pstmt.setDate(4, date != null ? new Date(date) : new Date(System.currentTimeMillis()));
       pstmt.executeUpdate();
     } catch (SQLException ex) {
@@ -87,7 +88,8 @@ public class Database {
   }
 
   public ResultSet getFileComments(String fileId) throws SQLException {
-    String sql = "SELECT * FROM comments WHERE file_id = ?";
+    String sql = "SELECT file_id, comment, date, user_name, user_type, profile_image FROM comments "
+        + "INNER JOIN user ON comments.user_id = user.user_id WHERE file_id = ?";
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);
@@ -108,6 +110,34 @@ public class Database {
     return pstmt.executeQuery();
   }
 
+  public void insertUser(String userId, String userType, String userName, String profileImage) {
+
+    String sql = "INSERT INTO user(user_id, user_type, created_on, user_name, profile_image) "
+        + "VALUES(?, ?, ?, ?, ?)";
+
+    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+      pstmt.setString(1, userId);
+      pstmt.setString(2, userType);
+      pstmt.setDate(3, new Date(System.currentTimeMillis()));
+      pstmt.setString(4, userName);
+      pstmt.setString(5, profileImage);
+      pstmt.executeUpdate();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public ResultSet getUserById(String userId) throws SQLException {
+
+    String sql = "SELECT * FROM user WHERE user_id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    pstmt.setString(1, userId);
+    return pstmt.executeQuery();
+  }
+
   public ResultSet getFileTypeStatistics() throws SQLException {
 
     String sql = "SELECT file_type, COUNT(file_type) FROM file GROUP BY file_type";
@@ -120,7 +150,8 @@ public class Database {
 
   public ResultSet getFileUploaderStatistics() throws SQLException {
 
-    String sql = "SELECT uploader_name, COUNT(uploader_name) FROM file GROUP BY uploader_name";
+    String sql = "SELECT user_name, COUNT(user_name) FROM file INNER JOIN user ON file.user_id = "
+        + "user.user_id GROUP BY user_name";
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);
@@ -140,8 +171,8 @@ public class Database {
 
   public ResultSet getUserFileTypeStatistics(String userName) throws SQLException {
 
-    String sql = "SELECT file_type, COUNT(file_type) FROM file WHERE uploader_name = "
-        + "? GROUP BY file_type";
+    String sql = "SELECT file_type, COUNT(file_type) FROM file INNER JOIN user ON file.user_id = "
+        + "user.user_id WHERE user_name = ? GROUP BY file_type";
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);
@@ -152,37 +183,13 @@ public class Database {
 
   public ResultSet getUserFileSizeStatistics(String userName) throws SQLException {
 
-    String sql = "SELECT file_name, file_size FROM file WHERE uploader_name = ?";
+    String sql = "SELECT file_name, file_size FROM file INNER JOIN user ON file.user_id = "
+        + "user.user_id WHERE user_name = ?";
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);
     pstmt.setString(1, userName);
 
-    return pstmt.executeQuery();
-  }
-
-  public void insertUser(String userId, String userType) {
-
-    String sql = "INSERT INTO user(user_id, user_type, created_on) VALUES(?, ?, ?)";
-
-    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
-      pstmt.setString(1, userId);
-      pstmt.setString(2, userType);
-      pstmt.setDate(3, new Date(System.currentTimeMillis()));
-      pstmt.executeUpdate();
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
-  }
-
-  public ResultSet getUserById(String userId) throws SQLException {
-
-    String sql = "SELECT * FROM user WHERE user_id = ?";
-
-    Connection con = connect();
-    PreparedStatement pstmt = con.prepareStatement(sql);
-
-    pstmt.setString(1, userId);
     return pstmt.executeQuery();
   }
 

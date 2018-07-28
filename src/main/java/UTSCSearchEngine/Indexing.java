@@ -78,8 +78,8 @@ public class Indexing {
             rs.getString("id"),
             rs.getString("file_name"),
             rs.getString("file_type"),
-            rs.getString("uploader_name"),
-            rs.getString("uploader_type"),
+            rs.getString("user_name"),
+            rs.getString("user_type"),
             rs.getString("file_size"),
             rs.getString("uploaded_on"),
             rs.getBytes("file"));
@@ -99,8 +99,8 @@ public class Indexing {
             rs.getString("id"),
             rs.getString("file_name"),
             rs.getString("file_type"),
-            rs.getString("uploader_name"),
-            rs.getString("uploader_type"),
+            rs.getString("user_name"),
+            rs.getString("user_type"),
             rs.getString("file_size"),
             rs.getString("uploaded_on"),
             rs.getBytes("file"));
@@ -187,24 +187,6 @@ public class Indexing {
     w.commit();
   }
 
-  public Directory getIndex() {
-    return this.index;
-  }
-
-  public StandardAnalyzer getAnalyzer() {
-    return this.analyzer;
-  }
-
-  public Path getDocDir() {
-    return this.docDir;
-  }
-
-  /**
-   * Method that reads from doc files
-   * 
-   * @param file
-   * @return
-   */
   private static List<String> parseDocContents(byte[] file) {
     List<XWPFParagraph> paragraphs;
     List<String> fileData = new ArrayList<>();
@@ -225,6 +207,18 @@ public class Indexing {
     }
 
     return fileData;
+  }
+
+  public Directory getIndex() {
+    return this.index;
+  }
+
+  public StandardAnalyzer getAnalyzer() {
+    return this.analyzer;
+  }
+
+  public Path getDocDir() {
+    return this.docDir;
   }
 
 }

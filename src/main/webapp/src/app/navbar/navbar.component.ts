@@ -43,7 +43,6 @@ export class NavbarComponent implements OnInit {
     this.http.send(JSON.stringify(request));
 
     const resp = JSON.parse(this.http.response);
-    console.log(resp);
     if (resp.status === 'SUCCESS') {
       swal({
         title: 'Success',
@@ -51,6 +50,7 @@ export class NavbarComponent implements OnInit {
         text: resp.message
       }).then(() => {
         localStorage.setItem('user', JSON.stringify({
+          'userId': profile.getId(),
           'userName': profile.getName(),
           'userType': resp.userType,
           'createdOn': resp.createdOn,
@@ -94,7 +94,7 @@ export class NavbarComponent implements OnInit {
 
   upload(files: FileList) {
     const user = JSON.parse(localStorage.getItem('user'));
-    this.http.open('POST', this.TOMCAT_URL + '/upload?userName=' + user.userName + '&userType=' + user.userType, false);
+    this.http.open('POST', this.TOMCAT_URL + '/upload?userId=' + user.userId, false);
 
     const request = new FormData();
     Array.from(files).forEach(file => {
