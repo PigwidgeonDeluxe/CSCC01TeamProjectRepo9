@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from '../home/home.component';
 import { RegisterComponent } from '../register/register.component';
 import { ProfileComponent } from '../profile/profile.component';
+import { SearchResultsComponent } from '../search-results/search-results.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent
+  },
+  {
+    path: 'search-results',
+    component: SearchResultsComponent
   },
   {
     path: '**',

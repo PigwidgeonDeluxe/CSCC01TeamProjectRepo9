@@ -11,6 +11,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
+import { SearchResultsComponent } from './search-results/search-results.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { ProfileComponent } from './profile/profile.component';
     RegisterComponent,
     HomeComponent,
     ProfileComponent,
+    SearchResultsComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,83 @@
+<div class="card">
+  <div class="card-header">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" href="/">
+          <i class="fa fa-search"></i> Go back to main page
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div class="form-group">
+      <label class="heading">Search</label>
+      <div class="input-group">
+        <input (keyup.enter)="search()" [(ngModel)]="searchQuery" type="text" class="form-control form-control-sm" id="searchBox" placeholder="Enter search query">
+        <span class="input-group-btn">
+          <button (click)="search()" type="submit" class="btn btn-success btn-sm" id="searchButton">
+            <i class="fa fa-search"></i> Search
+          </button>
+        </span>
+      </div>
+      <br>
+      <span>
+        <label class="heading">Advanced Options</label>
+      </span>
+      <div class="input-group">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="fileTypeQuery" placeholder="File Type">
+        <span class="mr-1"></span>
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="userNameQuery" placeholder="User Name">
+        <span class="mr-1"></span>
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="userTypeQuery" placeholder="User Type">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card mt-3 mb-5">
+  <div class="card-body">
+    <label class="heading">Results</label>
+    <div *ngFor="let result of results" class="mt-3 mb-3">
+      <div class="row">
+        <div class="col-md-1 text-center">
+          <i *ngIf="result.fileType !== 'docx' && result.fileType !== 'pdf' && result.fileType !== 'html'" class="far fa-file fa-3x"></i>
+          <i *ngIf="result.fileType === 'docx'" class="text-primary far fa-file-word fa-3x"></i>
+          <i *ngIf="result.fileType === 'pdf'" class="text-danger far fa-file-pdf fa-3x"></i>
+          <i *ngIf="result.fileType === 'html'" class="text-warning fa fa-globe fa-3x"></i>
+        </div>
+        <div class="col-md-11">
+          <div class="row">
+            <div class="col">
+              <span class="heading">{{ result.fileName }}</span>
+            </div>
+          </div>
+          <div class="row mt-2 mb-2">
+            <div class="col text-monospace">
+              {{ result.fileContent }}..."
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <span tooltip="File Size" class="badge badge-info">
+                <i class="fa fa-file"></i> {{ result.fileSize != 0 ? result.fileSize : '>1' }} KB
+              </span>
+              <span tooltip="Uploaded By: {{ result.userName }} ({{ result.userType }})"
+                    [ngClass]="{'badge-success': result.userType === 'student', 'badge-warning': result.userType === 'instructor'}"
+                    class="badge">
+                <i class="fa fa-user"></i> {{ result.userName }}
+              </span>
+              <span tooltip="Upload Date" class="badge badge-secondary">
+                <i class="far fa-calendar-alt"></i> {{ result.uploadDate | date: 'medium' }}
+              </span>
+              <span (click)="downloadFile(result.fileName, result.uploadDate)" class="badge badge-primary" style="cursor: pointer">
+                <i class="fa fa-download"></i> Download
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div [ngClass]="{'mt-3': results.length > 0}">
+      {{ results.length === 0 ? 'No results' : 'Found ' + results.length + ' results' }}
+    </div>
+  </div>
+</div>
