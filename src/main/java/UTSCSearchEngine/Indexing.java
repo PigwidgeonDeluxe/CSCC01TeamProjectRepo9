@@ -80,6 +80,7 @@ public class Indexing {
             rs.getString("file_type"),
             rs.getString("user_name"),
             rs.getString("user_type"),
+            rs.getString("user_id"),
             rs.getString("file_size"),
             rs.getString("uploaded_on"),
             rs.getBytes("file"));
@@ -101,6 +102,7 @@ public class Indexing {
             rs.getString("file_type"),
             rs.getString("user_name"),
             rs.getString("user_type"),
+            rs.getString("user_id"),
             rs.getString("file_size"),
             rs.getString("uploaded_on"),
             rs.getBytes("file"));
@@ -121,8 +123,8 @@ public class Indexing {
    * @throws IOException
    */
   private static void addDoc(IndexWriter w, String fileId,
-      String fileName, String fileType, String userName, String userType, String fileSize,
-      String uploadDate, byte[] fileContents) throws IOException {
+      String fileName, String fileType, String userName, String userType, String userId,
+      String fileSize, String uploadDate, byte[] fileContents) throws IOException {
     Document doc = new Document();
     InputStream in = new ByteArrayInputStream(fileContents);
 
@@ -132,6 +134,7 @@ public class Indexing {
     doc.add(new TextField("fileType", fileType, Field.Store.YES));
     doc.add(new TextField("userName", userName.replaceAll("%20", " "), Field.Store.YES));
     doc.add(new StringField("userType", userType, Field.Store.YES));
+    doc.add(new TextField("userId", userId, Field.Store.YES));
     doc.add(new TextField("fileSize", fileSize, Field.Store.YES));
     doc.add(new TextField("uploadDate", uploadDate, Field.Store.YES));
 

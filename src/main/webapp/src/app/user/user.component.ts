@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-
-import * as FileSaver from 'file-saver';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  selector: 'app-user',
+  templateUrl: './user.component.html',
+  styleUrls: ['./user.component.css']
 })
-export class ProfileComponent implements OnInit {
+export class UserComponent implements OnInit {
 
   TOMCAT_URL: string;
-
-  user: any;
   http: XMLHttpRequest;
+
+  userId: string;
+  userInfo: any;
   results: any;
 
   fileTypeData: any;
@@ -22,13 +21,15 @@ export class ProfileComponent implements OnInit {
   popularFileType: any;
   largestFile: any;
 
-  constructor(private router: Router) { }
+  constructor(private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
-    this.http = new XMLHttpRequest();
     this.TOMCAT_URL = 'http://localhost:8080';
-    this.user = JSON.parse(localStorage.getItem('user'));
+    this.http = new XMLHttpRequest();
     this.results = [];
+    this.activatedRoute.queryParams.subscribe((params: Params) => {
+      this.userId = params['userId'];
+    });
 
     this.fileTypeData = {
       chartType: 'PieChart',
@@ -53,6 +54,7 @@ export class ProfileComponent implements OnInit {
       }
     };
 
+    this.getUserInfo();
     this.getUserFiles();
     this.getStatistics();
   }
@@ -60,7 +62,7 @@ export class ProfileComponent implements OnInit {
   getStatistics() {
     const user = JSON.parse(localStorage.getItem('user'));
 
-    const url = this.TOMCAT_URL + '/statistics?userName=' + user.userName;
+    const url = this.TOMCAT_URL + '/statistics?userName=' + this.userInfo.userName;
 
     this.http.open('GET', url, false);
     this.http.send(null);
@@ -95,9 +97,16 @@ export class ProfileComponent implements OnInit {
     this.largestFile = Math.round(this.largestFile / 1000) / 100;
   }
 
-  getUserFiles() {
-    const url = this.TOMCAT_URL + '/search?userName=' + this.user.userName;
+  getUserInfo() {
+    const url = this.TOMCAT_URL + '/user?userId=' + this.userId;
+    this.http.open('GET', url, false);
+    this.http.send(null);
+    this.userInfo = JSON.parse(this.http.response);
+  }
 
+  getUserFiles() {
+
+    const url = this.TOMCAT_URL + '/search?userName=' + this.userInfo.userName;
     this.http.open('GET', url, false);
     this.http.send(null);
     const resp = this.http.response.split('"\n');
@@ -117,33 +126,6 @@ export class ProfileComponent implements OnInit {
         });
       }
     });
-  }
-
-  downloadFile(fileName: string, uploadDate: string) {
-    this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + fileName + '&uploadTime=' + uploadDate, true);
-    this.http.responseType = 'arraybuffer';
-    this.http.send(null);
-
-    this.http.onload = () => {
-      const data = this.http.response;
-      const extension = fileName.split('.').pop();
-      let contentType;
-      if (extension === 'pdf') {
-        contentType = {type: 'application/pdf'};
-      } else if (extension === 'doc' || extension === 'docx') {
-        contentType = {type: 'application/msword'};
-      } else if (extension === 'html') {
-        contentType = {type: 'text/html'};
-      } else {
-        contentType = {type: 'text/plain'};
-      }
-      const blob = new Blob([data], contentType);
-      FileSaver.saveAs(blob, fileName);
-    };
-  }
-
-  viewComments(docId: string) {
-    this.router.navigateByUrl('/comments?docId=' + docId);
   }
 
 }

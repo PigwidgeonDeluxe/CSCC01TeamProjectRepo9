@@ -39,10 +39,10 @@
             <div class="col-md-7 float-left">
               <h1>{{ user.userName }}</h1>
               <h5>
-                <span class="badge badge-warning text-capitalize">
+                <span [ngClass]="{'badge-warning': user.userType === 'instructor', 'badge-success': user.userType === 'student'}" class="badge text-capitalize">
                   <i class="fa fa-user"></i> {{ user.userType }}
                 </span>
-                <span class="badge badge-success">
+                <span class="badge badge-info">
                   <i class="fa fa-user-plus"></i> Follow
                 </span>
               </h5>

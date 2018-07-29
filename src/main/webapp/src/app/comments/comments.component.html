@@ -44,7 +44,7 @@
             <div class="row">
               <div class="col-md-2 text-center text-capitalize">
                 <img src="{{ result.profileImage }}?sz=75" alt="profileImage">
-                <span class="heading badge badge-warning badge-sm">
+                <span [ngClass]="{'badge-warning': result.userType === 'instructor', 'badge-success': result.userType === 'student'}" class="heading badge badge-sm">
                   <i class="fa fa-user"></i> {{ result.userType }}
                 </span>
               </div>

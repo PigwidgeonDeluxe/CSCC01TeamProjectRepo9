@@ -51,7 +51,7 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-2">
-                <img src="{{ result.profileImage }}?sz=75" alt="{{ result.userName }}">
+                <img src="{{ result.profileImage }}?sz=75" (click)="viewProfile(result.userId)" alt="{{ result.userName }}" style="cursor: pointer">
               </div>
               <div class="col-md-10">
                 <div class="row">
@@ -61,7 +61,10 @@
                 </div>
                 <div class="row">
                   <div class="col">
-                    <span [ngClass]="{'badge-success': result.userType === 'student', 'badge-warning': result.userType === 'instructor'}" class="badge badge-sm text-capitalize">
+                    <span [ngClass]="{'badge-success': result.userType === 'student', 'badge-warning': result.userType === 'instructor'}"
+                          (click)="viewProfile(result.userId)"
+                          class="badge badge-sm text-capitalize"
+                          style="cursor: pointer">
                       <i class="fa fa-user"></i> {{ result.userType }}
                     </span>
                     <span tooltip="Created On" class="badge badge-secondary">

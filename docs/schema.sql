@@ -17,6 +17,12 @@ CREATE TABLE file (
   uploaded_on INTEGER
 );
 
+CREATE TABLE following (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT,
+  following_user_id TEXT,
+);
+
 CREATE TABLE comments (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   file_id INTEGER,

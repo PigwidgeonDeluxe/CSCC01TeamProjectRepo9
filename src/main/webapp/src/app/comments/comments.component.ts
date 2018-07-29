@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+
 import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
 
@@ -50,8 +51,9 @@ export class CommentsComponent implements OnInit {
             'comment': element.split('~')[1],
             'userName': element.split('~')[2],
             'userType': element.split('~')[3],
-            'profileImage': element.split('~')[4],
-            'date': element.split('~')[5]
+            'userId': element.split('~')[4],
+            'profileImage': element.split('~')[5],
+            'date': element.split('~')[6]
           });
         }
       });

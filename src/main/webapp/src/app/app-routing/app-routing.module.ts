@@ -6,6 +6,7 @@ import { ProfileComponent } from '../profile/profile.component';
 import { StatisticsComponent } from '../statistics/statistics.component';
 import { CommentsComponent } from '../comments/comments.component';
 import { UsersComponent } from '../users/users.component';
+import { UserComponent } from '../user/user.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,10 @@ const routes: Routes = [
   {
     path: 'users',
     component: UsersComponent
+  },
+  {
+    path: 'user',
+    component: UserComponent
   },
   {
     path: 'statistics',

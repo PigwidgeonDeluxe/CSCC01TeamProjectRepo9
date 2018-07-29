@@ -89,10 +89,11 @@ export class SearchComponent implements OnInit {
           'fileType': element.split('~')[1],
           'userType': element.split('~')[2],
           'userName': element.split('~')[3],
-          'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
-          'uploadDate': +element.split('~')[5],
-          'docId': element.split('~')[6],
-          'fileContent': element.split('~')[7]
+          'userId': element.split('~')[4],
+          'fileSize': Math.round(+element.split('~')[5] / 1000) / 100,
+          'uploadDate': +element.split('~')[6],
+          'docId': element.split('~')[7],
+          'fileContent': element.split('~')[8]
         });
       }
     });
@@ -132,6 +133,14 @@ export class SearchComponent implements OnInit {
 
   viewComments(docId: string) {
     this.router.navigateByUrl('/comments?docId=' + docId);
+  }
+
+  viewProfile(userId: string) {
+    if (this.userId !== userId) {
+      this.router.navigateByUrl('/user?userId=' + userId);
+    } else {
+      this.router.navigateByUrl('/profile');
+    }
   }
 
 }

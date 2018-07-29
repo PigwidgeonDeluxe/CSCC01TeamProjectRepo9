@@ -146,6 +146,7 @@ public class Search extends HttpServlet {
           + d.get("fileType") + "~"
           + d.get("userType") + "~"
           + d.get("userName") + "~"
+          + d.get("userId") + "~"
           + d.get("fileSize") + "~"
           + d.get("uploadDate") + "~"
           + d.get("fileId") + "~"
