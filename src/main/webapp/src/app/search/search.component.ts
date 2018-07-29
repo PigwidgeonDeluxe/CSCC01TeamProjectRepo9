@@ -136,7 +136,7 @@ export class SearchComponent implements OnInit {
   }
 
   viewProfile(userId: string) {
-    if (this.userId !== userId) {
+    if (this.user.userId !== userId) {
       this.router.navigateByUrl('/user?userId=' + userId);
     } else {
       this.router.navigateByUrl('/profile');

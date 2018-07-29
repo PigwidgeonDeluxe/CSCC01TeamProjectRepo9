@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user',
@@ -11,9 +13,12 @@ export class UserComponent implements OnInit {
   TOMCAT_URL: string;
   http: XMLHttpRequest;
 
+  user: any;
   userId: string;
   userInfo: any;
   results: any;
+  following: any;
+  followingUser: boolean;
 
   fileTypeData: any;
   fileSizeData: any;
@@ -21,12 +26,15 @@ export class UserComponent implements OnInit {
   popularFileType: any;
   largestFile: any;
 
-  constructor(private activatedRoute: ActivatedRoute) { }
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.TOMCAT_URL = 'http://localhost:8080';
     this.http = new XMLHttpRequest();
+    this.user = JSON.parse(localStorage.getItem('user'));
     this.results = [];
+    this.following = [];
+    this.followingUser = false;
     this.activatedRoute.queryParams.subscribe((params: Params) => {
       this.userId = params['userId'];
     });
@@ -57,11 +65,11 @@ export class UserComponent implements OnInit {
     this.getUserInfo();
     this.getUserFiles();
     this.getStatistics();
+    this.getFollowing();
+    this.isFollowing();
   }
 
   getStatistics() {
-    const user = JSON.parse(localStorage.getItem('user'));
-
     const url = this.TOMCAT_URL + '/statistics?userName=' + this.userInfo.userName;
 
     this.http.open('GET', url, false);
@@ -105,7 +113,6 @@ export class UserComponent implements OnInit {
   }
 
   getUserFiles() {
-
     const url = this.TOMCAT_URL + '/search?userName=' + this.userInfo.userName;
     this.http.open('GET', url, false);
     this.http.send(null);
@@ -126,6 +133,67 @@ export class UserComponent implements OnInit {
         });
       }
     });
+  }
+
+  follow() {
+    const url = this.TOMCAT_URL + '/follow?userId=' + this.user.userId + '&followUserId=' + this.userId;
+    this.http.open('POST', url, false);
+    this.http.send(null);
+    const resp = JSON.parse(this.http.response);
+
+    if (resp.status === 'SUCCESS') {
+      swal({
+        title: 'Success',
+        type: 'success',
+        text: resp.message
+      }).then(() => {
+        location.reload();
+      });
+    } else {
+      swal({
+        title: 'Error',
+        type: 'error',
+        text: resp.message
+      }).then(() => {
+        location.reload();
+      });
+    }
+  }
+
+  isFollowing() {
+    const url = this.TOMCAT_URL + '/follow?userId=' + this.user.userId;
+    this.http.open('GET', url, false);
+    this.http.send(null);
+    const resp = this.http.response.split('\n');
+    resp.forEach(element => {
+      if (element.length > 0) {
+        if (element.split('~')[0] === this.userId) {
+          this.followingUser = true;
+        }
+      }
+    });
+  }
+
+  getFollowing() {
+    const url = this.TOMCAT_URL + '/follow?userId=' + this.userId;
+    this.http.open('GET', url, false);
+    this.http.send(null);
+    const resp = this.http.response.split('\n');
+    resp.forEach(element => {
+      if (element.length > 0) {
+        this.following.push({
+          'userId': element.split('~')[0],
+          'userName': element.split('~')[1],
+          'userType': element.split('~')[2],
+          'profileImage': element.split('~')[3],
+          'createdOn': +element.split('~')[4]
+        });
+      }
+    });
+  }
+
+  viewProfile(userId: string) {
+    this.router.navigateByUrl('/user?userId=' + userId);
   }
 
 }

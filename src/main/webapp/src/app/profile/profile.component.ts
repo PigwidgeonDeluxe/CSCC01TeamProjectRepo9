@@ -15,6 +15,7 @@ export class ProfileComponent implements OnInit {
   user: any;
   http: XMLHttpRequest;
   results: any;
+  following: any;
 
   fileTypeData: any;
   fileSizeData: any;
@@ -29,6 +30,7 @@ export class ProfileComponent implements OnInit {
     this.TOMCAT_URL = 'http://localhost:8080';
     this.user = JSON.parse(localStorage.getItem('user'));
     this.results = [];
+    this.following = [];
 
     this.fileTypeData = {
       chartType: 'PieChart',
@@ -55,6 +57,7 @@ export class ProfileComponent implements OnInit {
 
     this.getUserFiles();
     this.getStatistics();
+    this.getFollowing();
   }
 
   getStatistics() {
@@ -142,8 +145,30 @@ export class ProfileComponent implements OnInit {
     };
   }
 
+  getFollowing() {
+    const url = this.TOMCAT_URL + '/follow?userId=' + this.user.userId;
+    this.http.open('GET', url, false);
+    this.http.send(null);
+    const resp = this.http.response.split('\n');
+    resp.forEach(element => {
+      if (element.length > 0) {
+        this.following.push({
+          'userId': element.split('~')[0],
+          'userName': element.split('~')[1],
+          'userType': element.split('~')[2],
+          'profileImage': element.split('~')[3],
+          'createdOn': +element.split('~')[4]
+        });
+      }
+    });
+  }
+
   viewComments(docId: string) {
     this.router.navigateByUrl('/comments?docId=' + docId);
+  }
+
+  viewProfile(userId: string) {
+    this.router.navigateByUrl('/user?userId=' + userId);
   }
 
 }

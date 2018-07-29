@@ -42,8 +42,9 @@
                   <span [ngClass]="{'badge-warning': userInfo.userType === 'instructor', 'badge-success': userInfo.userType === 'student'}" class="badge text-capitalize">
                     <i class="fa fa-user"></i> {{ userInfo.userType }}
                   </span>
-                  <span class="badge badge-info">
-                    <i class="fa fa-user-plus"></i> Follow
+                  <span class="badge badge-info" (click)="follow(userInfo.userId)" style="cursor:pointer">
+                    <span *ngIf="!followingUser"><i class="fa fa-user-plus"></i> Follow</span>
+                    <span *ngIf="followingUser"><i class="fa fa-user-minus"></i> Unfollow</span>
                   </span>
                 </h5>
                 <h5>
@@ -90,13 +91,13 @@
                       <td>
                         <i class="fa fa-star"></i> Most Popular File Type
                       </td>
-                      <td>{{ popularFileType.fileType }}</td>
+                      <td>{{ popularFileType ? popularFileType.fileType : 'N/A' }}</td>
                     </tr>
                     <tr>
                       <td>
                         <i class="fa fa-file-upload"></i> Largest File Uploaded
                       </td>
-                      <td>{{ largestFile }} MB</td>
+                      <td>{{ largestFile ? largestFile + ' MB' : 'N/A' }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -110,7 +111,7 @@
       <div class="col">
         <div class="card">
           <div class="card-body">
-            <label class="heading">Your Files</label>
+            <label class="heading">Files</label>
             <div *ngFor="let result of results" class="mt-3 mb-3">
               <div class="row">
                 <div class="col-md-1 text-center">
@@ -155,7 +156,7 @@
               </div>
             </div>
             <div [ngClass]="{'mt-3': results.length > 0}">
-              {{ results.length === 0 ? 'You haven\'t uploaded any files...' : results.length + ' files' }}
+              {{ results.length === 0 ? 'This user hasn\'t uploaded any files...' : results.length + ' files' }}
             </div>
           </div>
         </div>
@@ -166,6 +167,39 @@
         <div class="card">
           <div class="card-body">
             <label class="heading">Following</label>
+              <div *ngIf="following.length > 0" class="row" class="mt-3 mb-3">
+                <div *ngFor="let element of following" class="mt-3 mb-3">
+                  <div class="card">
+                    <div (click)="viewProfile(element.userId)" class="card-body" style="cursor: pointer">
+                      <div class="row">
+                        <div class="col-md-1">
+                          <img src="{{ element.profileImage }}?sz=70"
+                            tooltip="{{ element.userName }}"
+                            alt="{{ element.userName }}">
+                        </div>
+                        <div class="col-md-11">
+                          <div class="row">
+                            <div class="col">
+                              <span class="heading">{{ element.userName }}</span>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <span [ngClass]="{'badge-success': element.userType === 'student', 'badge-warning': element.userType === 'instructor'}"
+                                    class="badge badge-sm text-capitalize">
+                                <i class="fa fa-user"></i> {{ element.userType }}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="following.length === 0">
+                This user is not following anyone...
+              </div>
           </div>
         </div>
       </div>

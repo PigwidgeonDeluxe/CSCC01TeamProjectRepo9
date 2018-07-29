@@ -155,6 +155,7 @@ public class Database {
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
       pstmt.setString(1, userId);
       pstmt.setString(2, followingUserId);
+      pstmt.executeUpdate();
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
@@ -166,15 +167,16 @@ public class Database {
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
       pstmt.setString(1, userId);
       pstmt.setString(2, followingUserId);
+      pstmt.executeUpdate();
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
   }
 
   public ResultSet getFollowing(String userId) throws SQLException {
-    String sql = "SELECT user.user_id, user_name, user_type, created_on, profile_image FROM user "
-        + "INNER JOIN following ON user.user_id = following.following_user_id WHERE "
-        + "following.user_id = ?";
+    String sql = "SELECT user.user_id, user_name, user_type, created_on, profile_image, "
+        + "following_user_id FROM user INNER JOIN following ON user.user_id = "
+        + "following.following_user_id WHERE following.user_id = ?";
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);

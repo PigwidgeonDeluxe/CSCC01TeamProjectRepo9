@@ -53,8 +53,8 @@ public class Follow extends HttpServlet {
     try {
       ResultSet rs = db.getFollowing(userId);
       while (rs.next()) {
-        if (rs.getString("user_id").equals(userId) &&
-            rs.getString("following_user_id").equals(followUserId)) {
+        if (rs.getString("following_user_id").equals(followUserId)) {
+          rs.close();
           db.unfollowUser(userId, followUserId);
           response.put("status", "SUCCESS");
           response.put("message", "Successfully unfollowed user");
@@ -67,6 +67,7 @@ public class Follow extends HttpServlet {
         db.followUser(userId, followUserId);
         response.put("status", "SUCCESS");
         response.put("message", "Successfully following user");
+        resp.getWriter().write(response.toString());
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
