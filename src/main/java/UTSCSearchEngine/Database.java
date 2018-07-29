@@ -53,7 +53,7 @@ public class Database {
   public ResultSet getAllFiles() throws SQLException {
 
     String sql = "SELECT file.id, file, file_name, file_type, file_size, user_name, user_type, "
-        + "uploaded_on FROM file INNER JOIN user ON file.user_id = user.user_id";
+        + "user.user_id, uploaded_on FROM file INNER JOIN user ON file.user_id = user.user_id";
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);
@@ -88,8 +88,8 @@ public class Database {
   }
 
   public ResultSet getFileComments(String fileId) throws SQLException {
-    String sql = "SELECT file_id, comment, date, user_name, user_type, profile_image FROM comments "
-        + "INNER JOIN user ON comments.user_id = user.user_id WHERE file_id = ?";
+    String sql = "SELECT file_id, comment, date, user_name, user_type, user.user_id, profile_image "
+        + "FROM comments INNER JOIN user ON comments.user_id = user.user_id WHERE file_id = ?";
 
     Connection con = connect();
     PreparedStatement pstmt = con.prepareStatement(sql);
@@ -146,6 +146,42 @@ public class Database {
     PreparedStatement pstmt = con.prepareStatement(sql);
 
     pstmt.setString(1, "%" + name + "%");
+    return pstmt.executeQuery();
+  }
+
+  public void followUser(String userId, String followingUserId) {
+    String sql = "INSERT INTO following(user_id, following_user_id) VALUES(?, ?)";
+
+    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+      pstmt.setString(1, userId);
+      pstmt.setString(2, followingUserId);
+      pstmt.executeUpdate();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public void unfollowUser(String userId, String followingUserId) {
+    String sql = "DELETE FROM following WHERE user_id = ? AND following_user_id = ?";
+
+    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+      pstmt.setString(1, userId);
+      pstmt.setString(2, followingUserId);
+      pstmt.executeUpdate();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public ResultSet getFollowing(String userId) throws SQLException {
+    String sql = "SELECT user.user_id, user_name, user_type, created_on, profile_image, "
+        + "following_user_id FROM user INNER JOIN following ON user.user_id = "
+        + "following.following_user_id WHERE following.user_id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    pstmt.setString(1, userId);
     return pstmt.executeQuery();
   }
 

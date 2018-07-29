@@ -16,6 +16,7 @@ import { StatisticsComponent } from './statistics/statistics.component';
 
 import { CommentsComponent } from './comments/comments.component';
 import { UsersComponent } from './users/users.component';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { UsersComponent } from './users/users.component';
     StatisticsComponent,
     CommentsComponent,
     UsersComponent,
+    UserComponent,
   ],
   imports: [
     BrowserModule,

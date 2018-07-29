@@ -124,6 +124,30 @@ public class User extends HttpServlet {
   }
 
   @Override
+  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+    Database db = new Database();
+    String userId = req.getParameter("userId");
+    JSONObject response = new JSONObject();
+
+    try {
+      ResultSet rs = db.getUserById(userId);
+      while (rs.next()) {
+        response.put("userId", rs.getString("user_id"));
+        response.put("userName", rs.getString("user_name"));
+        response.put("userType", rs.getString("user_type"));
+        response.put("profileImage", rs.getString("profile_image"));
+        response.put("createdOn", rs.getString("created_on"));
+      }
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+
+    resp.setHeader("Access-Control-Allow-Origin", "*");
+    resp.getWriter().write(response.toString());
+  }
+
+  @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("application/x-www-form-urlencoded");
     resp.setHeader("Access-Control-Allow-Origin", "*");

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import swal from 'sweetalert2';
 
@@ -16,7 +17,7 @@ export class UsersComponent implements OnInit {
   results: any;
   user: any;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.http = new XMLHttpRequest();
@@ -65,4 +66,11 @@ export class UsersComponent implements OnInit {
     }
   }
 
+  viewProfile(userId: string) {
+    if (userId !== this.user.userId) {
+      this.router.navigateByUrl('/user?userId=' + userId);
+    } else {
+      this.router.navigateByUrl('/profile');
+    }
+  }
 }

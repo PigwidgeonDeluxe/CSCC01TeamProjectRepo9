@@ -54,6 +54,7 @@ public class Comment extends HttpServlet {
             + comments.getString("comment") + "~"
             + comments.getString("user_name") + "~"
             + comments.getString("user_type") + "~"
+            + comments.getString("user_id") + "~"
             + comments.getString("profile_image") + "~"
             + comments.getString("date")+ "\n");
       }

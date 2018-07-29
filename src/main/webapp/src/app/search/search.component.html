@@ -76,8 +76,10 @@
                 <i class="fa fa-file"></i> {{ result.fileSize != 0 ? result.fileSize + 'MB' : '<1 KB' }}
               </span>
               <span tooltip="Uploaded By: {{ result.userName }} ({{ result.userType }})"
+                    (click)="viewProfile(result.userId)"
                     [ngClass]="{'badge-success': result.userType === 'student', 'badge-warning': result.userType === 'instructor'}"
-                    class="badge">
+                    class="badge"
+                    style="cursor: pointer">
                 <i class="fa fa-user"></i> {{ result.userName }}
               </span>
               <span tooltip="Upload Date" class="badge badge-secondary">
