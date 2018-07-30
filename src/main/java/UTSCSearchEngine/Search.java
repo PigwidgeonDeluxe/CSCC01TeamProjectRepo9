@@ -1,13 +1,14 @@
 package UTSCSearchEngine;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -145,8 +146,10 @@ public class Search extends HttpServlet {
           + d.get("fileType") + "~"
           + d.get("userType") + "~"
           + d.get("userName") + "~"
+          + d.get("userId") + "~"
           + d.get("fileSize") + "~"
           + d.get("uploadDate") + "~"
+          + d.get("fileId") + "~"
           + "\"" + contents + "\"\n");
     }
     return responseBackToUser.toString();

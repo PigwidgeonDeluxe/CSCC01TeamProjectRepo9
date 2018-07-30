@@ -3,6 +3,10 @@ body {
 	background-color: #90C3D4 !important;
 }
 
+img {
+	border-radius: 50%;
+}
+
 .heading {
 	font-weight: bold;
 }

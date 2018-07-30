@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import * as FileSaver from 'file-saver';
 import swal from 'sweetalert2';
@@ -21,14 +22,16 @@ export class SearchComponent implements OnInit {
   results: any;
   http: XMLHttpRequest;
   selectedSearchOption: any;
+  user: any;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.http = new XMLHttpRequest();
     this.TOMCAT_URL = 'http://localhost:8080';
     this.selectedSearchOption = 1;
     this.results = [];
+    this.user = JSON.parse(localStorage.getItem('user'));
   }
 
   search() {
@@ -43,14 +46,14 @@ export class SearchComponent implements OnInit {
     }
   }
 
-  getSearchResults(fileName, fileType, userName, userType) {
+  getSearchResults(searchParam, fileType, userName, userType) {
     let url = this.TOMCAT_URL + '/search';
 
-    if (fileName) {
+    if (searchParam) {
       if (url.indexOf('?') === -1) {
-        url += '?fileName=' + fileName;
+        url += '?fileName=' + searchParam + '&contents=' + searchParam;
       } else {
-        url += '&fileName=' + fileName;
+        url += '&fileName=' + searchParam + '&contents=' + searchParam;
       }
     }
     if (fileType) {
@@ -86,9 +89,11 @@ export class SearchComponent implements OnInit {
           'fileType': element.split('~')[1],
           'userType': element.split('~')[2],
           'userName': element.split('~')[3],
-          'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
-          'uploadDate': +element.split('~')[5],
-          'fileContent': element.split('~')[6]
+          'userId': element.split('~')[4],
+          'fileSize': Math.round(+element.split('~')[5] / 1000) / 100,
+          'uploadDate': +element.split('~')[6],
+          'docId': element.split('~')[7],
+          'fileContent': element.split('~')[8]
         });
       }
     });
@@ -124,6 +129,18 @@ export class SearchComponent implements OnInit {
       const blob = new Blob([data], contentType);
       FileSaver.saveAs(blob, fileName);
     };
+  }
+
+  viewComments(docId: string) {
+    this.router.navigateByUrl('/comments?docId=' + docId);
+  }
+
+  viewProfile(userId: string) {
+    if (this.user.userId !== userId) {
+      this.router.navigateByUrl('/user?userId=' + userId);
+    } else {
+      this.router.navigateByUrl('/profile');
+    }
   }
 
 }

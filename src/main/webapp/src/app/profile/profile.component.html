@@ -1,0 +1,203 @@
+<div class="container content-row mt-5">
+  <div class="row">
+    <div class="col">
+      <app-navbar></app-navbar>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="fa fa-search"></i> Search
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/profile">
+                <i class="fa fa-user"></i> Profile
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/users">
+                <i class="fa fa-users"></i> Users
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/statistics">
+                <i class="fa fa-chart-pie"></i> Statistics
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-5">
+              <img src="{{ user.profileImage }}?sz=125" alt="profile image" class="float-right">
+            </div>
+            <div class="col-md-7 float-left">
+              <h1>{{ user.userName }}</h1>
+              <h5>
+                <span [ngClass]="{'badge-warning': user.userType === 'instructor', 'badge-success': user.userType === 'student'}" class="badge text-capitalize">
+                  <i class="fa fa-user"></i> {{ user.userType }}
+                </span>
+              </h5>
+              <h5>
+                <span tooltip="Join Date" class="badge badge-secondary">
+                  <i class="far fa-calendar-alt"></i> {{ user.createdOn | date: 'yyyy-MM-dd' }}
+                </span>
+                <span tooltip="Files Uploaded" class="badge badge-secondary">
+                  <i class="fa fa-file"></i> {{ results.length }} Files
+                </span>
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <label class="heading">Your Statistics</label>
+          <div class="row text-center">
+            <div class="col">
+              <label class="heading">File Type Distribution</label>
+              <google-chart [data]="fileTypeData"></google-chart>
+            </div>
+            <div class="col">
+              <label class="heading">File Size Distribution</label>
+              <google-chart [data]="fileSizeData"></google-chart>
+            </div>
+          </div>
+          <div class="row text-center mt-5">
+            <div class="col">
+              <label class="heading">Additional Statistics</label>
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <td style="width: 50%">
+                      <i class="fa fa-file"></i> Files Uploaded
+                    </td>
+                    <td style="width: 50%">{{ fileSizeData.dataTable.length - 1 }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <i class="fa fa-star"></i> Most Popular File Type
+                    </td>
+                    <td>{{ popularFileType.fileType }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <i class="fa fa-file-upload"></i> Largest File Uploaded
+                    </td>
+                    <td>{{ largestFile }} MB</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <label class="heading">Your Files</label>
+          <div *ngFor="let result of results" class="mt-3 mb-3">
+            <div class="row">
+              <div class="col-md-1 text-center">
+                <i *ngIf="result.fileType !== 'docx' && result.fileType !== 'pdf' && result.fileType !== 'html'" class="far fa-file fa-3x"></i>
+                <i *ngIf="result.fileType === 'docx'" class="text-primary far fa-file-word fa-3x"></i>
+                <i *ngIf="result.fileType === 'pdf'" class="text-danger far fa-file-pdf fa-3x"></i>
+                <i *ngIf="result.fileType === 'html'" class="text-warning fa fa-globe fa-3x"></i>
+              </div>
+              <div class="col-md-11">
+                <div class="row">
+                  <div class="col">
+                    <span class="heading">{{ result.fileName }}</span>
+                  </div>
+                </div>
+                <div class="row mt-2 mb-2">
+                  <div class="col text-monospace">
+                    {{ result.fileContent }}..."
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <span tooltip="File Size" class="badge badge-info">
+                      <i class="fa fa-file"></i> {{ result.fileSize != 0 ? result.fileSize + 'MB' : '<1 KB' }}
+                    </span>
+                    <span tooltip="Uploaded By: {{ result.userName }} ({{ result.userType }})"
+                          [ngClass]="{'badge-success': result.userType === 'student', 'badge-warning': result.userType === 'instructor'}"
+                          class="badge">
+                      <i class="fa fa-user"></i> {{ result.userName }}
+                    </span>
+                    <span tooltip="Upload Date" class="badge badge-secondary">
+                      <i class="far fa-calendar-alt"></i> {{ result.uploadDate | date: 'medium' }}
+                    </span>
+                    <span (click)="downloadFile(result.fileName, result.uploadDate)" class="badge badge-primary" style="cursor: pointer">
+                      <i class="fa fa-download"></i> Download
+                    </span>
+                    <span (click)="viewComments(result.docId)" class="badge badge-primary" style="cursor: pointer">
+                      <i class="fa fa-comments"></i> Commments
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div [ngClass]="{'mt-3': results.length > 0}">
+            {{ results.length === 0 ? 'You haven\'t uploaded any files...' : results.length + ' files' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3 mb-5">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <label class="heading">Following</label>
+          <div *ngIf="following.length > 0" class="row" class="mt-3 mb-3">
+            <div *ngFor="let element of following" class="mt-3 mb-3">
+              <div class="card">
+                <div (click)="viewProfile(element.userId)" class="card-body" style="cursor: pointer">
+                  <div class="row">
+                    <div class="col-md-1">
+                      <img src="{{ element.profileImage }}?sz=70"
+                        tooltip="{{ element.userName }}"
+                        alt="{{ element.userName }}">
+                    </div>
+                    <div class="col-md-11">
+                      <div class="row">
+                        <div class="col">
+                          <span class="heading">{{ element.userName }}</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <span [ngClass]="{'badge-success': element.userType === 'student', 'badge-warning': element.userType === 'instructor'}"
+                                class="badge badge-sm text-capitalize">
+                            <i class="fa fa-user"></i> {{ element.userType }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="following.length === 0">
+            This user is not following anyone...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

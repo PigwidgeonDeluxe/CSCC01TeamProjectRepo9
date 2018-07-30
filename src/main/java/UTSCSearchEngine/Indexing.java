@@ -75,10 +75,12 @@ public class Indexing {
       ResultSet rs = db.getAllFiles();
       while (rs.next()) {
         addDoc(w,
+            rs.getString("id"),
             rs.getString("file_name"),
             rs.getString("file_type"),
-            rs.getString("uploader_name"),
-            rs.getString("uploader_type"),
+            rs.getString("user_name"),
+            rs.getString("user_type"),
+            rs.getString("user_id"),
             rs.getString("file_size"),
             rs.getString("uploaded_on"),
             rs.getBytes("file"));
@@ -95,10 +97,12 @@ public class Indexing {
       ResultSet rs = db.getAllFiles();
       while (rs.next()) {
         addDoc(w,
+            rs.getString("id"),
             rs.getString("file_name"),
             rs.getString("file_type"),
-            rs.getString("uploader_name"),
-            rs.getString("uploader_type"),
+            rs.getString("user_name"),
+            rs.getString("user_type"),
+            rs.getString("user_id"),
             rs.getString("file_size"),
             rs.getString("uploaded_on"),
             rs.getBytes("file"));
@@ -118,16 +122,19 @@ public class Indexing {
    * @param userType
    * @throws IOException
    */
-  private static void addDoc(IndexWriter w, String fileName, String fileType, String userName,
-      String userType, String fileSize, String uploadDate, byte[] fileContents) throws IOException {
+  private static void addDoc(IndexWriter w, String fileId,
+      String fileName, String fileType, String userName, String userType, String userId,
+      String fileSize, String uploadDate, byte[] fileContents) throws IOException {
     Document doc = new Document();
     InputStream in = new ByteArrayInputStream(fileContents);
 
     // add the values to the index
+    doc.add(new StringField("fileId", fileId, Field.Store.YES));
     doc.add(new TextField("fileName", fileName, Field.Store.YES));
     doc.add(new TextField("fileType", fileType, Field.Store.YES));
     doc.add(new TextField("userName", userName.replaceAll("%20", " "), Field.Store.YES));
     doc.add(new StringField("userType", userType, Field.Store.YES));
+    doc.add(new TextField("userId", userId, Field.Store.YES));
     doc.add(new TextField("fileSize", fileSize, Field.Store.YES));
     doc.add(new TextField("uploadDate", uploadDate, Field.Store.YES));
 
@@ -183,24 +190,6 @@ public class Indexing {
     w.commit();
   }
 
-  public Directory getIndex() {
-    return this.index;
-  }
-
-  public StandardAnalyzer getAnalyzer() {
-    return this.analyzer;
-  }
-
-  public Path getDocDir() {
-    return this.docDir;
-  }
-
-  /**
-   * Method that reads from doc files
-   * 
-   * @param file
-   * @return
-   */
   private static List<String> parseDocContents(byte[] file) {
     List<XWPFParagraph> paragraphs;
     List<String> fileData = new ArrayList<>();
@@ -221,6 +210,18 @@ public class Indexing {
     }
 
     return fileData;
+  }
+
+  public Directory getIndex() {
+    return this.index;
+  }
+
+  public StandardAnalyzer getAnalyzer() {
+    return this.analyzer;
+  }
+
+  public Path getDocDir() {
+    return this.docDir;
   }
 
 }

@@ -1,5 +1,6 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { Router } from '@angular/router';
 
 declare var gapi: any;
 import swal from 'sweetalert2';
@@ -18,7 +19,7 @@ export class NavbarComponent implements OnInit {
   modalRef: BsModalRef;
   userInfo: object;
 
-  constructor() {
+  constructor(private router: Router) {
     window['onSignIn'] = ((user) => {
       this.onSignIn(user);
     });
@@ -42,7 +43,6 @@ export class NavbarComponent implements OnInit {
     this.http.send(JSON.stringify(request));
 
     const resp = JSON.parse(this.http.response);
-    console.log(resp);
     if (resp.status === 'SUCCESS') {
       swal({
         title: 'Success',
@@ -50,8 +50,11 @@ export class NavbarComponent implements OnInit {
         text: resp.message
       }).then(() => {
         localStorage.setItem('user', JSON.stringify({
+          'userId': profile.getId(),
           'userName': profile.getName(),
-          'userType': resp.userType
+          'userType': resp.userType,
+          'createdOn': resp.createdOn,
+          'profileImage': profile.getImageUrl()
         }));
         location.reload();
       });
@@ -79,6 +82,7 @@ export class NavbarComponent implements OnInit {
         const auth2 = gapi.auth2.getAuthInstance();
         localStorage.clear();
         auth2.signOut();
+        this.router.navigateByUrl('/');
         location.reload();
       });
     } else {
@@ -90,7 +94,7 @@ export class NavbarComponent implements OnInit {
 
   upload(files: FileList) {
     const user = JSON.parse(localStorage.getItem('user'));
-    this.http.open('POST', this.TOMCAT_URL + '/upload?userName=' + user.userName + '&userType=' + user.userType, false);
+    this.http.open('POST', this.TOMCAT_URL + '/upload?userId=' + user.userId, false);
 
     const request = new FormData();
     Array.from(files).forEach(file => {

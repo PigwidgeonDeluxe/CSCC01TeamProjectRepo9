@@ -60,9 +60,11 @@ public class User extends HttpServlet {
               resp.getWriter().write(response.toString());
             } else {
               // user doesn't exist
-              db.insertUser(userId, json.getString("userType"));
+              db.insertUser(userId, json.getString("userType"),
+                  json.getString("userName"), json.getString("profileImage"));
               response.put("status", "SUCCESS");
               response.put("message", "Successfully created new " + json.getString("userType"));
+              response.put("createdOn", System.currentTimeMillis());
               resp.getWriter().write(response.toString());
             }
           } catch (SQLException ex) {
@@ -96,6 +98,7 @@ public class User extends HttpServlet {
               // user exists
               response.put("status", "SUCCESS");
               response.put("userType", rs.getString("user_type"));
+              response.put("createdOn", rs.getString("created_on"));
               response.put("message", "Successfully logged in");
               resp.getWriter().write(response.toString());
             } else {
@@ -118,6 +121,30 @@ public class User extends HttpServlet {
         ex.printStackTrace();
       }
     }
+  }
+
+  @Override
+  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+    Database db = new Database();
+    String userId = req.getParameter("userId");
+    JSONObject response = new JSONObject();
+
+    try {
+      ResultSet rs = db.getUserById(userId);
+      while (rs.next()) {
+        response.put("userId", rs.getString("user_id"));
+        response.put("userName", rs.getString("user_name"));
+        response.put("userType", rs.getString("user_type"));
+        response.put("profileImage", rs.getString("profile_image"));
+        response.put("createdOn", rs.getString("created_on"));
+      }
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+
+    resp.setHeader("Access-Control-Allow-Origin", "*");
+    resp.getWriter().write(response.toString());
   }
 
   @Override
