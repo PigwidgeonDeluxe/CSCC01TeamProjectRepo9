@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -19,6 +20,14 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Fragmenter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleFragmenter;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.Directory;
 
 @WebServlet("/search")
@@ -137,11 +146,33 @@ public class Search extends HttpServlet {
     TopDocs docs = searcher.search(q, hitsPerPage);
     ScoreDoc[] hits = docs.scoreDocs;
     StringBuilder responseBackToUser = new StringBuilder();
+
+    // result highlighter
+    Formatter formatter = new SimpleHTMLFormatter();
+    QueryScorer scorer = new QueryScorer(q);
+    Highlighter highlighter = new Highlighter(formatter, scorer);
+    Fragmenter fragmenter = new SimpleFragmenter(10);
+    highlighter.setTextFragmenter(fragmenter);
+
     for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
       Document d = searcher.doc(docId);
       String contents = d.get("contents");
+
+      String contentResult = "";
+      TokenStream stream = TokenSources.getAnyTokenStream(reader, docId, "contents", analyzer);
+
+      try {
+        String[] frags = highlighter.getBestFragments(stream, contents, 10);
+        for (String frag : frags) {
+          contentResult += (frag + "...");
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+
       contents = contents != null ? contents.substring(0, Math.min(contents.length(), 160)) : "";
+
       responseBackToUser.append(d.get("fileName") + "~"
           + d.get("fileType") + "~"
           + d.get("userType") + "~"
@@ -150,7 +181,7 @@ public class Search extends HttpServlet {
           + d.get("fileSize") + "~"
           + d.get("uploadDate") + "~"
           + d.get("fileId") + "~"
-          + "\"" + contents + "\"\n");
+          + "\"" + (contentResult.length() > 0 ? contentResult : contents + "...") + "\"\n");
     }
     return responseBackToUser.toString();
   }
