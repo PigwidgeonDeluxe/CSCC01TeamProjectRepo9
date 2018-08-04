@@ -50,9 +50,10 @@ public class User extends HttpServlet {
         if (idToken != null) {
           Payload payload = idToken.getPayload();
           String userId = payload.getSubject();
+          ResultSet rs = null;
 
           try {
-            ResultSet rs = db.getUserById(userId);
+            rs = db.getUserById(userId);
             if (rs.next()) {
               // user already exists
               response.put("status", "FAILURE");
@@ -69,6 +70,14 @@ public class User extends HttpServlet {
             }
           } catch (SQLException ex) {
             ex.printStackTrace();
+          } finally {
+            if (rs != null) {
+              try {
+                rs.close();
+              } catch (SQLException ex) {
+                ex.printStackTrace();
+              }
+            }
           }
         } else {
           response.put("status", "FAILURE");
@@ -91,9 +100,10 @@ public class User extends HttpServlet {
         if (idToken != null) {
           Payload payload = idToken.getPayload();
           String userId = payload.getSubject();
+          ResultSet rs = null;
 
           try {
-            ResultSet rs = db.getUserById(userId);
+            rs = db.getUserById(userId);
             if (rs.next()) {
               // user exists
               response.put("status", "SUCCESS");
@@ -109,6 +119,14 @@ public class User extends HttpServlet {
             }
           } catch (SQLException ex) {
             ex.printStackTrace();
+          } finally {
+            if (rs != null) {
+              try {
+                rs.close();
+              } catch (SQLException ex) {
+                ex.printStackTrace();
+              }
+            }
           }
         } else {
           response.put("status", "FAILURE");
@@ -129,9 +147,10 @@ public class User extends HttpServlet {
     Database db = new Database();
     String userId = req.getParameter("userId");
     JSONObject response = new JSONObject();
+    ResultSet rs = null;
 
     try {
-      ResultSet rs = db.getUserById(userId);
+      rs = db.getUserById(userId);
       while (rs.next()) {
         response.put("userId", rs.getString("user_id"));
         response.put("userName", rs.getString("user_name"));
@@ -141,6 +160,14 @@ public class User extends HttpServlet {
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
 
     resp.setHeader("Access-Control-Allow-Origin", "*");

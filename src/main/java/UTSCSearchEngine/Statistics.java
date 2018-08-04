@@ -37,12 +37,15 @@ public class Statistics extends HttpServlet {
           userFileTypeStats.put(fileTypeRs.getString("file_type"),
               fileTypeRs.getInt("count(file_type)"));
         }
+        fileTypeRs.close();
 
         ResultSet fileSizeRs = db.getUserFileSizeStatistics(userName);
         while(fileSizeRs.next()) {
           userFileSizeStats.put(fileSizeRs.getString("file_name"),
               fileSizeRs.getInt("file_size"));
         }
+        fileSizeRs.close();
+
       } catch (SQLException ex) {
         ex.printStackTrace();
       }
@@ -60,18 +63,22 @@ public class Statistics extends HttpServlet {
             fileTypeStats.put(fileTypeRs.getString("file_type"),
                 fileTypeRs.getInt("count(file_type)"));
           }
+          fileTypeRs.close();
 
           ResultSet fileUploaderRs = db.getFileUploaderStatistics();
           while(fileUploaderRs.next()) {
             fileUploaderStats.put(fileUploaderRs.getString("user_name"),
                 fileUploaderRs.getInt("count(user_name)"));
           }
+          fileUploaderRs.close();
 
           ResultSet fileSizeRs = db.getFileSizeStatistics();
           while(fileSizeRs.next()) {
             fileSizeStats.put(fileSizeRs.getString("file_name"),
                 fileSizeRs.getInt("file_size"));
           }
+          fileSizeRs.close();
+
         } catch (SQLException ex) {
           ex.printStackTrace();
         }

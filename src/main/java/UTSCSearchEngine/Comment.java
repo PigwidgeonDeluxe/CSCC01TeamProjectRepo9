@@ -38,10 +38,11 @@ public class Comment extends HttpServlet {
 
     
     JSONObject response = new JSONObject();
+    ResultSet rs = null;
 
     // package file data
     try {
-      ResultSet rs = db.getFileById(docId);
+      rs = db.getFileById(docId);
       while (rs.next()) {
         response.put("fileName", rs.getString("file_name"));
         response.put("fileType", rs.getString("file_type"));
@@ -52,11 +53,21 @@ public class Comment extends HttpServlet {
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
+
+    ResultSet comments = null;
 
     // package comments
     try {
-      ResultSet comments = db.getFileComments(docId);
+      comments = db.getFileComments(docId);
       while (comments.next()) {
         responseBackToUser.append(comments.getString("file_id") + "~"
             + comments.getString("comment") + "~"
@@ -69,6 +80,14 @@ public class Comment extends HttpServlet {
       response.put("comments", responseBackToUser.toString());
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      if (comments != null) {
+        try {
+          comments.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
 
     // write response back to user
