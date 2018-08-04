@@ -32,9 +32,10 @@ public class UserSearch extends HttpServlet {
 
     String userName = req.getParameter("userName");
     StringBuilder responseBackToUser = new StringBuilder();
+    ResultSet allNames = null;
 
     try {
-      ResultSet allNames = this.db.getUserByName(userName);
+      allNames = this.db.getUserByName(userName);
       while(allNames.next()) {
         responseBackToUser.append(allNames.getString("user_name") + "~"
             + allNames.getString("user_type") + "~"
@@ -44,6 +45,14 @@ public class UserSearch extends HttpServlet {
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (allNames != null) {
+        try {
+          allNames.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
 
     resp.setHeader("Access-Control-Allow-Origin", "*");

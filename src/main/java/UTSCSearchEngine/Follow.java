@@ -18,9 +18,10 @@ public class Follow extends HttpServlet {
     Database db = new Database();
     String userId = req.getParameter("userId");
     StringBuilder responseBackToUser = new StringBuilder();
+    ResultSet rs = null;
 
     try {
-      ResultSet rs = db.getFollowing(userId);
+      rs = db.getFollowing(userId);
       while (rs.next()) {
         responseBackToUser.append(rs.getString("user_id") + "~"
           + rs.getString("user_name") + "~"
@@ -28,9 +29,16 @@ public class Follow extends HttpServlet {
           + rs.getString("profile_image") + "~"
           + rs.getString("created_on") + "\n");
       }
-
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
 
     resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -44,14 +52,14 @@ public class Follow extends HttpServlet {
     String userId = req.getParameter("userId");
     String followUserId = req.getParameter("followUserId");
     JSONObject response = new JSONObject();
-
+    ResultSet rs = null;
     boolean followingUser = false;
 
     resp.setContentType("application/x-www-form-urlencoded");
     resp.setHeader("Access-Control-Allow-Origin", "*");
 
     try {
-      ResultSet rs = db.getFollowing(userId);
+      rs = db.getFollowing(userId);
       while (rs.next()) {
         if (rs.getString("following_user_id").equals(followUserId)) {
           rs.close();
@@ -62,7 +70,6 @@ public class Follow extends HttpServlet {
           followingUser = true;
         }
       }
-
       if (!followingUser) {
         db.followUser(userId, followUserId);
         response.put("status", "SUCCESS");
@@ -71,6 +78,14 @@ public class Follow extends HttpServlet {
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
   }
 }

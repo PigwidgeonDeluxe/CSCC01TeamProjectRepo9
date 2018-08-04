@@ -24,8 +24,10 @@ public class FileDownload extends HttpServlet {
     resp.setHeader("Content-disposition", "attachment; filename=" + fileName);
 
     Database db = new Database();
+    ResultSet rs = null;
+
     try {
-      ResultSet rs = db.getFileData(fileName, Long.parseLong(uploadTime));
+      rs = db.getFileData(fileName, Long.parseLong(uploadTime));
       if (rs.next()) {
 
         OutputStream out = resp.getOutputStream();
@@ -40,6 +42,14 @@ public class FileDownload extends HttpServlet {
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
   }
 }

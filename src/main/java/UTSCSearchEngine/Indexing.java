@@ -70,9 +70,10 @@ public class Indexing {
    */
   private void indexDocuments(final IndexWriter w) throws IOException {
     Database db = new Database();
+    ResultSet rs = null;
 
     try {
-      ResultSet rs = db.getAllFiles();
+      rs = db.getAllFiles();
       while (rs.next()) {
         addDoc(w,
             rs.getString("id"),
@@ -87,14 +88,23 @@ public class Indexing {
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
   }
 
   private void indexDocuments(String url, final IndexWriter w) throws IOException {
     Database db = new Database(url);
+    ResultSet rs = null;
 
     try {
-      ResultSet rs = db.getAllFiles();
+      rs = db.getAllFiles();
       while (rs.next()) {
         addDoc(w,
             rs.getString("id"),
@@ -109,6 +119,14 @@ public class Indexing {
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
   }
 
