@@ -24,6 +24,8 @@ export class SearchComponent implements OnInit {
   selectedSearchOption: any;
   user: any;
 
+  bookmarkedFiles: any;
+
   constructor(private router: Router) { }
 
   ngOnInit() {
@@ -31,7 +33,10 @@ export class SearchComponent implements OnInit {
     this.TOMCAT_URL = 'http://localhost:8080';
     this.selectedSearchOption = 1;
     this.results = [];
+    this.bookmarkedFiles = [];
     this.user = JSON.parse(localStorage.getItem('user'));
+
+    this.getBookmarks(this.user.userId);
   }
 
   search() {
@@ -140,6 +145,33 @@ export class SearchComponent implements OnInit {
       this.router.navigateByUrl('/user?userId=' + userId);
     } else {
       this.router.navigateByUrl('/profile');
+    }
+  }
+
+  getBookmarks(userId: string) {
+    this.http.open('GET', this.TOMCAT_URL + '/bookmark?userId=' + userId, false);
+    this.http.send(null);
+    const resp = this.http.response.split('\n');
+    this.bookmarkedFiles = [];
+    resp.forEach(element => {
+      if (element.length > 0) {
+        this.bookmarkedFiles.push(element.split('~')[6]);
+      }
+    });
+  }
+
+  bookmarkFile(userId: string, fileId: string) {
+    this.http.open('POST', this.TOMCAT_URL + '/bookmark?userId=' + userId + '&fileId=' + fileId, false);
+    this.http.send(null);
+    const resp = JSON.parse(this.http.response);
+    if (resp.status === 'SUCCESS') {
+      swal({
+        title: 'Success',
+        type: 'success',
+        text: resp.message
+      }).then(() => {
+        this.getBookmarks(userId);
+      });
     }
   }
 

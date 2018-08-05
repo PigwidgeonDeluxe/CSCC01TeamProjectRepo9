@@ -23,6 +23,8 @@ export class ProfileComponent implements OnInit {
   popularFileType: any;
   largestFile: any;
 
+  bookmarkedFiles: any;
+
   constructor(private router: Router) { }
 
   ngOnInit() {
@@ -31,6 +33,7 @@ export class ProfileComponent implements OnInit {
     this.user = JSON.parse(localStorage.getItem('user'));
     this.results = [];
     this.following = [];
+    this.bookmarkedFiles = [];
 
     this.fileTypeData = {
       chartType: 'PieChart',
@@ -58,6 +61,7 @@ export class ProfileComponent implements OnInit {
     this.getUserFiles();
     this.getStatistics();
     this.getFollowing();
+    this.getBookmarks();
   }
 
   getStatistics() {
@@ -158,6 +162,27 @@ export class ProfileComponent implements OnInit {
           'userType': element.split('~')[2],
           'profileImage': element.split('~')[3],
           'createdOn': +element.split('~')[4]
+        });
+      }
+    });
+  }
+
+  getBookmarks() {
+    const url = this.TOMCAT_URL + '/bookmark?userId=' + this.user.userId;
+    this.http.open('GET', url, false);
+    this.http.send(null);
+    const resp = this.http.response.split('\n');
+    this.bookmarkedFiles = [];
+    resp.forEach(element => {
+      if (element.length > 0) {
+        this.bookmarkedFiles.push({
+          'fileName': element.split('~')[0],
+          'fileType': element.split('~')[1],
+          'fileSize': Math.round(+element.split('~')[2] / 1000) / 100,
+          'userName': element.split('~')[3],
+          'userType': element.split('~')[4],
+          'uploadedOn': +element.split('~')[5],
+          'docId': element.split('~')[6]
         });
       }
     });
