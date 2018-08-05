@@ -36,7 +36,9 @@ export class SearchComponent implements OnInit {
     this.bookmarkedFiles = [];
     this.user = JSON.parse(localStorage.getItem('user'));
 
-    this.getBookmarks(this.user.userId);
+    if (this.user) {
+      this.getBookmarks(this.user.userId);
+    }
   }
 
   search() {
