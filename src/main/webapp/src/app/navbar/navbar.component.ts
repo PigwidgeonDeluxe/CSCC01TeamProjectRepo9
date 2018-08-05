@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 declare var gapi: any;
@@ -12,11 +11,12 @@ import swal from 'sweetalert2';
 })
 export class NavbarComponent implements OnInit {
 
+  @Input() navSelection: string;
+
   TOMCAT_URL: string;
   http: XMLHttpRequest;
 
   loginUsername: string;
-  modalRef: BsModalRef;
   userInfo: object;
 
   constructor(private router: Router) {
@@ -56,6 +56,7 @@ export class NavbarComponent implements OnInit {
           'createdOn': resp.createdOn,
           'profileImage': profile.getImageUrl()
         }));
+        this.router.navigateByUrl('/');
         location.reload();
       });
     } else {
