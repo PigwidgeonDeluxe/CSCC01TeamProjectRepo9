@@ -25,7 +25,7 @@
         <i class="fas fa-sign-out-alt"></i>
       </a>
       <a tooltip="Profile" placement="bottom" class="nav-item nav-link" href="/profile">
-        <i class="fa fa-user"></i>
+        <img src="{{ userInfo.profileImage }}?sz=40" alt="profile">
       </a>
     </div>
     <div *ngIf="!userInfo" class="navbar-nav">
