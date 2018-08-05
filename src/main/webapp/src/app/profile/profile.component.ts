@@ -103,11 +103,11 @@ export class ProfileComponent implements OnInit {
   }
 
   getUserFiles() {
-    const url = this.TOMCAT_URL + '/search?userName=' + this.user.userName;
+    const url = this.TOMCAT_URL + '/userFiles?userId=' + this.user.userId;
 
     this.http.open('GET', url, false);
     this.http.send(null);
-    const resp = this.http.response.split('"\n');
+    const resp = this.http.response.split('\n');
     this.results = [];
     resp.forEach(element => {
       if (element.length > 0) {
@@ -116,11 +116,9 @@ export class ProfileComponent implements OnInit {
           'fileType': element.split('~')[1],
           'userType': element.split('~')[2],
           'userName': element.split('~')[3],
-          'userId': element.split('~')[4],
-          'fileSize': Math.round(+element.split('~')[5] / 1000) / 100,
-          'uploadDate': +element.split('~')[6],
-          'docId': element.split('~')[7],
-          'fileContent': element.split('~')[8]
+          'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
+          'uploadDate': +element.split('~')[5],
+          'docId': element.split('~')[6]
         });
       }
     });

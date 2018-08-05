@@ -110,6 +110,18 @@ public class Database {
     return pstmt.executeQuery();
   }
 
+  public ResultSet getUserFiles(String userId) throws SQLException {
+
+    String sql = "SELECT file_name, file_type, user_type, user_name, file_size, uploaded_on, "
+        + "file.id FROM file INNER JOIN user ON file.user_id = user.user_id WHERE file.user_id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    pstmt.setString(1, userId);
+    return pstmt.executeQuery();
+  }
+
   public void insertUser(String userId, String userType, String userName, String profileImage) {
 
     String sql = "INSERT INTO user(user_id, user_type, created_on, user_name, profile_image) "
