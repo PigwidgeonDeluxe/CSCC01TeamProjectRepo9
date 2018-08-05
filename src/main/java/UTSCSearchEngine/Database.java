@@ -150,6 +150,7 @@ public class Database {
   }
 
   public void followUser(String userId, String followingUserId) {
+
     String sql = "INSERT INTO following(user_id, following_user_id) VALUES(?, ?)";
 
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
@@ -162,6 +163,7 @@ public class Database {
   }
 
   public void unfollowUser(String userId, String followingUserId) {
+
     String sql = "DELETE FROM following WHERE user_id = ? AND following_user_id = ?";
 
     try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
@@ -174,6 +176,7 @@ public class Database {
   }
 
   public ResultSet getFollowing(String userId) throws SQLException {
+
     String sql = "SELECT user.user_id, user_name, user_type, created_on, profile_image, "
         + "following_user_id FROM user INNER JOIN following ON user.user_id = "
         + "following.following_user_id WHERE following.user_id = ?";
@@ -237,6 +240,45 @@ public class Database {
     PreparedStatement pstmt = con.prepareStatement(sql);
     pstmt.setString(1, userName);
 
+    return pstmt.executeQuery();
+  }
+
+  public void bookmarkFile(String fileId, String userId) {
+
+    String sql = "INSERT INTO bookmark (file_id, user_id) VALUES (?, ?)";
+
+    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+      pstmt.setString(1, fileId);
+      pstmt.setString(2, userId);
+      pstmt.executeUpdate();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public void unbookmarkFile(String fileId, String userId) {
+
+    String sql = "DELETE FROM bookmark WHERE file_id = ? AND user_id = ?";
+
+    try (Connection con = connect(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+      pstmt.setString(1, fileId);
+      pstmt.setString(2, userId);
+      pstmt.executeUpdate();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public ResultSet getBookmarks(String userId) throws SQLException {
+
+    String sql = "SELECT file_name, file_type, file_size, user.user_name, user.user_type, "
+        + "uploaded_on, file.id FROM bookmark INNER JOIN file ON file.id = bookmark.file_id "
+        + "INNER JOIN user ON user.user_id = file.user_id WHERE bookmark.user_id = ?";
+
+    Connection con = connect();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+
+    pstmt.setString(1, userId);
     return pstmt.executeQuery();
   }
 
