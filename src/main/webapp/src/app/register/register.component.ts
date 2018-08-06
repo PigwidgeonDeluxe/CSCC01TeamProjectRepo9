@@ -4,6 +4,9 @@ import { Router } from '../../../node_modules/@angular/router';
 declare var gapi: any;
 import swal from 'sweetalert2';
 
+/**
+ * Component for handling user registration
+ */
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -17,6 +20,10 @@ export class RegisterComponent implements OnInit {
   registerUsername: string;
   registerUserType: string;
 
+  /**
+   * Initialize router and bind Google SSO button
+   * @param router router to route between pages
+   */
   constructor(private router: Router) {
     window['onRegister'] = ((user) => {
       this.onRegister(user);
@@ -29,6 +36,10 @@ export class RegisterComponent implements OnInit {
     this.registerUserType = '1';
   }
 
+  /**
+   * Handle creation of new user
+   * @param googleUser Google User from Google APIs
+   */
   onRegister(googleUser) {
     const profile = googleUser.getBasicProfile();
     const idToken = googleUser.getAuthResponse().id_token;
@@ -46,12 +57,14 @@ export class RegisterComponent implements OnInit {
     this.http.send(JSON.stringify(request));
 
     const resp = JSON.parse(this.http.response);
+    // on successful user creation, send message to user
     if (resp.status === 'SUCCESS') {
       swal({
         title: 'Success',
         type: 'success',
         text: resp.message
       }).then(() => {
+        // store newly created user information in local storage
         localStorage.setItem('user', JSON.stringify({
           'userId': profile.getId(),
           'userName': profile.getName(),
@@ -59,9 +72,11 @@ export class RegisterComponent implements OnInit {
           'createdOn': resp.createdOn,
           'profileImage': profile.getImageUrl()
         }));
+        // reroute to home page and reload
         this.router.navigateByUrl('/');
         location.reload();
       });
+    // on failure, send an error message to the user
     } else {
       swal({
         title: 'Failure',
@@ -73,6 +88,10 @@ export class RegisterComponent implements OnInit {
     }
   }
 
+  /**
+   * Handle sign out request
+   * @param userInitiated boolean representing if sign out was initiated by the system or the user
+   */
   signOut(userInitiated) {
     if (userInitiated) {
       gapi.load('auth2', () => {
@@ -83,6 +102,7 @@ export class RegisterComponent implements OnInit {
         type: 'success',
         text: 'Successfully logged out'
       }).then(() => {
+        // if the sign out was user initiated, reroute to the home page
         const auth2 = gapi.auth2.getAuthInstance();
         localStorage.clear();
         auth2.signOut();
@@ -90,6 +110,7 @@ export class RegisterComponent implements OnInit {
         location.reload();
       });
     } else {
+      // if the sign out was system initiated, just signout and do not reroute
       const auth2 = gapi.auth2.getAuthInstance();
       localStorage.clear();
       auth2.signOut();

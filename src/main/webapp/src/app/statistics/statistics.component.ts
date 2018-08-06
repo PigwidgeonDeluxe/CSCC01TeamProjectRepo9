@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+/**
+ * Comopnent for handling system statistics
+ */
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
@@ -22,6 +25,9 @@ export class StatisticsComponent implements OnInit {
 
   constructor() { }
 
+  /**
+   * Initialize resources and charts
+   */
   ngOnInit() {
     this.http = new XMLHttpRequest();
     this.TOMCAT_URL = 'http://localhost:8080';
@@ -68,6 +74,9 @@ export class StatisticsComponent implements OnInit {
     this.getStatistics();
   }
 
+  /**
+   * Get statistics from the backend
+   */
   getStatistics() {
     const url = this.TOMCAT_URL + '/statistics';
 
@@ -77,7 +86,9 @@ export class StatisticsComponent implements OnInit {
 
     for (const key in resp.fileType) {
       if (resp.fileType.hasOwnProperty(key)) {
+        // add data to chart
         this.fileTypeData.dataTable.push([key, resp.fileType[key]]);
+        // get the most popular file type
         if (this.popularFileType) {
           if (resp.fileType[key] > this.popularFileType.files) {
             this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
@@ -90,7 +101,9 @@ export class StatisticsComponent implements OnInit {
 
     for (const key in resp.uploaderStats) {
       if (resp.uploaderStats.hasOwnProperty(key)) {
+        // add data to chart
         this.fileUploaderData.dataTable.push([key, resp.uploaderStats[key]]);
+        // get the top contributor
         if (this.topContributor) {
           if (resp.uploaderStats[key] > this.topContributor.files) {
             this.topContributor = {'name': key, 'files': resp.uploaderStats[key]};
@@ -103,8 +116,10 @@ export class StatisticsComponent implements OnInit {
 
     for (const key in resp.fileSize) {
       if (resp.fileSize.hasOwnProperty(key)) {
+        // add data to the chart
         this.fileSizeData.dataTable.push([key, resp.fileSize[key]]);
         if (this.largestFile) {
+          // get the largest file
           if (resp.fileSize[key] > this.largestFile) {
             this.largestFile = resp.fileSize[key];
           }
@@ -114,6 +129,7 @@ export class StatisticsComponent implements OnInit {
       }
     }
 
+    // cast largest file to a digestable format
     this.largestFile = Math.round(this.largestFile / 1000) / 100;
 
   }
