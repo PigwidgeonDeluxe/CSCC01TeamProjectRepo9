@@ -3,4 +3,4 @@ We decided to use this sprint as time to finish up unit tests and add in extra f
 In general, it was used to apply a final polish to ths project as all main features were completed in the sprint before.
 One of the problems we faced was some unavailibity in time as final exams start this week, and the team wished to begin studying soon or had to finish project in other courses.
 We also decided that one of the extra features we added simply wasn't necessary anymore so we removed it.
-The sprint points went up in the beginning because we some new features that we felt would improve user experience features.
+The sprint points went up in the beginning because we added some new features that we felt would improve user experience features.
