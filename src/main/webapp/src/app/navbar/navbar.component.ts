@@ -125,33 +125,48 @@ export class NavbarComponent implements OnInit {
    */
   upload(files: FileList) {
     const user = JSON.parse(localStorage.getItem('user'));
+    const re = /(?:\.([^.]+))?$/;
+    let validFiles = true;
     this.http.open('POST', this.TOMCAT_URL + '/upload?userId=' + user.userId, false);
 
     // package request
     const request = new FormData();
     Array.from(files).forEach(file => {
+      if (re.exec(file.name)[1] !== 'txt' ||
+        re.exec(file.name)[1] !== 'docx' || re.exec(file.name)[1] !== 'pdf' || re.exec(file.name)[1] !== 'html') {
+        validFiles = false;
+      }
       request.append(file.name, file);
     });
 
-    this.http.send(request);
-    const resp = JSON.parse(this.http.response);
-
-    // send proper messages on success or error
-    if (resp.status === 'SUCCESS') {
+    if (!validFiles) {
       swal({
-        title: 'Success',
-        type: 'success',
-        text: resp.message
-      }).then(() => {
-        location.reload();
+        title: 'Warning',
+        type: 'warning',
+        html: 'Invalid files detected. Please only upload <b>TXT</b>, <b>HTML</b>, <b>DOCX</b>, or <b>PDF</b> files'
       });
     } else {
-      swal({
-        title: 'Failure',
-        type: 'error',
-        text: resp.message
-      });
+      this.http.send(request);
+      const resp = JSON.parse(this.http.response);
+
+      // send proper messages on success or error
+      if (resp.status === 'SUCCESS') {
+        swal({
+          title: 'Success',
+          type: 'success',
+          text: resp.message
+        }).then(() => {
+          location.reload();
+        });
+      } else {
+        swal({
+          title: 'Failure',
+          type: 'error',
+          text: resp.message
+        });
+      }
     }
+
   }
 
 }
