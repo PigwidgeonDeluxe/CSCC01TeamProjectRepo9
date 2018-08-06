@@ -6,7 +6,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col-md-5">
-              <img src="{{ user.profileImage }}?sz=125" alt="profile image" class="float-right">
+              <img src="{{ user.profileImage }}?sz=125" alt="profile image" class="float-right profile">
             </div>
             <div class="col-md-7 float-left">
               <h1>{{ user.userName }}</h1>
@@ -190,7 +190,8 @@
                     <div class="col-md-1">
                       <img src="{{ element.profileImage }}?sz=70"
                         tooltip="{{ element.userName }}"
-                        alt="{{ element.userName }}">
+                        alt="{{ element.userName }}"
+                        class="profile">
                     </div>
                     <div class="col-md-11">
                       <div class="row">
