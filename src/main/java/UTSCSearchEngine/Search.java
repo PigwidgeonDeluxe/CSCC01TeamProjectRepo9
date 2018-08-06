@@ -30,14 +30,21 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.Directory;
 
+/**
+ * Class for handling searching of files
+ */
 @WebServlet("/search")
 public class Search extends HttpServlet {
 
-  private static final long serialVersionUID = 1L;
   private static StandardAnalyzer analyzer = null;
   private static Directory index = null;
   private static Indexing indexer = new Indexing();
 
+  /**
+   * Initializes and starts the main App
+   * @param config1 configuration to start the app
+   * @throws ServletException if the app encounters an error and cannot be initialized
+   */
   public void init(ServletConfig config1) throws ServletException {
     super.init(config1);
     System.out.println("Started: init");
@@ -45,18 +52,32 @@ public class Search extends HttpServlet {
     System.out.println("Finished: init");
   }
 
+  /**
+   * Indexes the files in the system
+   */
   public static void callIndexing() {
     indexer.doIndexing();
     analyzer = indexer.getAnalyzer();
     index = indexer.getIndex();
   }
 
+  /**
+   * Overloaded index call for testing purposes
+   * @param url test database URL
+   */
   public void callIndexing(String url) {
     indexer.doIndexing(url);
     analyzer = indexer.getAnalyzer();
     index = indexer.getIndex();
   }
 
+  /**
+   * Handles GET requests -- (searching for files in the system)
+   * @param req HttpServletRequest -- expects one or more of the following optional query
+   *            parameters: "fileName", "fileType", "userName", "userType", "contents"
+   * @param resp HttpServletResponse
+   * @throws IOException if database return is invalid
+   */
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
@@ -137,9 +158,8 @@ public class Search extends HttpServlet {
 
   /**
    * Search for Query q and return a response to the user containing the requested information
-   * 
-   * @param q
-   * @throws IOException
+   * @param q query for file in the system
+   * @throws IOException if the database return is invalid
    */
   private String search(Query q) throws IOException {
     int hitsPerPage = 10;

@@ -9,9 +9,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
+/**
+ * Class for handling user follows
+ */
 @WebServlet("/follow")
 public class Follow extends HttpServlet {
 
+  /**
+   * Handles GET requests -- (getting users a given user is following)
+   * @param req HttpServletRequest -- expects query parameter "userId"
+   * @param resp HttpServletResponse
+   * @throws IOException if the database return is invalid
+   */
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -21,6 +30,7 @@ public class Follow extends HttpServlet {
     ResultSet rs = null;
 
     try {
+      // get the user information of the following users
       rs = db.getFollowing(userId);
       while (rs.next()) {
         responseBackToUser.append(rs.getString("user_id") + "~"
@@ -32,6 +42,7 @@ public class Follow extends HttpServlet {
     } catch (SQLException ex) {
       ex.printStackTrace();
     } finally {
+      // close open connection
       if (rs != null) {
         try {
           rs.close();
@@ -41,10 +52,17 @@ public class Follow extends HttpServlet {
       }
     }
 
+    // send response back to user
     resp.setHeader("Access-Control-Allow-Origin", "*");
     resp.getWriter().write(responseBackToUser.toString());
   }
 
+  /**
+   * Handles POST requests -- (following another user)
+   * @param req HttpServletRequest -- expects query parameters "userId" and "followUserId"
+   * @param resp HttpServletResponse
+   * @throws IOException if the database return is invalid
+   */
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -61,6 +79,7 @@ public class Follow extends HttpServlet {
     try {
       rs = db.getFollowing(userId);
       while (rs.next()) {
+        // if the user is already being followed, unfollow that user
         if (rs.getString("following_user_id").equals(followUserId)) {
           rs.close();
           db.unfollowUser(userId, followUserId);
@@ -70,6 +89,7 @@ public class Follow extends HttpServlet {
           followingUser = true;
         }
       }
+      // if the user is not being followed, follow that user
       if (!followingUser) {
         db.followUser(userId, followUserId);
         response.put("status", "SUCCESS");
