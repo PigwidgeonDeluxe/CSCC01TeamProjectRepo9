@@ -1,28 +1,4 @@
 <div class="card">
-  <div class="card-header">
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <a class="nav-link active" href="/">
-          <i class="fa fa-search"></i> Search
-        </a>
-      </li>
-      <li *ngIf="user" class="nav-item">
-        <a class="nav-link" href="/profile">
-          <i class="fa fa-user"></i> Profile
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/users">
-          <i class="fa fa-users"></i> Users
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/statistics">
-          <i class="fa fa-chart-pie"></i> Statistics
-        </a>
-      </li>
-    </ul>
-  </div>
   <div class="card-body">
     <div class="form-group">
       <label class="heading">Search</label>
@@ -62,12 +38,14 @@
         <div class="col-md-11">
           <div class="row">
             <div class="col">
-              <span class="heading">{{ result.fileName }}</span>
+              <span class="heading">
+                {{ result.fileName }} <span *ngIf="bookmarkedFiles.includes(result.docId)"><i class="fas fa-bookmark text-danger"></i></span>
+              </span>
             </div>
           </div>
           <div class="row mt-2 mb-2">
             <div class="col text-monospace">
-              {{ result.fileContent }}..."
+              <div [innerHtml]="result.fileContent"></div>
             </div>
           </div>
           <div class="row">
@@ -90,6 +68,13 @@
               </span>
               <span (click)="viewComments(result.docId)" class="badge badge-primary" style="cursor: pointer">
                 <i class="fa fa-comments"></i> Commments
+              </span>
+              <span tooltip="{{ bookmarkedFiles.includes(result.docId) ? 'Unbookmark' : 'Bookmark' }}"
+                    (click)="bookmarkFile(user.userId, result.docId)"
+                    class="badge badge-danger"
+                    style="cursor: pointer">
+                <i *ngIf="bookmarkedFiles.includes(result.docId)" class="far fa-bookmark"></i>
+                <i *ngIf="!bookmarkedFiles.includes(result.docId)" class="fas fa-bookmark"></i>
               </span>
             </div>
           </div>

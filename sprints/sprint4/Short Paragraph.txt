@@ -1,0 +1,6 @@
+Our team did not finish all tasks in the sprint.
+Most of the functionality was implemented in this sprint aside from changing the storage 
+system to database and updating indexing from the database.
+Optional features were considered during this sprint to be put up as tasks.
+The team suffered from having little time to work on the project as midterms were still
+happening and assignments from other courses.

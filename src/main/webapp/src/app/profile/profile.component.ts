@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 
 import * as FileSaver from 'file-saver';
 
+/**
+ * Component handling profile interactions
+ */
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -23,14 +26,24 @@ export class ProfileComponent implements OnInit {
   popularFileType: any;
   largestFile: any;
 
+  bookmarkedFiles: any;
+
+  /**
+   * Initialize router
+   * @param router router to route between pages
+   */
   constructor(private router: Router) { }
 
+  /**
+   * Initialize resources and charts on page load
+   */
   ngOnInit() {
     this.http = new XMLHttpRequest();
     this.TOMCAT_URL = 'http://localhost:8080';
     this.user = JSON.parse(localStorage.getItem('user'));
     this.results = [];
     this.following = [];
+    this.bookmarkedFiles = [];
 
     this.fileTypeData = {
       chartType: 'PieChart',
@@ -58,8 +71,12 @@ export class ProfileComponent implements OnInit {
     this.getUserFiles();
     this.getStatistics();
     this.getFollowing();
+    this.getBookmarks();
   }
 
+  /**
+   * Get user statistics
+   */
   getStatistics() {
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -71,7 +88,9 @@ export class ProfileComponent implements OnInit {
 
     for (const key in resp.fileType) {
       if (resp.fileType.hasOwnProperty(key)) {
+        // add file type data to file type chart
         this.fileTypeData.dataTable.push([key, resp.fileType[key]]);
+        // get the most popular file type
         if (this.popularFileType) {
           if (resp.fileType[key] > this.popularFileType.files) {
             this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
@@ -84,7 +103,9 @@ export class ProfileComponent implements OnInit {
 
     for (const key in resp.fileSize) {
       if (resp.fileSize.hasOwnProperty(key)) {
+        // add file size data to file size chart
         this.fileSizeData.dataTable.push([key, resp.fileSize[key]]);
+        // get the largest file
         if (this.largestFile) {
           if (resp.fileSize[key] > this.largestFile) {
             this.largestFile = resp.fileSize[key];
@@ -95,16 +116,21 @@ export class ProfileComponent implements OnInit {
       }
     }
 
+    // cast largest file to digestable type
     this.largestFile = Math.round(this.largestFile / 1000) / 100;
   }
 
+  /**
+   * Get all the files uploaded by the user
+   */
   getUserFiles() {
-    const url = this.TOMCAT_URL + '/search?userName=' + this.user.userName;
+    const url = this.TOMCAT_URL + '/userFiles?userId=' + this.user.userId;
 
     this.http.open('GET', url, false);
     this.http.send(null);
-    const resp = this.http.response.split('"\n');
+    const resp = this.http.response.split('\n');
     this.results = [];
+    // package response
     resp.forEach(element => {
       if (element.length > 0) {
         this.results.push({
@@ -112,16 +138,19 @@ export class ProfileComponent implements OnInit {
           'fileType': element.split('~')[1],
           'userType': element.split('~')[2],
           'userName': element.split('~')[3],
-          'userId': element.split('~')[4],
-          'fileSize': Math.round(+element.split('~')[5] / 1000) / 100,
-          'uploadDate': +element.split('~')[6],
-          'docId': element.split('~')[7],
-          'fileContent': element.split('~')[8]
+          'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
+          'uploadDate': +element.split('~')[5],
+          'docId': element.split('~')[6]
         });
       }
     });
   }
 
+  /**
+   * Download a given file
+   * @param fileName name of the given file
+   * @param uploadDate the date the file was uploaded
+   */
   downloadFile(fileName: string, uploadDate: string) {
     this.http.open('GET', this.TOMCAT_URL + '/download?fileName=' + fileName + '&uploadTime=' + uploadDate, true);
     this.http.responseType = 'arraybuffer';
@@ -131,6 +160,7 @@ export class ProfileComponent implements OnInit {
       const data = this.http.response;
       const extension = fileName.split('.').pop();
       let contentType;
+      // content type handling
       if (extension === 'pdf') {
         contentType = {type: 'application/pdf'};
       } else if (extension === 'doc' || extension === 'docx') {
@@ -140,16 +170,21 @@ export class ProfileComponent implements OnInit {
       } else {
         contentType = {type: 'text/plain'};
       }
+      // package blob and initialte download request from browser
       const blob = new Blob([data], contentType);
       FileSaver.saveAs(blob, fileName);
     };
   }
 
+  /**
+   * Get all users being followed
+   */
   getFollowing() {
     const url = this.TOMCAT_URL + '/follow?userId=' + this.user.userId;
     this.http.open('GET', url, false);
     this.http.send(null);
     const resp = this.http.response.split('\n');
+    // package response
     resp.forEach(element => {
       if (element.length > 0) {
         this.following.push({
@@ -163,10 +198,43 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  /**
+   * Get all files bookmarked
+   */
+  getBookmarks() {
+    const url = this.TOMCAT_URL + '/bookmark?userId=' + this.user.userId;
+    this.http.open('GET', url, false);
+    this.http.send(null);
+    const resp = this.http.response.split('\n');
+    this.bookmarkedFiles = [];
+    // package response
+    resp.forEach(element => {
+      if (element.length > 0) {
+        this.bookmarkedFiles.push({
+          'fileName': element.split('~')[0],
+          'fileType': element.split('~')[1],
+          'fileSize': Math.round(+element.split('~')[2] / 1000) / 100,
+          'userName': element.split('~')[3],
+          'userType': element.split('~')[4],
+          'uploadedOn': +element.split('~')[5],
+          'docId': element.split('~')[6]
+        });
+      }
+    });
+  }
+
+  /**
+   * View a given comment
+   * @param docId ID of the given comment
+   */
   viewComments(docId: string) {
     this.router.navigateByUrl('/comments?docId=' + docId);
   }
 
+  /**
+   * View a given user's profile
+   * @param userId ID of the given user
+   */
   viewProfile(userId: string) {
     this.router.navigateByUrl('/user?userId=' + userId);
   }

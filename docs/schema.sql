@@ -30,3 +30,9 @@ CREATE TABLE comments (
   comment TEXT,
   date INTEGER
 );
+
+CREATE TABLE bookmark (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_id INTEGER,
+  user_id INTEGER
+);

@@ -8,6 +8,11 @@ import { CommentsComponent } from '../comments/comments.component';
 import { UsersComponent } from '../users/users.component';
 import { UserComponent } from '../user/user.component';
 
+/**
+ * Module for handling route changing
+ */
+
+// collection of valid routes
 const routes: Routes = [
   {
     path: '',
@@ -37,6 +42,7 @@ const routes: Routes = [
     path: 'comments',
     component: CommentsComponent
   },
+  // route to home given any other route
   {
     path: '**',
     redirectTo: '',
