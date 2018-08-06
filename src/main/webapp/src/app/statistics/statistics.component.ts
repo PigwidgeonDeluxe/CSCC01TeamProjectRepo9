@@ -60,7 +60,7 @@ export class StatisticsComponent implements OnInit {
       options: {
         width: 500,
         legend: 'none',
-        histogram: { bucketSize: 80000 },
+        histogram: { bucketSize: 10000 },
         colors: ['green']
       }
     };

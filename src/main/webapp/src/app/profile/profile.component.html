@@ -1,40 +1,12 @@
+<app-navbar></app-navbar>
 <div class="container content-row mt-5">
   <div class="row">
     <div class="col">
-      <app-navbar></app-navbar>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
       <div class="card">
-        <div class="card-header">
-          <ul class="nav nav-pills">
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="fa fa-search"></i> Search
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/profile">
-                <i class="fa fa-user"></i> Profile
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/users">
-                <i class="fa fa-users"></i> Users
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/statistics">
-                <i class="fa fa-chart-pie"></i> Statistics
-              </a>
-            </li>
-          </ul>
-        </div>
         <div class="card-body">
           <div class="row">
             <div class="col-md-5">
-              <img src="{{ user.profileImage }}?sz=125" alt="profile image" class="float-right">
+              <img src="{{ user.profileImage }}?sz=125" alt="profile image" class="float-right profile">
             </div>
             <div class="col-md-7 float-left">
               <h1>{{ user.userName }}</h1>
@@ -170,7 +142,7 @@
                 <div class="row">
                   <div class="col">
                     <span class="heading">
-                      {{ result.fileName }} <i class="fas fa-bookmark"></i>
+                      {{ result.fileName }} <i class="fas fa-bookmark text-danger"></i>
                     </span>
                   </div>
                 </div>
@@ -218,7 +190,8 @@
                     <div class="col-md-1">
                       <img src="{{ element.profileImage }}?sz=70"
                         tooltip="{{ element.userName }}"
-                        alt="{{ element.userName }}">
+                        alt="{{ element.userName }}"
+                        class="profile">
                     </div>
                     <div class="col-md-11">
                       <div class="row">
@@ -241,7 +214,7 @@
             </div>
           </div>
           <div *ngIf="following.length === 0">
-            This user is not following anyone...
+            You are not following anyone...
           </div>
         </div>
       </div>

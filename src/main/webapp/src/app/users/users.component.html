@@ -1,34 +1,6 @@
+<app-navbar navSelection="users"></app-navbar>
 <div class="container content-row mt-5">
-  <div class="row">
-    <div class="col">
-      <app-navbar></app-navbar>
-    </div>
-  </div>
   <div class="card">
-    <div class="card-header">
-      <ul class="nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link" href="/">
-            <i class="fa fa-search"></i> Search
-          </a>
-        </li>
-        <li *ngIf="user" class="nav-item">
-          <a class="nav-link" href="/profile">
-            <i class="fa fa-user"></i> Profile
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/users">
-            <i class="fa fa-users"></i> Users
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/statistics">
-            <i class="fa fa-chart-pie"></i> Statistics
-          </a>
-        </li>
-      </ul>
-    </div>
     <div class="card-body">
       <div class="form-group">
         <label class="heading">Search for a User</label>
@@ -51,7 +23,7 @@
           <div class="card-body" (click)="viewProfile(result.userId)" style="cursor: pointer">
             <div class="row">
               <div class="col-md-2">
-                <img src="{{ result.profileImage }}?sz=75" alt="{{ result.userName }}">
+                <img src="{{ result.profileImage }}?sz=75" alt="{{ result.userName }}" class="profile">
               </div>
               <div class="col-md-10">
                 <div class="row">

@@ -7,9 +7,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
+  backgroundUrl: string;
+  backgroundNum: number;
+
   constructor() { }
 
   ngOnInit() {
+    this.backgroundNum = Math.floor(Math.random() * (4 - 1)) + 1;
+    this.backgroundUrl = 'assets/background' + this.backgroundNum + '.jpg';
   }
 
 }
