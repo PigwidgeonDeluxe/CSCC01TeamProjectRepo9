@@ -114,7 +114,7 @@ export class SearchComponent implements OnInit {
     this.results = [];
     // package response
     resp.forEach(element => {
-      if (element.length > 0) {
+      if (element.length > 0 && element !== '\n') {
         this.results.push({
           'fileName': element.split('~')[0],
           'fileType': element.split('~')[1],
