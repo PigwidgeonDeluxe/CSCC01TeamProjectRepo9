@@ -9,9 +9,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
+/**
+ * Class for handling statistics
+ */
 @WebServlet("/statistics")
 public class Statistics extends HttpServlet {
 
+  /**
+   * Handles GET requests -- (getting user or general statistics)
+   * @param req HttpServletRequest -- can use optional query parameter "userName"
+   * @param resp HttpServletResponse
+   * @throws IOException if the database return is invalid
+   */
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
@@ -31,6 +40,7 @@ public class Statistics extends HttpServlet {
     String userName = req.getParameter("userName");
 
     if (userName != null) {
+      // handle getting general system-wide statistics
       try {
         ResultSet fileTypeRs = db.getUserFileTypeStatistics(userName);
         while(fileTypeRs.next()) {
@@ -57,6 +67,7 @@ public class Statistics extends HttpServlet {
       resp.setHeader("Access-Control-Allow-Origin", "*");
       resp.getWriter().write(responseJSON.toString());
     } else {
+        // handle getting user statistics
         try {
           ResultSet fileTypeRs = db.getFileTypeStatistics();
           while(fileTypeRs.next()) {

@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 
 import swal from 'sweetalert2';
 
+/**
+ * Component handling searching of other users
+ */
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
@@ -17,8 +20,15 @@ export class UsersComponent implements OnInit {
   results: any;
   user: any;
 
+  /**
+   * Initialize router
+   * @param router router to route between pages
+   */
   constructor(private router: Router) { }
 
+  /**
+   * Initialize resources
+   */
   ngOnInit() {
     this.http = new XMLHttpRequest();
     this.TOMCAT_URL = 'http://localhost:8080';
@@ -26,6 +36,9 @@ export class UsersComponent implements OnInit {
     this.results = [];
   }
 
+  /**
+   * Search for a given user
+   */
   search() {
     if (!this.searchQuery) {
       swal({
@@ -38,6 +51,10 @@ export class UsersComponent implements OnInit {
     }
   }
 
+  /**
+   * Initiate a search request for a given user
+   * @param searchParam query containing name of user to search for
+   */
   getSearchResults(searchParam: string) {
     const url = this.TOMCAT_URL + '/userSearch?userName=' + searchParam;
 
@@ -66,9 +83,15 @@ export class UsersComponent implements OnInit {
     }
   }
 
+  /**
+   * Route to the profile of a given user
+   * @param userId ID of the given user
+   */
   viewProfile(userId: string) {
+    // if the user is some other user, route to their profile
     if (userId !== this.user.userId) {
       this.router.navigateByUrl('/user?userId=' + userId);
+    // if the user is the logged in user, route to profile
     } else {
       this.router.navigateByUrl('/profile');
     }

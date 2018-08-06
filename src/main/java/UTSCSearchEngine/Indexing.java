@@ -25,6 +25,9 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.jsoup.Jsoup;
 
+/**
+ * Class for indexing files uploaded to the system
+ */
 public class Indexing {
 
   private StandardAnalyzer analyzer = null;
@@ -48,6 +51,10 @@ public class Indexing {
     }
   }
 
+  /**
+   * Overloaded indexing method for testing
+   * @param url test database URL
+   */
   public void doIndexing(String url) {
     this.analyzer = new StandardAnalyzer();
     this.index = new RAMDirectory();
@@ -64,9 +71,8 @@ public class Indexing {
 
   /**
    * Index all the documents for a given Path
-   * 
-   * @param w
-   * @throws IOException
+   * @param w an IndexWriter to write indexes
+   * @throws IOException if the database return is invalid
    */
   private void indexDocuments(final IndexWriter w) throws IOException {
     Database db = new Database();
@@ -99,6 +105,12 @@ public class Indexing {
     }
   }
 
+  /**
+   * Overloaded method for testing
+   * @param url test database URL
+   * @param w IndexWriter to write indexes
+   * @throws IOException if the database return is invalid
+   */
   private void indexDocuments(String url, final IndexWriter w) throws IOException {
     Database db = new Database(url);
     ResultSet rs = null;
@@ -132,13 +144,12 @@ public class Indexing {
 
   /**
    * Add all the documents' attributes to the index
-   * 
-   * @param w
-   * @param fileName
-   * @param fileType
-   * @param userName
-   * @param userType
-   * @throws IOException
+   * @param w IndexWriter to write indexes
+   * @param fileName the name of the given file
+   * @param fileType the type of the given file (file extension)
+   * @param userName the name of the user uploading the file
+   * @param userType the type of the user uploading the file
+   * @throws IOException if the database return is invalid
    */
   private static void addDoc(IndexWriter w, String fileId,
       String fileName, String fileType, String userName, String userType, String userId,
@@ -208,6 +219,11 @@ public class Indexing {
     w.commit();
   }
 
+  /**
+   * Parses the contents of a file with a ".doc" or ".docx" extension
+   * @param file the DOC file to be parsed
+   * @return a List of the contents in the DOC file
+   */
   private static List<String> parseDocContents(byte[] file) {
     List<XWPFParagraph> paragraphs;
     List<String> fileData = new ArrayList<>();
@@ -230,14 +246,26 @@ public class Indexing {
     return fileData;
   }
 
+  /**
+   * Returns the index
+   * @return the index
+   */
   public Directory getIndex() {
     return this.index;
   }
 
+  /**
+   * Returns the indexer analyzer
+   * @return the indexer analyzer
+   */
   public StandardAnalyzer getAnalyzer() {
     return this.analyzer;
   }
 
+  /**
+   * Returns the path of the RAMDirectory
+   * @return the path of the RAMDirectory
+   */
   public Path getDocDir() {
     return this.docDir;
   }

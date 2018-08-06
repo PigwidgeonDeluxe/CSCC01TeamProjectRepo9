@@ -8,9 +8,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Class for handling the files attributed to a given user
+ */
 @WebServlet("/userFiles")
 public class UserFiles extends HttpServlet {
 
+  /**
+   * Handles GET requests -- (getting user files)
+   * @param req HttpServletRequest -- expects query parameter "userId"
+   * @param resp HttpServletResponse
+   * @throws IOException if the database return is invalid
+   */
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
@@ -21,6 +30,7 @@ public class UserFiles extends HttpServlet {
     ResultSet rs = null;
 
     try {
+      // returns the files attributed to a given user
       rs = db.getUserFiles(userId);
       while(rs.next()) {
         responseBackToUser.append(rs.getString("file_name") + "~"
@@ -34,6 +44,7 @@ public class UserFiles extends HttpServlet {
     } catch (SQLException ex) {
       ex.printStackTrace();
     } finally {
+      // close open connection
       if (rs != null) {
         try {
           rs.close();
@@ -43,6 +54,7 @@ public class UserFiles extends HttpServlet {
       }
     }
 
+    // package and send response to user
     resp.setHeader("Access-Control-Allow-Origin", "*");
     resp.getWriter().write(responseBackToUser.toString());
   }
