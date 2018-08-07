@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,14 +26,8 @@ public class CommentTest {
 
   private String url = "jdbc:sqlite:test-database.db";
 
-  /**
-   * Set up the database for testing **do not use real database, all data will be erased**
-   * 
-   * @throws SQLException
-   * @throws IOException
-   */
   @Before
-  public void setUp() throws SQLException, IOException {
+  public void setUp() throws SQLException {
 
     Database db = new Database(this.url);
     Connection con = db.connect();
@@ -45,21 +40,23 @@ public class CommentTest {
 
     // create table
     String createTable =
-        "CREATE TABLE comments (id integer primary key autoincrement, file_id integer, "
-            + "comment text, comment_user text, date integer)";
+        "CREATE TABLE comments (id INTEGER PRIMARY KEY AUTOINCREMENT, file_id INTEGER, "
+            + "user_id INTEGER, comment TEXT, date INTEGER)";
     PreparedStatement pstmt2 = con.prepareStatement(createTable);
     pstmt2.executeUpdate();
     pstmt2.close();
 
     // insert test comment
-    db.insertFileComment("0", "test comment", "comment_user", (long) 100);
+    db.insertUser("comment_user", "student", "test user", "test.jpg");
+    db.insertFileComment("0", "test comment", "comment_user", null);
     con.close();
   }
 
   @Test
-  public void testDoGet() throws IOException {
+  public void getComment() throws IOException {
     Database db = new Database(this.url);
     Comment comment = new Comment(db);
+
     HttpServletRequest req = mock(HttpServletRequest.class);
     HttpServletResponse resp = mock(HttpServletResponse.class);
 
@@ -68,49 +65,10 @@ public class CommentTest {
 
     when(req.getParameter("docId")).thenReturn("0");
     when(resp.getWriter()).thenReturn(writer);
-
     comment.doGet(req, resp);
 
-    writer.flush(); // ensure writer is flushed
-    // ensure the response to the front end has the designed formatting
-    assertEquals("Ensure the response to the front end has the designed formatting.",
-        "{\"comments\":\"0~test comment~comment_user~100\\n\"}", stringWriter.toString());
-  }
-
-  @Test
-  public void testDoPost() throws SQLException {
-    Database db = new Database(this.url);
-    Comment comment = new Comment(db);
-    HttpServletRequest req = mock(HttpServletRequest.class);
-    HttpServletResponse resp = mock(HttpServletResponse.class);
-
-    // mock user requests
-    when(req.getParameter("docId")).thenReturn("0");
-    when(req.getParameter("comment")).thenReturn("test comment 2");
-    when(req.getParameter("commentUser")).thenReturn("test user 2");
-
-    comment.doPost(req, resp);
-
-    ResultSet result = db.getFileComments("0");
-    ArrayList<String> idList = new ArrayList<String>();
-    ArrayList<String> commentList = new ArrayList<String>();
-    ArrayList<String> userList = new ArrayList<String>();
-    ArrayList<String> dateList = new ArrayList<String>();
-
-    while (result.next()) {
-      idList.add(result.getString("file_id"));
-      commentList.add(result.getString("comment"));
-      userList.add(result.getString("comment_user"));
-      dateList.add(result.getString("date"));
-    }
-    // check that both comments exist and are correct
-    assertEquals(2, idList.size());
-    assertEquals("0", idList.get(0));
-    assertEquals("test comment", commentList.get(0));
-    assertEquals("comment_user", userList.get(0));
-    assertEquals("0", idList.get(1));
-    assertEquals("test comment 2", commentList.get(1));
-    assertEquals("test user 2", userList.get(1));
-
+    JSONObject json = new JSONObject(stringWriter.toString());
+    assertTrue(json.getString("comments").contains("test comment"));
+    assertTrue(json.getString("comments").contains("comment_user"));
   }
 }

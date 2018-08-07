@@ -1,5 +1,5 @@
-<div class="container content-row mt-5">
 <app-navbar></app-navbar>
+<div class="container content-row mt-5">
 <div class="card mb-3">
   <div class="card-body">
     <div class="row">
@@ -43,7 +43,7 @@
           <div class="col">
             <div class="row">
               <div class="col-md-2 text-center text-capitalize">
-                <img src="{{ result.profileImage }}?sz=75" alt="profileImage">
+                <img src="{{ result.profileImage }}?sz=75" alt="profileImage" class="profile">
                 <span [ngClass]="{'badge-warning': result.userType === 'instructor', 'badge-success': result.userType === 'student'}" class="heading badge badge-sm">
                   <i class="fa fa-user"></i> {{ result.userType }}
                 </span>

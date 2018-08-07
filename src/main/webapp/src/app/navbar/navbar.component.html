@@ -1,36 +1,42 @@
-<div *ngIf="!userInfo" class="card mb-3">
-  <div class="card-body">
-    <div class="row">
-      <div class="col">
-        <label class="heading">Sign In</label>
-      </div>
+<nav class="navbar navbar-expand-sm navbar-dark">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav mr-auto">
+      <a [ngClass]="{'active': navSelection === 'search'}" class="nav-item nav-link" href="#">
+        <i class="fa fa-search"></i> Search
+      </a>
+      <a [ngClass]="{'active': navSelection === 'users'}" class="nav-item nav-link" href="/users">
+        <i class="fa fa-users"></i> Users
+      </a>
+      <a [ngClass]="{'active': navSelection === 'statistics'}" class="nav-item nav-link" href="/statistics">
+        <i class="fa fa-chart-pie"></i> Statistics
+      </a>
     </div>
-    <div class="row">
-      <div class="col">
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <div *ngIf="navSelection === 'search'">
+      <div *ngIf="userInfo" class="navbar-nav">
+        <a tooltip="Upload" placement="bottom" class="nav-item nav-link" href="#">
+          <label style="margin: 0; cursor: pointer">
+            <input (change)="upload($event.target.files)" type="file" style="display: none" multiple>
+            <i class="fa fa-upload"></i>
+          </label>
+        </a>
+        <a tooltip="Sign Out" placement="bottom" class="nav-item nav-link" href="#" (click)="signOut(true)">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+        <a tooltip="Profile" placement="bottom" class="nav-item nav-link" href="/profile">
+          <img src="{{ userInfo.profileImage }}?sz=40" alt="profile" class="profile">
+        </a>
       </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col">
-        <a href="/register">Register for a new account</a>
+      <div *ngIf="!userInfo" class="navbar-nav">
+        <a *ngIf="!userInfo" class="mr-3 nav-item nav-link" href="/register">
+          <i class="fa fa-user-plus"></i> Register
+        </a>
+        <a class="nav-item">
+          <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        </a>
       </div>
     </div>
   </div>
-</div>
-<div *ngIf="userInfo" class="card mb-3">
-  <div class="card-body">
-    <div class="row">
-      <div class="col">
-        Welcome <span class="heading">{{ userInfo.userName }}</span>
-      </div>
-      <div class="col text-right">
-        <label class="btn btn-sm btn-primary" style="margin: 0">
-          <i class="fa fa-upload"></i> Upload <input (change)="upload($event.target.files)" type="file" style="display: none" multiple>
-        </label>
-        <button (click)="signOut(true)" type="button" class="btn btn-sm btn-secondary">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+</nav>

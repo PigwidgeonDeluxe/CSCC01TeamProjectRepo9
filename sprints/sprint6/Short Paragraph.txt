@@ -1,0 +1,4 @@
+Our team did not finish all the task assigned for this sprint.
+All primary functionality were completely implemented and code has been refactored.
+The majority of the optional features(profile page, following users, commenting) were completed this sprint. All that remains are UI adjustments to allow a more user friendly environment to work in.
+The team mainly had issues with availability due to overwhelming amount of final projects being due at this time of the semester.

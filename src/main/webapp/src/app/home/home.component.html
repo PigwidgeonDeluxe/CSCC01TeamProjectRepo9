@@ -1,8 +1,12 @@
-<div class="container content-row mt-5">
-  <div class="row">
-    <div class="col">
-      <app-navbar></app-navbar>
+<div [ngStyle]="{'background-image': 'url(' + backgroundUrl + ')'}" class="background"></div>
+<div class="content">
+  <app-navbar navSelection="search"></app-navbar>
+  <div class="container content-row mt-5">
+    <div class="row">
+      <div class="col">
+      </div>
     </div>
+    <img src="../assets/logo.png" alt="logo" class="logo mb-5">
+    <app-search></app-search>
   </div>
-  <app-search></app-search>
 </div>

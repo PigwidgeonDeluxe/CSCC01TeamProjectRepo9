@@ -10,11 +10,17 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONObject;
 
+/**
+ * Class for handling file upload
+ */
 @WebServlet("/upload")
 public class FileUpload extends HttpServlet {
 
-  private Indexing indexer = new Indexing();
-
+  /**
+   * Handles POST requests -- (uploading a file to the system)
+   * @param req HttpServletRequest -- expects query parameter "userId" for uploading user
+   * @param resp HttpServletResponse
+   */
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) {
     JSONObject response = new JSONObject();
@@ -47,7 +53,7 @@ public class FileUpload extends HttpServlet {
       ex.printStackTrace();
     }
 
-    // reindex
+    // reindex files in the system
     Search.callIndexing();
   }
 }

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+/**
+ * Comopnent for handling system statistics
+ */
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
@@ -14,14 +17,20 @@ export class StatisticsComponent implements OnInit {
   fileUploaderData: any;
   fileSizeData: any;
 
+  stats: any;
+  fileTypeEmpty: boolean;
+  fileUploaderEmpty: boolean;
+  fileSizeEmpty: boolean;
+
   topContributor: any;
   popularFileType: any;
   largestFile: number;
-  newestUser: any;
-  oldestUser: any;
 
   constructor() { }
 
+  /**
+   * Initialize resources and charts
+   */
   ngOnInit() {
     this.http = new XMLHttpRequest();
     this.TOMCAT_URL = 'http://localhost:8080';
@@ -60,7 +69,7 @@ export class StatisticsComponent implements OnInit {
       options: {
         width: 500,
         legend: 'none',
-        histogram: { bucketSize: 80000 },
+        histogram: { bucketSize: 10000 },
         colors: ['green']
       }
     };
@@ -68,53 +77,76 @@ export class StatisticsComponent implements OnInit {
     this.getStatistics();
   }
 
+  /**
+   * Get statistics from the backend
+   */
   getStatistics() {
     const url = this.TOMCAT_URL + '/statistics';
 
     this.http.open('GET', url, false);
     this.http.send(null);
-    const resp = JSON.parse(this.http.response);
+    this.stats = JSON.parse(this.http.response);
 
-    for (const key in resp.fileType) {
-      if (resp.fileType.hasOwnProperty(key)) {
-        this.fileTypeData.dataTable.push([key, resp.fileType[key]]);
+    for (const key in this.stats.fileType) {
+      if (this.stats.fileType.hasOwnProperty(key)) {
+        // add data to chart
+        this.fileTypeData.dataTable.push([key, this.stats.fileType[key]]);
+        // get the most popular file type
         if (this.popularFileType) {
-          if (resp.fileType[key] > this.popularFileType.files) {
-            this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
+          if (this.stats.fileType[key] > this.popularFileType.files) {
+            this.popularFileType = {'fileType': key, 'files': this.stats.fileType[key]};
           }
         } else {
-          this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
+          this.popularFileType = {'fileType': key, 'files': this.stats.fileType[key]};
         }
       }
     }
 
-    for (const key in resp.uploaderStats) {
-      if (resp.uploaderStats.hasOwnProperty(key)) {
-        this.fileUploaderData.dataTable.push([key, resp.uploaderStats[key]]);
+    for (const key in this.stats.uploaderStats) {
+      if (this.stats.uploaderStats.hasOwnProperty(key)) {
+        // add data to chart
+        this.fileUploaderData.dataTable.push([key, this.stats.uploaderStats[key]]);
+        // get the top contributor
         if (this.topContributor) {
-          if (resp.uploaderStats[key] > this.topContributor.files) {
-            this.topContributor = {'name': key, 'files': resp.uploaderStats[key]};
+          if (this.stats.uploaderStats[key] > this.topContributor.files) {
+            this.topContributor = {'name': key, 'files': this.stats.uploaderStats[key]};
           }
         } else {
-          this.topContributor = {'name': key, 'files': resp.uploaderStats[key]};
+          this.topContributor = {'name': key, 'files': this.stats.uploaderStats[key]};
         }
       }
     }
 
-    for (const key in resp.fileSize) {
-      if (resp.fileSize.hasOwnProperty(key)) {
-        this.fileSizeData.dataTable.push([key, resp.fileSize[key]]);
+    for (const key in this.stats.fileSize) {
+      if (this.stats.fileSize.hasOwnProperty(key)) {
+        // add data to the chart
+        this.fileSizeData.dataTable.push([key, this.stats.fileSize[key]]);
         if (this.largestFile) {
-          if (resp.fileSize[key] > this.largestFile) {
-            this.largestFile = resp.fileSize[key];
+          // get the largest file
+          if (this.stats.fileSize[key] > this.largestFile) {
+            this.largestFile = this.stats.fileSize[key];
           }
         } else {
-          this.largestFile = resp.fileSize[key];
+          this.largestFile = this.stats.fileSize[key];
         }
       }
     }
 
+    // cast largest file to a digestable format
     this.largestFile = Math.round(this.largestFile / 1000) / 100;
+
+    // handling if there are no files in the system
+    if (Object.keys(this.stats.fileType).length === 0) {
+      this.fileTypeEmpty = true;
+    }
+
+    if (Object.keys(this.stats.uploaderStats).length === 0) {
+      this.fileUploaderEmpty = true;
+    }
+
+    if (Object.keys(this.stats.fileSize).length === 0) {
+      this.fileSizeEmpty = true;
+    }
 
   }
 

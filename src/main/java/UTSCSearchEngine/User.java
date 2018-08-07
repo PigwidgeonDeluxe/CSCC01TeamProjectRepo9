@@ -3,9 +3,7 @@ package UTSCSearchEngine;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import java.security.GeneralSecurityException;
 import java.sql.ResultSet;
@@ -16,23 +14,24 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Class for handling user creation and login
+ */
 @WebServlet("/user")
 public class User extends HttpServlet {
 
+  /**
+   * Processes user request as either a login or user creation
+   * @param req HttpServletRequest -- accepts one of optional query parameter "create" or "login"
+   * @param resp HttpServletResponse
+   * @param postBody body of POST request; expects POST body containing JSON with object parameters
+   *                 "token", "userName", "userType", and "profileImage"
+   */
   private void processRequest(HttpServletRequest req, HttpServletResponse resp, String postBody) {
+    // setup google id token verifier
     GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
         new JacksonFactory())
         .setAudience(Collections.singletonList("262727309060-6bg972cbt6p1k27318l7ubk8saflsski.apps.googleusercontent.com"))
@@ -41,25 +40,28 @@ public class User extends HttpServlet {
     Database db = new Database();
     JSONObject response = new JSONObject();
 
+    // handle user creation request
     String createUserQuery = req.getParameter("create");
     if (createUserQuery != null) {
       JSONObject json = new JSONObject(postBody);
 
       try {
+        // verify the token is valid
         GoogleIdToken idToken = verifier.verify(json.getString("token"));
         if (idToken != null) {
           Payload payload = idToken.getPayload();
           String userId = payload.getSubject();
+          ResultSet rs = null;
 
           try {
-            ResultSet rs = db.getUserById(userId);
+            rs = db.getUserById(userId);
             if (rs.next()) {
-              // user already exists
+              // user already exists; return a failure structure to the frontend
               response.put("status", "FAILURE");
               response.put("message", "User already exists");
               resp.getWriter().write(response.toString());
             } else {
-              // user doesn't exist
+              // user doesn't exist; create a new user
               db.insertUser(userId, json.getString("userType"),
                   json.getString("userName"), json.getString("profileImage"));
               response.put("status", "SUCCESS");
@@ -69,8 +71,18 @@ public class User extends HttpServlet {
             }
           } catch (SQLException ex) {
             ex.printStackTrace();
+          } finally {
+            // close open connection
+            if (rs != null) {
+              try {
+                rs.close();
+              } catch (SQLException ex) {
+                ex.printStackTrace();
+              }
+            }
           }
         } else {
+          // token is invalid; return a failure structure to the frontend
           response.put("status", "FAILURE");
           response.put("message", "Unable to create new user");
           resp.getWriter().write(response.toString());
@@ -82,35 +94,48 @@ public class User extends HttpServlet {
       }
     }
 
+    // handle user login request
     String loginUserQuery = req.getParameter("login");
     if (loginUserQuery != null) {
       JSONObject json = new JSONObject(postBody);
 
       try {
+        // verify token
         GoogleIdToken idToken = verifier.verify(json.getString("token"));
         if (idToken != null) {
           Payload payload = idToken.getPayload();
           String userId = payload.getSubject();
+          ResultSet rs = null;
 
           try {
-            ResultSet rs = db.getUserById(userId);
+            rs = db.getUserById(userId);
             if (rs.next()) {
-              // user exists
+              // user exists; login the user
               response.put("status", "SUCCESS");
               response.put("userType", rs.getString("user_type"));
               response.put("createdOn", rs.getString("created_on"));
               response.put("message", "Successfully logged in");
               resp.getWriter().write(response.toString());
             } else {
-              // user doesn't exist
+              // user doesn't exist; send a failure structure to the frontend
               response.put("status", "FAILURE");
               response.put("message", "User does not exist");
               resp.getWriter().write(response.toString());
             }
           } catch (SQLException ex) {
             ex.printStackTrace();
+          } finally {
+            // close open connection
+            if (rs != null) {
+              try {
+                rs.close();
+              } catch (SQLException ex) {
+                ex.printStackTrace();
+              }
+            }
           }
         } else {
+          // the token is invaild; send a failure structure to the frontend
           response.put("status", "FAILURE");
           response.put("message", "Unable to login user");
           resp.getWriter().write(response.toString());
@@ -123,15 +148,23 @@ public class User extends HttpServlet {
     }
   }
 
+  /**
+   * Handles GET requests -- (getting user information)
+   * @param req HttpServletRequest -- expects query parameter "userId"
+   * @param resp HttpServletResponse
+   * @throws IOException if the database return is invalid
+   */
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
     Database db = new Database();
     String userId = req.getParameter("userId");
     JSONObject response = new JSONObject();
+    ResultSet rs = null;
 
+    // get user information from database
     try {
-      ResultSet rs = db.getUserById(userId);
+      rs = db.getUserById(userId);
       while (rs.next()) {
         response.put("userId", rs.getString("user_id"));
         response.put("userName", rs.getString("user_name"));
@@ -141,12 +174,27 @@ public class User extends HttpServlet {
       }
     } catch (SQLException ex) {
       ex.printStackTrace();
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+        }
+      }
     }
 
+    // package and send request to user
     resp.setHeader("Access-Control-Allow-Origin", "*");
     resp.getWriter().write(response.toString());
   }
 
+  /**
+   * Handles and sends POST requests; passes request and response headers to processRequest
+   * @param req HttpServletRequest
+   * @param resp HttpServletResponse
+   * @throws IOException if the database return is invalid
+   */
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("application/x-www-form-urlencoded");
