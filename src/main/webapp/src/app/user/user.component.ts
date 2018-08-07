@@ -23,8 +23,12 @@ export class UserComponent implements OnInit {
   following: any;
   followingUser: boolean;
 
+  stats: any;
   fileTypeData: any;
   fileSizeData: any;
+
+  fileTypeEmpty: boolean;
+  fileSizeEmpty: boolean;
 
   popularFileType: any;
   largestFile: any;
@@ -89,40 +93,49 @@ export class UserComponent implements OnInit {
 
     this.http.open('GET', url, false);
     this.http.send(null);
-    const resp = JSON.parse(this.http.response);
+    this.stats = JSON.parse(this.http.response);
 
-    for (const key in resp.fileType) {
-      if (resp.fileType.hasOwnProperty(key)) {
+    for (const key in this.stats.fileType) {
+      if (this.stats.fileType.hasOwnProperty(key)) {
         // add data to chart
-        this.fileTypeData.dataTable.push([key, resp.fileType[key]]);
+        this.fileTypeData.dataTable.push([key, this.stats.fileType[key]]);
         // get the most popular file type
         if (this.popularFileType) {
-          if (resp.fileType[key] > this.popularFileType.files) {
-            this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
+          if (this.stats.fileType[key] > this.popularFileType.files) {
+            this.popularFileType = {'fileType': key, 'files': this.stats.fileType[key]};
           }
         } else {
-          this.popularFileType = {'fileType': key, 'files': resp.fileType[key]};
+          this.popularFileType = {'fileType': key, 'files': this.stats.fileType[key]};
         }
       }
     }
 
-    for (const key in resp.fileSize) {
-      if (resp.fileSize.hasOwnProperty(key)) {
+    for (const key in this.stats.fileSize) {
+      if (this.stats.fileSize.hasOwnProperty(key)) {
         // add data to the chart
-        this.fileSizeData.dataTable.push([key, resp.fileSize[key]]);
+        this.fileSizeData.dataTable.push([key, this.stats.fileSize[key]]);
         // get the largest file
         if (this.largestFile) {
-          if (resp.fileSize[key] > this.largestFile) {
-            this.largestFile = resp.fileSize[key];
+          if (this.stats.fileSize[key] > this.largestFile) {
+            this.largestFile = this.stats.fileSize[key];
           }
         } else {
-          this.largestFile = resp.fileSize[key];
+          this.largestFile = this.stats.fileSize[key];
         }
       }
     }
 
     // cast the largest file to a more digestable format
     this.largestFile = Math.round(this.largestFile / 1000) / 100;
+
+    // handling if there are no files in the system
+    if (Object.keys(this.stats.fileType).length === 0) {
+      this.fileTypeEmpty = true;
+    }
+
+    if (Object.keys(this.stats.fileSize).length === 0) {
+      this.fileSizeEmpty = true;
+    }
   }
 
   /**
@@ -139,10 +152,11 @@ export class UserComponent implements OnInit {
    * Get the files of the given user
    */
   getUserFiles() {
-    const url = this.TOMCAT_URL + '/search?userName=' + this.userInfo.userName;
+    const url = this.TOMCAT_URL + '/userFiles?userId=' + this.user.userId;
+
     this.http.open('GET', url, false);
     this.http.send(null);
-    const resp = this.http.response.split('"\n');
+    const resp = this.http.response.split('\n');
     this.results = [];
     // package response
     resp.forEach(element => {
@@ -152,11 +166,9 @@ export class UserComponent implements OnInit {
           'fileType': element.split('~')[1],
           'userType': element.split('~')[2],
           'userName': element.split('~')[3],
-          'userId': element.split('~')[4],
-          'fileSize': Math.round(+element.split('~')[5] / 1000) / 100,
-          'uploadDate': +element.split('~')[6],
-          'docId': element.split('~')[7],
-          'fileContent': element.split('~')[8]
+          'fileSize': Math.round(+element.split('~')[4] / 1000) / 100,
+          'uploadDate': +element.split('~')[5],
+          'docId': element.split('~')[6]
         });
       }
     });
