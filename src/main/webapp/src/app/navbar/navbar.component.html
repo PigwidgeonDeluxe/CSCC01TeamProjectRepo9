@@ -14,27 +14,29 @@
         <i class="fa fa-chart-pie"></i> Statistics
       </a>
     </div>
-    <div *ngIf="userInfo" class="navbar-nav">
-      <a tooltip="Upload" placement="bottom" class="nav-item nav-link" href="#">
-        <label style="margin: 0; cursor: pointer">
-          <input (change)="upload($event.target.files)" type="file" style="display: none" multiple>
-          <i class="fa fa-upload"></i>
-        </label>
-      </a>
-      <a tooltip="Sign Out" placement="bottom" class="nav-item nav-link" href="#" (click)="signOut(true)">
-        <i class="fas fa-sign-out-alt"></i>
-      </a>
-      <a tooltip="Profile" placement="bottom" class="nav-item nav-link" href="/profile">
-        <img src="{{ userInfo.profileImage }}?sz=40" alt="profile" class="profile">
-      </a>
-    </div>
-    <div *ngIf="!userInfo" class="navbar-nav">
-      <a *ngIf="!userInfo" class="mr-3 nav-item nav-link" href="/register">
-        <i class="fa fa-user-plus"></i> Register
-      </a>
-      <a class="nav-item">
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
-      </a>
+    <div *ngIf="navSelection === 'search'">
+      <div *ngIf="userInfo" class="navbar-nav">
+        <a tooltip="Upload" placement="bottom" class="nav-item nav-link" href="#">
+          <label style="margin: 0; cursor: pointer">
+            <input (change)="upload($event.target.files)" type="file" style="display: none" multiple>
+            <i class="fa fa-upload"></i>
+          </label>
+        </a>
+        <a tooltip="Sign Out" placement="bottom" class="nav-item nav-link" href="#" (click)="signOut(true)">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+        <a tooltip="Profile" placement="bottom" class="nav-item nav-link" href="/profile">
+          <img src="{{ userInfo.profileImage }}?sz=40" alt="profile" class="profile">
+        </a>
+      </div>
+      <div *ngIf="!userInfo" class="navbar-nav">
+        <a *ngIf="!userInfo" class="mr-3 nav-item nav-link" href="/register">
+          <i class="fa fa-user-plus"></i> Register
+        </a>
+        <a class="nav-item">
+          <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        </a>
+      </div>
     </div>
   </div>
 </nav>
