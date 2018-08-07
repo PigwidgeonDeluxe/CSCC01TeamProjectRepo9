@@ -7,15 +7,27 @@
           <div class="row text-center">
             <div class="col">
               <label class="heading">File Type Distribution</label>
-              <google-chart [data]="fileTypeData"></google-chart>
+              <google-chart *ngIf="!fileTypeEmpty" [data]="fileTypeData"></google-chart>
+              <div *ngIf="fileTypeEmpty">
+                <br>
+                <span>No data</span>
+              </div>
             </div>
             <div class="col">
               <label class="heading">Contributors</label>
-              <google-chart [data]="fileUploaderData"></google-chart>
+              <google-chart *ngIf="!fileUploaderEmpty" [data]="fileUploaderData"></google-chart>
+              <div *ngIf="fileTypeEmpty">
+                <br>
+                <span>No data</span>
+              </div>
             </div>
             <div class="col">
               <label class="heading">File Size Distribution</label>
-              <google-chart [data]="fileSizeData"></google-chart>
+              <google-chart *ngIf="!fileSizeEmpty" [data]="fileSizeData"></google-chart>
+              <div *ngIf="fileTypeEmpty">
+                <br>
+                <span>No data</span>
+              </div>
             </div>
             <div class="col">
               <label class="heading">Additional Statistics</label>
@@ -25,19 +37,19 @@
                     <td class="heading">
                       <i class="fa fa-trophy"></i> Top Contributor
                     </td>
-                    <td>{{ topContributor.name }}</td>
+                    <td>{{ topContributor ? topContributor.name : 'N/A' }}</td>
                   </tr>
                   <tr>
                     <td class="heading">
                       <i class="fa fa-star"></i> Most Popular File Type
                     </td>
-                    <td>{{ popularFileType.fileType }}</td>
+                    <td>{{ popularFileType ? popularFileType.fileType : 'N/A' }}</td>
                   </tr>
                   <tr>
                     <td class="heading">
                       <i class="fa fa-file-upload"></i> Largest File Uploaded
                     </td>
-                    <td>{{ largestFile }} MB</td>
+                    <td>{{ largestFile ? largestFile : 0 }} MB</td>
                   </tr>
                 </tbody>
               </table>

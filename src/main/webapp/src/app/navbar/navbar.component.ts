@@ -132,8 +132,8 @@ export class NavbarComponent implements OnInit {
     // package request
     const request = new FormData();
     Array.from(files).forEach(file => {
-      if (re.exec(file.name)[1] !== 'txt' ||
-        re.exec(file.name)[1] !== 'docx' || re.exec(file.name)[1] !== 'pdf' || re.exec(file.name)[1] !== 'html') {
+      if (re.exec(file.name)[1] !== 'txt' &&
+        re.exec(file.name)[1] !== 'docx' && re.exec(file.name)[1] !== 'pdf' && re.exec(file.name)[1] !== 'html') {
         validFiles = false;
       }
       request.append(file.name, file);
