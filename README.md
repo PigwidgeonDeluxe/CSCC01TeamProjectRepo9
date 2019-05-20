@@ -1,4 +1,28 @@
 # UTSC Search Engine
+## Brief Summary
+
+<img src="docs/screenshot.png" alt="screenshot of out project's landing screen" />
+
+This is a basic search engine for uploading, searching, and commenting on files. This was developed as our final project for CSCC01 - Introduction to Software Engineering at the University of Toronto Scarborough Campus.
+It was primarily developed by team members Edward Zhang, Edgar Lai, Angela Zhu, and myself.
+
+The general idea of this project was to develop a platform so that students and instructors could upload and search course files on a single unified system.
+Users can make accounts on the platform in order to gain access to certain additional features restricted to students only.
+The project was built using Scrum and Agile development practices, which allowed for a smooth development process and should allow future additions with ease.
+
+The following technologies were used in our project:
+
+  - Backend Technologies:
+    - Tomcat
+    - Apache Lucene
+    - SQLite
+    - Mockito and JUnit
+
+  - Frontend Technologies:
+    - Angular 5
+    - Bootstrap 4
+
+The team and I spent 7 weeks developing this project with the following being the end result
 
 ## Installation
 
