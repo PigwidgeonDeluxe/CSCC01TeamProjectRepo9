@@ -1,7 +1,7 @@
 # UTSC Search Engine
 ## Brief Summary
 
-<img src="docs/screenshot.png" alt="screenshot of out project's landing screen" />
+<img src="docs/screenshot.png" alt="screenshot of our project's landing screen" />
 
 This is a basic search engine for uploading, searching, and commenting on files. This was developed as our final project for CSCC01 - Introduction to Software Engineering at the University of Toronto Scarborough Campus.
 It was primarily developed by team members Edward Zhang, Edgar Lai, Angela Zhu, and myself.
