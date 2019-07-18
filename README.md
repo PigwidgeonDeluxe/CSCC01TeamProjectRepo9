@@ -3,7 +3,7 @@
 
 <img src="docs/screenshot.png" alt="screenshot of our project's landing screen" />
 
-This is a basic search engine for uploading, searching, and commenting on files. This was developed as our final project for CSCC01 - Introduction to Software Engineering at the University of Toronto Scarborough Campus.
+This is a search engine for uploading, searching, and commenting on files. This was developed as our final project for CSCC01 - Introduction to Software Engineering at the University of Toronto Scarborough Campus.
 It was primarily developed by team members Edward Zhang, Edgar Lai, Angela Zhu, and myself.
 
 The general idea of this project was to develop a platform so that students and instructors could upload and search course files on a single unified system.
